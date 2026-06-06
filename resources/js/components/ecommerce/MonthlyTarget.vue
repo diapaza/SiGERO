@@ -82,7 +82,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import DropdownMenu from '../common/DropdownMenu.vue'
+import DropdownMenu from '../shared/DropdownMenu.vue'
 import HorizontalDots from '@/icons/HorizontalDots.vue'
 import TrendArrowIcon from '@/icons/TrendArrowIcon.vue'
 const menuItems = [

@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
-import CommonGridShape from '@/components/common/CommonGridShape.vue'
+import CommonGridShape from '@/components/shared/CommonGridShape.vue'
 import ChevronLeftIcon from '@/icons/ChevronLeftIcon.vue'
 
 withDefaults(defineProps<{

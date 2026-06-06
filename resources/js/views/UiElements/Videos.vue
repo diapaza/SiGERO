@@ -24,10 +24,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import ComponentCard from '@/components/common/ComponentCard.vue'
-import YouTubeEmbed from '@/components/ui/YouTubeEmbed.vue'
+import ComponentCard from '@/components/shared/ComponentCard.vue'
+import YouTubeEmbed from '@/components/shared/YouTubeEmbed.vue'
 const currentPageTitle = ref('Videos')
 </script>
 

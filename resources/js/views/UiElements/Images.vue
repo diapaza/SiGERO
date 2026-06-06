@@ -17,12 +17,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import ComponentCard from '@/components/common/ComponentCard.vue'
-import ResponsiveImage from '@/components/ui/images/ResponsiveImage.vue'
-import TwoColumnImageGrid from '@/components/ui/images/TwoColumnImageGrid.vue'
-import ThreeColumnImageGrid from '@/components/ui/images/ThreeColumnImageGrid.vue'
+import ComponentCard from '@/components/shared/ComponentCard.vue'
+import ResponsiveImage from '@/components/demos/images/ResponsiveImage.vue'
+import TwoColumnImageGrid from '@/components/demos/images/TwoColumnImageGrid.vue'
+import ThreeColumnImageGrid from '@/components/demos/images/ThreeColumnImageGrid.vue'
 const currentPageTitle = ref('Images')
 </script>
 

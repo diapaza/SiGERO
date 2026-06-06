@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import TrendIndicator from '@/components/common/TrendIndicator.vue'
+import TrendIndicator from '@/components/shared/TrendIndicator.vue'
 
 defineProps<{
   icon: object

@@ -32,17 +32,17 @@
 
 <script setup>
 import { ref } from 'vue'
-import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import DefaultInputs from '@/components/forms/FormElements/DefaultInputs.vue'
-import ComponentCard from '@/components/common/ComponentCard.vue'
-import SelectInput from '@/components/forms/FormElements/SelectInput.vue'
-import InputState from '@/components/forms/FormElements/InputState.vue'
-import TextArea from '@/components/forms/FormElements/TextArea.vue'
-import InputGroup from '@/components/forms/FormElements/InputGroup.vue'
-import Dropzone from '@/components/forms/FormElements/Dropzone.vue'
-import FileInput from '@/components/forms/FormElements/FileInput.vue'
-import CheckboxInput from '@/components/forms/FormElements/CheckboxInput.vue'
+import DefaultInputs from '@/components/demos/forms/DefaultInputs.vue'
+import ComponentCard from '@/components/shared/ComponentCard.vue'
+import SelectInput from '@/components/demos/forms/SelectInput.vue'
+import InputState from '@/components/demos/forms/InputState.vue'
+import TextArea from '@/components/demos/forms/TextArea.vue'
+import InputGroup from '@/components/demos/forms/InputGroup.vue'
+import Dropzone from '@/components/demos/forms/Dropzone.vue'
+import FileInput from '@/components/demos/forms/FileInput.vue'
+import CheckboxInput from '@/components/demos/forms/CheckboxInput.vue'
 
 const currentPageTitle = ref('Form Elements')
 </script>

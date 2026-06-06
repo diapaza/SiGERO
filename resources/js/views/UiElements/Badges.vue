@@ -63,9 +63,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseBadge from '@/components/base/BaseBadge.vue'
-import PageBreadcrumb from '../../components/common/PageBreadcrumb.vue'
+import PageBreadcrumb from '../../components/shared/PageBreadcrumb.vue'
 import AdminLayout from '../../components/layout/AdminLayout.vue'
-import ComponentCard from '../../components/common/ComponentCard.vue'
+import ComponentCard from '../../components/shared/ComponentCard.vue'
 import { PlusIcon } from '@/icons'
 const currentPageTitle = ref('Badge')
 

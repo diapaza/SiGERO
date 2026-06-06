@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import StatCard from '@/components/common/StatCard.vue'
+import StatCard from '@/components/shared/StatCard.vue'
 import UserGroupIcon from '@/icons/UserGroupIcon.vue'
 import BoxCubeIcon from '@/icons/BoxCubeIcon.vue'
 </script>

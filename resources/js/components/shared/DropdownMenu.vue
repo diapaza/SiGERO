@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import vClickOutsideDirective from './v-click-outside.vue'
+import vClickOutsideDirective from './directives/v-click-outside.vue'
 import HorizontalDots from '@/icons/HorizontalDots.vue'
 
 const vClickOutside = vClickOutsideDirective

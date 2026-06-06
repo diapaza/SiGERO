@@ -49,12 +49,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import ComponentCard from '@/components/common/ComponentCard.vue'
+import ComponentCard from '@/components/shared/ComponentCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
-import FormModal from '@/components/ui/FormModal.vue'
+import FormModal from '@/components/shared/FormModal.vue'
 
 
 const currentPageTitle = ref('Modal')

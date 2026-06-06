@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import DropdownMenu from '../common/DropdownMenu.vue'
+import DropdownMenu from '../shared/DropdownMenu.vue'
 import HorizontalDots from '@/icons/HorizontalDots.vue'
 const menuItems = [
   { label: 'View More', onClick: () => console.log('View More clicked') },

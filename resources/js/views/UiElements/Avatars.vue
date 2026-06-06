@@ -34,10 +34,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import ComponentCard from '@/components/common/ComponentCard.vue'
-import Avatar from '@/components/ui/Avatar.vue'
+import ComponentCard from '@/components/shared/ComponentCard.vue'
+import Avatar from '@/components/shared/Avatar.vue'
 const currentPageTitle = ref('Avatars')
 
 const avatarSrc = '/images/user/user-01.jpg'

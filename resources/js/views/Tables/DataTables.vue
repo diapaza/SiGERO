@@ -16,8 +16,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
-import ComponentCard from '@/components/common/ComponentCard.vue'
+import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
+import ComponentCard from '@/components/shared/ComponentCard.vue'
 import DataTableBasic from '@/components/tables/data-tables/DataTableBasic.vue'
 import DataTableFilter from '@/components/tables/data-tables/DataTableFilter.vue'
 
