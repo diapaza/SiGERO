@@ -36,24 +36,24 @@
     <BaseModal v-model:isOpen="isProfileInfoModal" title="Edit Personal Information" size="lg" contentClass="rounded-3xl">
       <template #body>
         <p class="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">Update your details to keep your profile up-to-date.</p>
-        <div class="custom-scrollbar h-[458px] overflow-y-auto px-2">
+        <div class="custom-scrollbar h-[458px] overflow-y-auto">
           <div>
             <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">Social Links</h5>
             <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
               <div>
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Facebook</label>
+                <BaseLabel label="Facebook" />
                 <BaseInput type="text" modelValue="https://www.facebook.com/PimjoHQ" />
               </div>
               <div>
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">X.com</label>
+                <BaseLabel label="X.com" />
                 <BaseInput type="text" modelValue="https://x.com/PimjoHQ" />
               </div>
               <div>
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Linkedin</label>
+                <BaseLabel label="Linkedin" />
                 <BaseInput type="text" modelValue="https://www.linkedin.com/company/pimjo/posts/?feedView=all" />
               </div>
               <div>
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Instagram</label>
+                <BaseLabel label="Instagram" />
                 <BaseInput type="text" modelValue="https://instagram.com/PimjoHQ" />
               </div>
             </div>
@@ -62,23 +62,23 @@
             <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">Personal Information</h5>
             <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
               <div class="col-span-2 lg:col-span-1">
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">First Name</label>
+                <BaseLabel label="First Name" />
                 <BaseInput type="text" modelValue="Musharof" />
               </div>
               <div class="col-span-2 lg:col-span-1">
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Last Name</label>
+                <BaseLabel label="Last Name" />
                 <BaseInput type="text" modelValue="Chowdhury" />
               </div>
               <div class="col-span-2 lg:col-span-1">
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Email Address</label>
+                <BaseLabel label="Email Address" />
                 <BaseInput type="text" modelValue="emirhanboruch55@gmail.com" />
               </div>
               <div class="col-span-2 lg:col-span-1">
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Phone</label>
+                <BaseLabel label="Phone" />
                 <BaseInput type="text" modelValue="+09 363 398 46" />
               </div>
               <div class="col-span-2">
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Bio</label>
+                <BaseLabel label="Bio" />
                 <BaseInput type="text" modelValue="Team Manager" />
               </div>
             </div>
@@ -98,6 +98,7 @@ import { ref } from 'vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 import EditIcon from '@/icons/EditIcon.vue'
 
 const isProfileInfoModal = ref(false)

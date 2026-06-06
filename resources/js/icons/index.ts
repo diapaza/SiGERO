@@ -29,7 +29,6 @@ import HomeIcon from "./HomeIcon.vue";
 import HorizontalDots from "./HorizontalDots.vue";
 import InfoCircleIcon from "./InfoCircleIcon.vue";
 import InfoIcon from "./InfoIcon.vue";
-import InstagramIcon from "./InstagramIcon.vue";
 import LayoutDashboardIcon from "./LayoutDashboardIcon.vue";
 import LinkedInIcon from "./LinkedInIcon.vue";
 import ListIcon from "./ListIcon.vue";
@@ -95,7 +94,6 @@ export {
   HorizontalDots,
   InfoCircleIcon,
   InfoIcon,
-  InstagramIcon,
   LayoutDashboardIcon,
   LinkedInIcon,
   ListIcon,

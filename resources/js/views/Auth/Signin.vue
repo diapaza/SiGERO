@@ -1,15 +1,15 @@
 <template>
   <AuthLayout title="Sign In" description="Enter your email and password to sign in!">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-      <SocialButton provider="google" label="Sign in with Google" />
-      <SocialButton provider="x" label="Sign in with X" />
+      <BaseSocialButton provider="google" label="Sign in with Google" />
+      <BaseSocialButton provider="x" label="Sign in with X" />
     </div>
 
-    <Divider />
+    <BaseDivider />
 
     <form @submit.prevent="handleSubmit">
       <div class="space-y-5">
-        <FormField label="Email" labelFor="email" required>
+        <BaseFormField label="Email" labelFor="email" required>
           <BaseInput
             v-model="email"
             type="email"
@@ -17,15 +17,15 @@
             name="email"
             placeholder="info@gmail.com"
           />
-        </FormField>
+        </BaseFormField>
 
-        <FormField label="Password" labelFor="password" required>
-          <PasswordInput
+        <BaseFormField label="Password" labelFor="password" required>
+          <BasePasswordInput
             v-model="password"
             id="password"
             placeholder="Enter your password"
           />
-        </FormField>
+        </BaseFormField>
 
         <div class="flex items-center justify-between">
           <BaseCheckbox v-model="keepLoggedIn" label="Keep me logged in" />
@@ -60,13 +60,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
-import SocialButton from '@/components/base/SocialButton.vue'
-import Divider from '@/components/base/Divider.vue'
+import BaseSocialButton from '@/components/base/BaseSocialButton.vue'
+import BaseDivider from '@/components/base/BaseDivider.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCheckbox from '@/components/base/BaseCheckbox.vue'
-import FormField from '@/components/base/FormField.vue'
-import PasswordInput from '@/components/base/PasswordInput.vue'
+import BaseFormField from '@/components/base/BaseFormField.vue'
+import BasePasswordInput from '@/components/base/BasePasswordInput.vue'
 
 const email = ref('')
 const password = ref('')

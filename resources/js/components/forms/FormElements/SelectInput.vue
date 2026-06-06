@@ -2,9 +2,7 @@
   <div class="space-y-6">
     <!-- Single Select Input -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-        Select Input
-      </label>
+      <BaseLabel label="Select Input" />
       <BaseSelect
         v-model="singleSelect"
         placeholder="Select Option"
@@ -21,6 +19,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 import BaseSelect from '@/components/base/BaseSelect.vue'
 import MultipleSelect from './MultipleSelect.vue'
 

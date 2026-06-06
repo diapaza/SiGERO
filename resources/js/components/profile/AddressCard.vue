@@ -35,22 +35,22 @@
     <BaseModal v-model:isOpen="isProfileAddressModal" title="Edit Address" size="lg" contentClass="rounded-3xl">
       <template #body>
         <p class="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">Update your details to keep your profile up-to-date.</p>
-        <div class="overflow-y-auto custom-scrollbar px-2">
+        <div class="overflow-y-auto custom-scrollbar">
           <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
-              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Country</label>
+              <BaseLabel label="Country" />
               <BaseInput type="text" modelValue="United States" />
             </div>
             <div>
-              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">City/State</label>
+              <BaseLabel label="City/State" />
               <BaseInput type="text" modelValue="Poenix, Arizona, United States" />
             </div>
             <div>
-              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Postal Code</label>
+              <BaseLabel label="Postal Code" />
               <BaseInput type="text" modelValue="ERT 2489" />
             </div>
             <div>
-              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">TAX ID</label>
+              <BaseLabel label="TAX ID" />
               <BaseInput type="text" modelValue="AS4568384" />
             </div>
           </div>
@@ -69,6 +69,7 @@ import { ref } from 'vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 import EditIcon from '@/icons/EditIcon.vue'
 
 const isProfileAddressModal = ref(false)

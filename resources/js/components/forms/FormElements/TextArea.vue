@@ -2,9 +2,7 @@
   <div class="space-y-6">
     <!-- Normal Textarea -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-        Description
-      </label>
+      <BaseLabel label="Description" />
       <BaseTextarea
         v-model="normalDescription"
         placeholder="Enter a description..."
@@ -14,9 +12,7 @@
 
     <!-- Disabled Textarea -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-300 dark:text-white/15">
-        Description
-      </label>
+      <BaseLabel label="Description" disabled />
       <BaseTextarea
         v-model="disabledDescription"
         placeholder="Enter a description..."
@@ -27,9 +23,7 @@
 
     <!-- Error State Textarea -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-        Description
-      </label>
+      <BaseLabel label="Description" />
       <BaseTextarea
         v-model="errorDescription"
         placeholder="Enter a description..."
@@ -43,6 +37,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 import BaseTextarea from '@/components/base/BaseTextarea.vue'
 
 const normalDescription = ref('')

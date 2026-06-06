@@ -17,9 +17,7 @@
 
           <div class="mt-8">
             <div>
-              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Event Title
-              </label>
+              <BaseLabel label="Event Title" />
               <input
                 v-model="eventTitle"
                 type="text"
@@ -61,9 +59,7 @@
             </div>
 
             <div class="mt-6">
-              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Enter Start Date
-              </label>
+              <BaseLabel label="Enter Start Date" />
               <input
                 v-model="eventStartDate"
                 type="date"
@@ -72,9 +68,7 @@
             </div>
 
             <div class="mt-6">
-              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Enter End Date
-              </label>
+              <BaseLabel label="Enter End Date" />
               <input
                 v-model="eventEndDate"
                 type="date"
@@ -99,6 +93,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'

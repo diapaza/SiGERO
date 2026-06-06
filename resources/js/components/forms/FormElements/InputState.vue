@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Error State Input -->
-    <FormField label="Email" error="This is an error message.">
+    <BaseFormField label="Email" error="This is an error message.">
       <div class="relative">
         <BaseInput
           v-model="errorEmail"
@@ -25,10 +25,10 @@
           </svg>
         </span>
       </div>
-    </FormField>
+    </BaseFormField>
 
     <!-- Success State Input -->
-    <FormField label="Email" hint="This is a success message.">
+    <BaseFormField label="Email" hint="This is a success message.">
       <div class="relative">
         <BaseInput
           v-model="successEmail"
@@ -52,23 +52,23 @@
           </svg>
         </span>
       </div>
-    </FormField>
+    </BaseFormField>
 
     <!-- Disabled State Input -->
-    <FormField label="Email">
+    <BaseFormField label="Email">
       <BaseInput
         type="text"
         placeholder="info@gmail.com"
         disabled
       />
-    </FormField>
+    </BaseFormField>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseInput from '@/components/base/BaseInput.vue'
-import FormField from '@/components/base/FormField.vue'
+import BaseFormField from '@/components/base/BaseFormField.vue'
 
 const errorEmail = ref('demoemail')
 const successEmail = ref('demoemail@gmail.com')

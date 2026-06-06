@@ -4,25 +4,27 @@
       <form @submit.prevent="onSubmit" class="space-y-4">
         <slot name="form-fields">
           <div class="grid grid-cols-1 gap-4">
-            <label class="block">
-              <span class="text-sm text-slate-700 dark:text-slate-300">Nombre</span>
+            <div>
+              <BaseLabel for="name" label="Nombre" />
               <BaseInput
                 v-model="form.name"
+                id="name"
                 type="text"
-                className="mt-1 block w-full"
+                className="w-full"
                 :disabled="loading"
               />
-            </label>
+            </div>
 
-            <label class="block">
-              <span class="text-sm text-slate-700 dark:text-slate-300">Email</span>
+            <div>
+              <BaseLabel for="email" label="Email" />
               <BaseInput
                 v-model="form.email"
+                id="email"
                 type="email"
-                className="mt-1 block w-full"
+                className="w-full"
                 :disabled="loading"
               />
-            </label>
+            </div>
           </div>
         </slot>
       </form>
@@ -45,6 +47,7 @@ import { reactive, computed, watch } from 'vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 
 const props = defineProps<{
   isOpen: boolean

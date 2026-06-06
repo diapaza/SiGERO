@@ -1,22 +1,17 @@
 <template>
   <AuthLayout title="Sign Up" description="Enter your email and password to sign up!">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-      <SocialButton provider="google" label="Sign up with Google" />
-      <SocialButton provider="x" label="Sign up with X" />
+      <BaseSocialButton provider="google" label="Sign up with Google" />
+      <BaseSocialButton provider="x" label="Sign up with X" />
     </div>
 
-    <Divider />
+    <BaseDivider />
 
     <form @submit.prevent="handleSubmit">
       <div class="space-y-5">
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div class="sm:col-span-1">
-            <label
-              for="fname"
-              class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-            >
-              First Name<span class="text-error-500">*</span>
-            </label>
+            <BaseLabel for="fname" label="First Name" required />
             <BaseInput
               v-model="firstName"
               type="text"
@@ -26,12 +21,7 @@
             />
           </div>
           <div class="sm:col-span-1">
-            <label
-              for="lname"
-              class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-            >
-              Last Name<span class="text-error-500">*</span>
-            </label>
+            <BaseLabel for="lname" label="Last Name" required />
             <BaseInput
               v-model="lastName"
               type="text"
@@ -43,12 +33,7 @@
         </div>
 
         <div>
-          <label
-            for="email"
-            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-          >
-            Email<span class="text-error-500">*</span>
-          </label>
+          <BaseLabel for="email" label="Email" required />
           <BaseInput
             v-model="email"
             type="email"
@@ -59,12 +44,7 @@
         </div>
 
         <div>
-          <label
-            for="password"
-            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-          >
-            Password<span class="text-error-500">*</span>
-          </label>
+          <BaseLabel for="password" label="Password" required />
           <BaseInput
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
@@ -114,11 +94,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
-import SocialButton from '@/components/base/SocialButton.vue'
-import Divider from '@/components/base/Divider.vue'
+import BaseSocialButton from '@/components/base/BaseSocialButton.vue'
+import BaseDivider from '@/components/base/BaseDivider.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCheckbox from '@/components/base/BaseCheckbox.vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 import EyeIcon from '@/icons/EyeIcon.vue'
 import EyeOffIcon from '@/icons/EyeOffIcon.vue'
 

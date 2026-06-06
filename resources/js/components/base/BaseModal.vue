@@ -27,7 +27,7 @@
                   <h3 v-if="title" class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ title }}</h3>
                   <slot name="header" />
                 </div>
-                <CloseButton @click="close" className="relative right-0 top-0 shrink-0" />
+                <BaseCloseButton @click="close" className="relative right-0 top-0 shrink-0" />
               </div>
             </header>
 
@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
-import CloseButton from '@/components/base/CloseButton.vue'
+import BaseCloseButton from '@/components/base/BaseCloseButton.vue'
 
 const props = withDefaults(defineProps<{
   isOpen: boolean

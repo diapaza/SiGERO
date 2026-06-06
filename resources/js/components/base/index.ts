@@ -10,12 +10,13 @@ import BaseRadio from './BaseRadio.vue'
 import BaseSelect from './BaseSelect.vue'
 import BaseTable from './BaseTable.vue'
 import BaseTextarea from './BaseTextarea.vue'
-import CloseButton from './CloseButton.vue'
-import Divider from './Divider.vue'
-import FormField from './FormField.vue'
-import PasswordInput from './PasswordInput.vue'
-import SocialButton from './SocialButton.vue'
-import VerticalDivider from './VerticalDivider.vue'
+import BaseCloseButton from './BaseCloseButton.vue'
+import BaseDivider from './BaseDivider.vue'
+import BaseLabel from './BaseLabel.vue'
+import BaseFormField from './BaseFormField.vue'
+import BasePasswordInput from './BasePasswordInput.vue'
+import BaseSocialButton from './BaseSocialButton.vue'
+import BaseVerticalDivider from './BaseVerticalDivider.vue'
 
 export {
   BaseButton,
@@ -30,10 +31,11 @@ export {
   BaseSelect,
   BaseTable,
   BaseTextarea,
-  CloseButton,
-  Divider,
-  FormField,
-  PasswordInput,
-  SocialButton,
-  VerticalDivider,
+  BaseCloseButton,
+  BaseDivider,
+  BaseLabel,
+  BaseFormField,
+  BasePasswordInput,
+  BaseSocialButton,
+  BaseVerticalDivider,
 }

@@ -2,31 +2,31 @@
   <div class="space-y-6">
     <!-- Text Input -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Input</label>
+      <BaseLabel label="Input" />
       <BaseInput v-model="formData.input" type="text" />
     </div>
 
     <!-- Input with Placeholder -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Input with Placeholder</label>
+      <BaseLabel label="Input with Placeholder" />
       <BaseInput v-model="formData.inputWithPlaceholder" type="text" placeholder="info@gmail.com" />
     </div>
 
     <!-- Select Input -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Select Input</label>
+      <BaseLabel label="Select Input" />
       <BaseSelect v-model="formData.selectInput" placeholder="Select Option" :options="selectOptions" />
     </div>
 
     <!-- Password Input -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Password Input</label>
-      <PasswordInput v-model="formData.password" placeholder="Enter your password" />
+      <BaseLabel label="Password Input" />
+      <BasePasswordInput v-model="formData.password" placeholder="Enter your password" />
     </div>
 
     <!-- Date Picker Input -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Date Picker Input</label>
+      <BaseLabel label="Date Picker Input" />
       <div class="relative">
         <flat-pickr
           v-model="date"
@@ -42,7 +42,7 @@
 
     <!-- Time Select Input -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Time Select Input</label>
+      <BaseLabel label="Time Select Input" />
       <div class="relative">
         <flat-pickr
           v-model="time"
@@ -65,8 +65,9 @@ import { ref, reactive } from 'vue'
 import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
 import BaseInput from '@/components/base/BaseInput.vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 import BaseSelect from '@/components/base/BaseSelect.vue'
-import PasswordInput from '@/components/base/PasswordInput.vue'
+import BasePasswordInput from '@/components/base/BasePasswordInput.vue'
 import CalenderIcon from '@/icons/CalenderIcon.vue'
 
 const selectOptions = [

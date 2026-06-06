@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <!-- Email Input -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Email</label>
+      <BaseLabel label="Email" />
       <BaseInput v-model="email" type="text" placeholder="info@gmail.com">
         <template #prepend>
           <MailIcon class="fill-current" />
@@ -12,7 +12,7 @@
 
     <!-- Phone Input with Prepended Country Code -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Phone</label>
+      <BaseLabel label="Phone" />
       <div class="relative">
         <div class="absolute">
           <select
@@ -37,7 +37,7 @@
 
     <!-- Phone Input with Appended Country Code -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Phone</label>
+      <BaseLabel label="Phone" />
       <div class="relative">
         <div class="absolute right-0">
           <select
@@ -62,7 +62,7 @@
 
     <!-- URL Input -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">URL</label>
+      <BaseLabel label="URL" />
       <BaseInput v-model="url" type="url" placeholder="www.tailadmin.com">
         <template #prepend>
           <span class="text-gray-500 dark:text-gray-400 text-sm font-medium">http://</span>
@@ -72,7 +72,7 @@
 
     <!-- Website Input with Copy Button -->
     <div>
-      <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Website</label>
+      <BaseLabel label="Website" />
       <div class="relative">
         <button
           @click="copyWebsite"
@@ -96,6 +96,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseInput from '@/components/base/BaseInput.vue'
+import BaseLabel from '@/components/base/BaseLabel.vue'
 import MailIcon from '@/icons/MailIcon.vue'
 import ChevronDownIcon from '@/icons/ChevronDownIcon.vue'
 

@@ -1,4 +1,4 @@
-<!-- CloseButton.vue -->
+<!-- BaseCloseButton.vue -->
 <template>
   <button
     type="button"
