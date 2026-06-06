@@ -47,6 +47,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/data-tables',
+      name: 'Data Tables',
+      component: () => import('../views/Tables/DataTables.vue'),
+      meta: {
+        title: 'Data Tables',
+      },
+    },
+    {
       path: '/line-chart',
       name: 'Line Chart',
       component: () => import('../views/Chart/LineChart/LineChart.vue'),
