@@ -11,21 +11,21 @@
       <div class="space-y-5">
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div class="sm:col-span-1">
-            <BaseLabel for="fname" label="First Name" required />
+            <BaseLabel label-for="fname" label="First Name" required />
             <BaseInput
+              id="fname"
               v-model="firstName"
               type="text"
-              id="fname"
               name="fname"
               placeholder="Enter your first name"
             />
           </div>
           <div class="sm:col-span-1">
-            <BaseLabel for="lname" label="Last Name" required />
+            <BaseLabel label-for="lname" label="Last Name" required />
             <BaseInput
+              id="lname"
               v-model="lastName"
               type="text"
-              id="lname"
               name="lname"
               placeholder="Enter your last name"
             />
@@ -33,26 +33,26 @@
         </div>
 
         <div>
-          <BaseLabel for="email" label="Email" required />
+          <BaseLabel label-for="email" label="Email" required />
           <BaseInput
+            id="email"
             v-model="email"
             type="email"
-            id="email"
             name="email"
             placeholder="Enter your email"
           />
         </div>
 
         <div>
-          <BaseLabel for="password" label="Password" required />
+          <BaseLabel label-for="password" label="Password" required />
           <BaseInput
+            id="password"
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
-            id="password"
             placeholder="Enter your password"
           >
             <template #append>
-              <span @click="togglePasswordVisibility" class="cursor-pointer">
+              <span class="cursor-pointer" @click="togglePasswordVisibility">
                 <EyeOffIcon v-if="!showPassword" class="fill-gray-500 dark:fill-gray-400" />
                 <EyeIcon v-else class="fill-gray-500 dark:fill-gray-400" />
               </span>
@@ -71,19 +71,14 @@
           </BaseCheckbox>
         </div>
 
-        <BaseButton type="submit" variant="primary" class="w-full">
-          Sign Up
-        </BaseButton>
+        <BaseButton type="submit" variant="primary" class="w-full"> Sign Up </BaseButton>
       </div>
     </form>
 
     <div class="mt-5">
       <p class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
         Already have an account?
-        <router-link
-          to="/signin"
-          class="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-        >
+        <router-link to="/signin" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">
           Sign In
         </router-link>
       </p>
@@ -115,12 +110,6 @@ const togglePasswordVisibility = () => {
 }
 
 const handleSubmit = () => {
-  console.log('Form submitted', {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    email: email.value,
-    password: password.value,
-    agreeToTerms: agreeToTerms.value,
-  })
+  // TODO: Implement sign-up logic
 }
 </script>

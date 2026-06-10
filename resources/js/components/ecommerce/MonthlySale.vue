@@ -22,16 +22,17 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import DropdownMenu from '../shared/DropdownMenu.vue'
 import HorizontalDots from '@/icons/HorizontalDots.vue'
-const menuItems = [
-  { label: 'View More', onClick: () => console.log('View More clicked') },
-  { label: 'Delete', onClick: () => console.log('Delete clicked') },
-]
-
 import VueApexCharts from 'vue3-apexcharts'
+import { createBarChartOptions } from '@/components/charts/chart-options'
+
+const menuItems = [
+  { label: 'View More', onClick: () => {} },
+  { label: 'Delete', onClick: () => {} },
+]
 
 const series = ref([
   {
@@ -40,88 +41,5 @@ const series = ref([
   },
 ])
 
-const chartOptions = ref({
-  colors: ['#465fff'],
-  chart: {
-    fontFamily: 'Outfit, sans-serif',
-    type: 'bar',
-    toolbar: {
-      show: false,
-    },
-  },
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      columnWidth: '39%',
-      borderRadius: 5,
-      borderRadiusApplication: 'end',
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  stroke: {
-    show: true,
-    width: 4,
-    colors: ['transparent'],
-  },
-  xaxis: {
-    categories: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ],
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-  },
-  legend: {
-    show: true,
-    position: 'top',
-    horizontalAlign: 'left',
-    fontFamily: 'Outfit',
-    markers: {
-      radius: 99,
-    },
-  },
-  yaxis: {
-    title: false,
-  },
-  grid: {
-    yaxis: {
-      lines: {
-        show: true,
-      },
-    },
-  },
-  fill: {
-    opacity: 1,
-  },
-  tooltip: {
-    x: {
-      show: false,
-    },
-    y: {
-      formatter: function (val) {
-        return val.toString()
-      },
-    },
-  },
-})
-
-onMounted(() => {
-  // Any additional setup can be done here if needed
-})
+const chartOptions = ref(createBarChartOptions())
 </script>

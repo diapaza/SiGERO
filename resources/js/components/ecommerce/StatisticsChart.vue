@@ -18,13 +18,13 @@
             <button
               v-for="option in options"
               :key="option.value"
-              @click="selected = option.value"
               :class="[
                 selected === option.value
                   ? 'shadow-theme-xs text-gray-900 dark:text-white bg-white dark:bg-gray-800'
                   : 'text-gray-500 dark:text-gray-400',
                 'px-3 py-2 font-medium rounded-md text-theme-sm hover:text-gray-900 hover:shadow-theme-xs dark:hover:bg-gray-800 dark:hover:text-white',
               ]"
+              @click="selected = option.value"
             >
               {{ option.label }}
             </button>
@@ -58,6 +58,8 @@
 import { ref } from 'vue'
 import flatPickr from 'vue-flatpickr-component'
 import CalenderIcon from '@/icons/CalenderIcon.vue'
+import VueApexCharts from 'vue3-apexcharts'
+import { createAreaChartOptions } from '@/components/charts/chart-options'
 
 const options = [
   { value: 'optionOne', label: 'Monthly' },
@@ -73,7 +75,6 @@ const flatpickrConfig = {
   dateFormat: 'M j',
   defaultDate: [new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()],
 }
-import VueApexCharts from 'vue3-apexcharts'
 
 const series = ref([
   {
@@ -86,92 +87,7 @@ const series = ref([
   },
 ])
 
-const chartOptions = ref({
-  legend: {
-    show: false,
-    position: 'top',
-    horizontalAlign: 'left',
-  },
-  colors: ['#465FFF', '#9CB9FF'],
-  chart: {
-    fontFamily: 'Outfit, sans-serif',
-    type: 'area',
-    toolbar: {
-      show: false,
-    },
-  },
-  fill: {
-    gradient: {
-      enabled: true,
-      opacityFrom: 0.55,
-      opacityTo: 0,
-    },
-  },
-  stroke: {
-    curve: 'straight',
-    width: [2, 2],
-  },
-  markers: {
-    size: 0,
-  },
-  labels: {
-    show: false,
-    position: 'top',
-  },
-  grid: {
-    xaxis: {
-      lines: {
-        show: false,
-      },
-    },
-    yaxis: {
-      lines: {
-        show: true,
-      },
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  tooltip: {
-    x: {
-      format: 'dd MMM yyyy',
-    },
-  },
-  xaxis: {
-    type: 'category',
-    categories: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ],
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-    tooltip: {
-      enabled: false,
-    },
-  },
-  yaxis: {
-    title: {
-      style: {
-        fontSize: '0px',
-      },
-    },
-  },
-})
+const chartOptions = ref(createAreaChartOptions())
 </script>
 
 <style scoped>

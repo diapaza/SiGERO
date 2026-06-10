@@ -1,5 +1,5 @@
 <template>
-  <div class="relative" ref="dropdownRef">
+  <div ref="dropdownRef" class="relative">
     <button
       class="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
       @click="toggleDropdown"
@@ -10,7 +10,7 @@
       >
         <span
           class="absolute inline-flex w-full h-full bg-orange-400 rounded-full opacity-75 -z-1 animate-ping"
-        ></span>
+        />
       </span>
       <BellIcon class="fill-current" />
     </button>
@@ -23,7 +23,7 @@
         class="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-800"
       >
         <h5 class="text-lg font-semibold text-gray-800 dark:text-white/90">Notification</h5>
-        <button @click="closeDropdown" class="text-gray-500 dark:text-gray-400">
+        <button class="text-gray-500 dark:text-gray-400" @click="closeDropdown">
           <CloseIcon class="fill-current" />
         </button>
       </div>
@@ -39,7 +39,7 @@
               <span
                 :class="notification.status === 'online' ? 'bg-success-500' : 'bg-error-500'"
                 class="absolute bottom-0 right-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white dark:border-gray-900"
-              ></span>
+              />
             </span>
             <span class="block">
               <span class="mb-1.5 block text-theme-sm text-gray-500 dark:text-gray-400">
@@ -53,7 +53,7 @@
               </span>
               <span class="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
                 <span>{{ notification.type }}</span>
-                <span class="w-1 h-1 bg-gray-400 rounded-full"></span>
+                <span class="w-1 h-1 bg-gray-400 rounded-full" />
                 <span>{{ notification.time }}</span>
               </span>
             </span>
@@ -73,97 +73,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import BellIcon from '@/icons/BellIcon.vue'
 import CloseIcon from '@/icons/CloseIcon.vue'
+import { useClickOutside } from '@/composables/useClickOutside'
+import { notifications as notificationData } from '@/data/notifications'
 
 const dropdownOpen = ref(false)
 const notifying = ref(true)
-const dropdownRef = ref(null)
+const dropdownRef = ref<HTMLElement | null>(null)
 
-const notifications = ref([
-  {
-    id: 1,
-    userName: 'Terry Franci',
-    userImage: '/images/user/user-02.jpg',
-    action: 'requests permission to change',
-    project: 'Project - Nganter App',
-    type: 'Project',
-    time: '5 min ago',
-    status: 'online',
-  },
-  {
-    id: 2,
-    userName: 'Terry Franci',
-    userImage: '/images/user/user-03.jpg',
-    action: 'requests permission to change',
-    project: 'Project - Nganter App',
-    type: 'Project',
-    time: '5 min ago',
-    status: 'offline',
-  },
-  {
-    id: 3,
-    userName: 'Terry Franci',
-    userImage: '/images/user/user-04.jpg',
-    action: 'requests permission to change',
-    project: 'Project - Nganter App',
-    type: 'Project',
-    time: '5 min ago',
-    status: 'online',
-  },
-  {
-    id: 4,
-    userName: 'Terry Franci',
-    userImage: '/images/user/user-05.jpg',
-    action: 'requests permission to change',
-    project: 'Project - Nganter App',
-    type: 'Project',
-    time: '5 min ago',
-    status: 'online',
-  },
-  {
-    id: 5,
-    userName: 'Terry Franci',
-    userImage: '/images/user/user-06.jpg',
-    action: 'requests permission to change',
-    project: 'Project - Nganter App',
-    type: 'Project',
-    time: '5 min ago',
-    status: 'offline',
-  },
-  {
-    id: 6,
-    userName: 'Terry Franci',
-    userImage: '/images/user/user-07.jpg',
-    action: 'requests permission to change',
-    project: 'Project - Nganter App',
-    type: 'Project',
-    time: '5 min ago',
-    status: 'online',
-  },
-  {
-    id: 7,
-    userName: 'Terry Franci',
-    userImage: '/images/user/user-08.jpg',
-    action: 'requests permission to change',
-    project: 'Project - Nganter App',
-    type: 'Project',
-    time: '5 min ago',
-    status: 'online',
-  },
-  {
-    id: 7,
-    userName: 'Terry Franci',
-    userImage: '/images/user/user-09.jpg',
-    action: 'requests permission to change',
-    project: 'Project - Nganter App',
-    type: 'Project',
-    time: '5 min ago',
-    status: 'online',
-  },
-])
+const notifications = ref(notificationData)
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
@@ -174,29 +95,15 @@ const closeDropdown = () => {
   dropdownOpen.value = false
 }
 
-const handleClickOutside = (event) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
-    closeDropdown()
-  }
-}
-
-const handleItemClick = (event) => {
+const handleItemClick = (event: Event) => {
   event.preventDefault()
-  console.log('Notification item clicked')
   closeDropdown()
 }
 
-const handleViewAllClick = (event) => {
+const handleViewAllClick = (event: Event) => {
   event.preventDefault()
-  console.log('View All Notifications clicked')
   closeDropdown()
 }
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
+useClickOutside(dropdownRef, closeDropdown)
 </script>

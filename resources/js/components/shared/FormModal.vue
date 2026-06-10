@@ -1,27 +1,27 @@
 <template>
-  <BaseModal v-model:isOpen="isOpen" :title="title" :size="size" @close="handleClose">
+  <BaseModal v-model:is-open="isOpen" :title="title" :size="size" @close="handleClose">
     <template #body>
-      <form @submit.prevent="onSubmit" class="space-y-4">
+      <form class="space-y-4" @submit.prevent="onSubmit">
         <slot name="form-fields">
           <div class="grid grid-cols-1 gap-4">
             <div>
-              <BaseLabel for="name" label="Nombre" />
+              <BaseLabel label-for="name" label="Name" />
               <BaseInput
-                v-model="form.name"
                 id="name"
+                v-model="form.name"
                 type="text"
-                className="w-full"
+                class-name="w-full"
                 :disabled="loading"
               />
             </div>
 
             <div>
-              <BaseLabel for="email" label="Email" />
+              <BaseLabel label-for="email" label="Email" />
               <BaseInput
-                v-model="form.email"
                 id="email"
+                v-model="form.email"
                 type="email"
-                className="w-full"
+                class-name="w-full"
                 :disabled="loading"
               />
             </div>
@@ -31,12 +31,12 @@
     </template>
 
     <template #actions>
-      <BaseButton type="button" variant="outline" @click="handleClose" :disabled="loading">
-        Cancelar
+      <BaseButton type="button" variant="outline" :disabled="loading" @click="handleClose">
+        Cancel
       </BaseButton>
-      <BaseButton type="button" variant="primary" @click="onSubmit" :disabled="loading">
-        <span v-if="!loading">Guardar</span>
-        <span v-else>Guardando...</span>
+      <BaseButton type="button" variant="primary" :disabled="loading" @click="onSubmit">
+        <span v-if="!loading">Save</span>
+        <span v-else>Saving...</span>
       </BaseButton>
     </template>
   </BaseModal>
@@ -83,8 +83,7 @@ const onSubmit = async () => {
 
 const handleClose = () => {
   for (const k in form) {
-    // @ts-ignore
-    form[k] = props.initialData?.[k] ?? ''
+    ;(form as Record<string, unknown>)[k] = props.initialData?.[k] ?? ''
   }
   emits('update:isOpen', false)
   emits('close')

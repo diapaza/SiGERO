@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTheme } from '../layout/ThemeProvider.vue'
+import { useTheme } from '@/composables/useTheme'
 import SunIcon from '@/icons/SunIcon.vue'
 import MoonIcon from '@/icons/MoonIcon.vue'
 

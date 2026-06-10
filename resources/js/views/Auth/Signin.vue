@@ -9,22 +9,18 @@
 
     <form @submit.prevent="handleSubmit">
       <div class="space-y-5">
-        <BaseFormField label="Email" labelFor="email" required>
+        <BaseFormField label="Email" label-for="email" required>
           <BaseInput
+            id="email"
             v-model="email"
             type="email"
-            id="email"
             name="email"
             placeholder="info@gmail.com"
           />
         </BaseFormField>
 
-        <BaseFormField label="Password" labelFor="password" required>
-          <BasePasswordInput
-            v-model="password"
-            id="password"
-            placeholder="Enter your password"
-          />
+        <BaseFormField label="Password" label-for="password" required>
+          <BasePasswordInput id="password" v-model="password" placeholder="Enter your password" />
         </BaseFormField>
 
         <div class="flex items-center justify-between">
@@ -37,19 +33,14 @@
           </router-link>
         </div>
 
-        <BaseButton type="submit" variant="primary" class="w-full">
-          Sign In
-        </BaseButton>
+        <BaseButton type="submit" variant="primary" class="w-full"> Sign In </BaseButton>
       </div>
     </form>
 
     <div class="mt-5">
       <p class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
         Don't have an account?
-        <router-link
-          to="/signup"
-          class="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-        >
+        <router-link to="/signup" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">
           Sign Up
         </router-link>
       </p>
@@ -73,10 +64,6 @@ const password = ref('')
 const keepLoggedIn = ref(false)
 
 const handleSubmit = () => {
-  console.log('Form submitted', {
-    email: email.value,
-    password: password.value,
-    keepLoggedIn: keepLoggedIn.value,
-  })
+  // TODO: Implement sign-in logic
 }
 </script>
