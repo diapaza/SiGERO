@@ -7,11 +7,14 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -19,8 +22,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
+        'username',
+        'dni',
+        'nombres',
+        'apellidos',
+        'whatsapp_number',
+        'role_id',
         'password',
     ];
 
@@ -42,8 +49,27 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Rol::class);
+    }
+
+    public function hasRole($roles): bool
+    {
+        return in_array($this->role?->nombre, (array) $roles, true);
+    }
+
+    public function movimientos(): HasMany
+    {
+        return $this->hasMany(Movimiento::class, 'user_id');
+    }
+
+    public function movimientosRegistrados(): HasMany
+    {
+        return $this->hasMany(Movimiento::class, 'registrado_por');
     }
 }
