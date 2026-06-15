@@ -29,8 +29,8 @@
 
       <ul class="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
         <li v-for="item in menuItems" :key="item.href">
-          <router-link
-            :to="item.href"
+          <Link
+            :href="item.href"
             class="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
           >
             <!-- SVG icon would go here -->
@@ -39,11 +39,11 @@
               class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
             />
             {{ item.text }}
-          </router-link>
+          </Link>
         </li>
       </ul>
-      <router-link
-        to="/signin"
+      <Link
+        href="/signin"
         class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         @click="signOut"
       >
@@ -51,7 +51,7 @@
           class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
         />
         Sign out
-      </router-link>
+      </Link>
     </div>
     <!-- Dropdown End -->
   </div>
@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
-import { RouterLink } from 'vue-router'
+import { Link } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import { useClickOutside } from '@/composables/useClickOutside'
 

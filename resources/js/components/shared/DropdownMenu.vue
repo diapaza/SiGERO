@@ -13,15 +13,15 @@
       <slot name="menu">
         <!-- Default menu items -->
         <template v-for="(item, index) in menuItems">
-          <router-link
+          <Link
             v-if="item.to"
             :key="`router-${index}`"
-            :to="item.to"
+            :href="item.to"
             :class="itemClass"
             @click="handleMenuItemClick(item.onClick)"
           >
             {{ item.label }}
-          </router-link>
+          </Link>
 
           <button
             v-else
@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Link } from '@inertiajs/vue3'
 import vClickOutsideDirective from './directives/v-click-outside.vue'
 import HorizontalDots from '@/icons/HorizontalDots.vue'
 

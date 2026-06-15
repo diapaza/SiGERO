@@ -6,13 +6,13 @@
     <nav>
       <ol class="flex items-center gap-1.5">
         <li>
-          <router-link
+          <Link
             class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-            to="/"
+            href="/"
           >
             Home
             <ChevronRightIcon class="stroke-current" />
-          </router-link>
+          </Link>
         </li>
         <li class="text-sm text-gray-800 dark:text-white/90">
           {{ pageTitle }}
@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3'
 import ChevronRightIcon from '@/icons/ChevronRightIcon.vue'
 
 interface BreadcrumbProps {

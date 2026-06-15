@@ -25,12 +25,12 @@
 
         <div class="flex items-center justify-between">
           <BaseCheckbox v-model="keepLoggedIn" label="Keep me logged in" />
-          <router-link
-            to="/reset-password"
+          <Link
+            href="/reset-password"
             class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
           >
             Forgot password?
-          </router-link>
+          </Link>
         </div>
 
         <BaseButton type="submit" variant="primary" class="w-full"> Sign In </BaseButton>
@@ -40,9 +40,9 @@
     <div class="mt-5">
       <p class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
         Don't have an account?
-        <router-link to="/signup" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">
+        <Link href="/signup" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">
           Sign Up
-        </router-link>
+        </Link>
       </p>
     </div>
   </AuthLayout>
@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Link } from '@inertiajs/vue3'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
 import BaseSocialButton from '@/components/base/BaseSocialButton.vue'
 import BaseDivider from '@/components/base/BaseDivider.vue'

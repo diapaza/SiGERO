@@ -10,21 +10,24 @@
           {{ title }}
         </h4>
 
-        <p class="text-sm text-gray-500 dark:text-gray-400">{{ message }}</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          {{ message }}
+        </p>
 
-        <router-link
+        <Link
           v-if="showLink"
-          :to="linkHref"
+          :href="linkHref"
           class="inline-block mt-3 text-sm font-medium text-gray-500 underline dark:text-gray-400"
         >
           {{ linkText }}
-        </router-link>
+        </Link>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3'
 import { SuccessIcon, ErrorIcon, WarningIcon, InfoCircleIcon } from '@/icons'
 import { computed } from 'vue'
 

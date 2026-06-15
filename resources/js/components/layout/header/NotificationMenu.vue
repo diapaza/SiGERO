@@ -61,20 +61,20 @@
         </li>
       </ul>
 
-      <router-link
-        to="#"
+      <Link
+        href="#"
         class="mt-3 flex justify-center rounded-lg border border-gray-300 bg-white p-3 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
         @click="handleViewAllClick"
       >
         View All Notification
-      </router-link>
+      </Link>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { Link } from '@inertiajs/vue3'
 import BellIcon from '@/icons/BellIcon.vue'
 import CloseIcon from '@/icons/CloseIcon.vue'
 import { useClickOutside } from '@/composables/useClickOutside'

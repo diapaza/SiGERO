@@ -31,7 +31,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+          'vue-vendor': ['vue', 'pinia'],
           apexcharts: ['vue3-apexcharts', 'apexcharts'],
           fullcalendar: [
             '@fullcalendar/vue3',

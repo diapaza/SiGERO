@@ -14,7 +14,7 @@
     @mouseleave="isHovered = false"
   >
     <div :class="['py-8 flex', !isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start']">
-      <router-link to="/">
+      <Link href="/">
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="dark:hidden"
@@ -32,7 +32,7 @@
           height="40"
         />
         <img v-else src="/images/logo/logo-icon.svg" alt="Logo" width="32" height="32" />
-      </router-link>
+      </Link>
     </div>
     <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
       <nav class="mb-6">
@@ -85,9 +85,9 @@
                     ]"
                   />
                 </button>
-                <router-link
+                <Link
                   v-else-if="item.path"
-                  :to="item.path"
+                  :href="item.path"
                   :class="[
                     'menu-item group',
                     {
@@ -106,7 +106,7 @@
                   <span v-if="isExpanded || isHovered || isMobileOpen" class="menu-item-text">{{
                     item.name
                   }}</span>
-                </router-link>
+                </Link>
                 <transition
                   @enter="startTransition"
                   @after-enter="endTransition"
@@ -120,8 +120,8 @@
                   >
                     <ul class="mt-2 space-y-1 ml-9">
                       <li v-for="subItem in item.subItems" :key="subItem.name">
-                        <router-link
-                          :to="subItem.path"
+                        <Link
+                          :href="subItem.path"
                           :class="[
                             'menu-dropdown-item',
                             {
@@ -157,7 +157,7 @@
                               pro
                             </span>
                           </span>
-                        </router-link>
+                        </Link>
                       </li>
                     </ul>
                   </div>
@@ -173,16 +173,16 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { Link, usePage } from '@inertiajs/vue3'
 import { ChevronDownIcon, HorizontalDots } from '@/icons'
 import { useSidebar } from '@/composables/useSidebar'
 import { menuGroups } from '@/constants/menu'
 
-const route = useRoute()
+const page = usePage()
 
 const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar()
 
-const isActive = (path: string) => route.path === path
+const isActive = (path: string) => page.url === path
 
 const toggleSubmenu = (groupIndex: number, itemIndex: number) => {
   const key = `${groupIndex}-${itemIndex}`

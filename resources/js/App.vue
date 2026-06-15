@@ -1,7 +1,7 @@
 <template>
   <ThemeProvider>
     <SidebarProvider>
-      <RouterView />
+      <slot />
       <BaseToast />
       <GlobalDialog />
     </SidebarProvider>
