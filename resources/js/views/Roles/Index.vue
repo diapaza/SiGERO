@@ -16,10 +16,13 @@
               :start-icon="TrashIcon"
               @click="goToTrashed"
             >
-              <span class="hidden sm:inline">Ver eliminados ({{ trashedCount }})</span>
+              <span>Ver eliminados ({{ trashedCount }})</span>
             </BaseButton>
-            <BaseButton variant="primary" size="sm" :start-icon="PlusIcon" @click="openCreateModal">
-              <span class="hidden sm:inline">Agregar Rol</span>
+            <BaseButton variant="primary" size="sm" @click="openCreateModal">
+              <template #start>
+                <PlusIcon :size="18" />
+              </template>
+              <span>Agregar Rol</span>
             </BaseButton>
           </div>
         </template>
