@@ -4,8 +4,8 @@
       class="flex items-center text-gray-700 dark:text-gray-400"
       @click.prevent="toggleDropdown"
     >
-      <span class="mr-3 overflow-hidden rounded-full h-11 w-11">
-        <img src="/images/user/owner.jpg" alt="User" />
+      <span class="mr-3 overflow-hidden rounded-full">
+        <UserAvatar :name="userName" :size="44" />
       </span>
 
       <span class="block mr-1 font-medium text-theme-sm">{{ userName }}</span>
@@ -59,6 +59,7 @@
 
 <script setup lang="ts">
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
+import UserAvatar from '@/components/shared/UserAvatar.vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 import { useClickOutside } from '@/composables/useClickOutside'
