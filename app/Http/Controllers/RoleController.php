@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Role\StoreRoleRequest;
+use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Models\Rol;
-use Illuminate\Http\Request;
+use App\Services\RoleService;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class RoleController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $roles = Rol::latest()->get();
         $trashedCount = Rol::onlyTrashed()->count();
@@ -23,48 +27,32 @@ class RoleController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request, RoleService $service): RedirectResponse
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255|unique:roles,nombre',
-        ], [
-            'nombre.required' => 'El nombre del rol es obligatorio.',
-            'nombre.unique' => 'Ya existe un rol con ese nombre.',
-            'nombre.max' => 'El nombre no debe exceder los 255 caracteres.',
-        ]);
-
-        Rol::create($validated);
+        $service->create($request->validated());
 
         return redirect()->route('roles.index')->with('success', 'Rol creado correctamente.');
     }
 
-    public function update(Request $request, Rol $role)
+    public function update(UpdateRoleRequest $request, Rol $role, RoleService $service): RedirectResponse
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255|unique:roles,nombre,' . $role->id,
-        ], [
-            'nombre.required' => 'El nombre del rol es obligatorio.',
-            'nombre.unique' => 'Ya existe un rol con ese nombre.',
-            'nombre.max' => 'El nombre no debe exceder los 255 caracteres.',
-        ]);
-
-        $role->update($validated);
+        $service->update($role, $request->validated());
 
         return redirect()->route('roles.index')->with('success', 'Rol actualizado correctamente.');
     }
 
-    public function destroy(Rol $role)
+    public function destroy(Rol $role, RoleService $service): RedirectResponse
     {
-        if ($role->users()->count() > 0) {
+        $deleted = $service->delete($role);
+
+        if (! $deleted) {
             return back()->with('error', 'No se puede eliminar un rol que tiene usuarios asignados.');
         }
-
-        $role->delete();
 
         return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
     }
 
-    public function trashed()
+    public function trashed(): Response
     {
         $roles = Rol::onlyTrashed()->latest('deleted_at')->get();
 
@@ -77,9 +65,9 @@ class RoleController extends Controller
         ]);
     }
 
-    public function restore(Rol $role)
+    public function restore(Rol $role, RoleService $service): RedirectResponse
     {
-        $role->restore();
+        $service->restore($role);
 
         return redirect()->route('roles.trashed')->with('success', 'Rol restaurado correctamente.');
     }

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Rol;
-
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,7 +26,7 @@ class DatabaseSeeder extends Seeder
             'nombres' => 'Administrador',
             'apellidos' => 'Redes',
             'whatsapp_number' => '987654321',
-            'role_id' => 1
+            'role_id' => 1,
         ]);
     }
 }

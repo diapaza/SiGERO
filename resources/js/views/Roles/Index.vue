@@ -58,6 +58,7 @@
               placeholder="Ingrese el nombre del rol"
               :state="form.errors.nombre ? 'error' : 'default'"
               class-name="w-full"
+              @blur="validateSingleField('nombre')"
             />
           </BaseFormField>
         </form>
@@ -76,8 +77,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, watch, onMounted } from 'vue'
-import { usePage, router, Link } from '@inertiajs/vue3'
+import { ref, computed, h, watch } from 'vue'
+import { usePage, router } from '@inertiajs/vue3'
 import type { ColumnDef } from '@tanstack/vue-table'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
@@ -90,6 +91,7 @@ import BaseFormField from '@/components/base/BaseFormField.vue'
 import { PlusIcon, EditIcon, TrashIcon } from '@/icons'
 import { useForm } from '@inertiajs/vue3'
 import { useDialog } from '@/composables/useDialog'
+import { useValidation } from '@/composables/useValidation'
 import { toast } from 'vue-sonner'
 import type { Role } from '@/types/models'
 
@@ -103,6 +105,10 @@ const { confirm } = useDialog()
 
 const form = useForm({
   nombre: '',
+})
+
+const { validate, validateSingleField } = useValidation(form, 'role', {
+  nombre: 'nombre del rol',
 })
 
 const pageProps = computed(() => page.props as any)
@@ -134,24 +140,8 @@ const closeModal = () => {
   form.clearErrors()
 }
 
-const validateForm = (): boolean => {
-  form.clearErrors()
-
-  if (!form.nombre.trim()) {
-    form.setError('nombre', 'El nombre del rol es obligatorio.')
-    return false
-  }
-
-  if (form.nombre.length > 255) {
-    form.setError('nombre', 'El nombre no debe exceder los 255 caracteres.')
-    return false
-  }
-
-  return true
-}
-
 const submitForm = () => {
-  if (!validateForm()) return
+  if (!validate()) return
   if (editingRole.value) {
     form.put(route('roles.update', editingRole.value.id), {
       onSuccess: () => {

@@ -21,7 +21,7 @@ class Objeto extends Model
         'categoria_id',
         'foto',
         'serie',
-        'disponible'
+        'disponible',
     ];
 
     protected function casts(): array

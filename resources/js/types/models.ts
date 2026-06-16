@@ -6,6 +6,70 @@ export interface Role {
   updated_at: string
 }
 
+export interface Categoria {
+  id: number
+  nombre: string
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface Marca {
+  id: number
+  nombre: string
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface Objeto {
+  id: number
+  codigo: string
+  nombre: string
+  modelo: string | null
+  descripcion: string | null
+  marca_id: number | null
+  categoria_id: number | null
+  foto: string | null
+  serie: string | null
+  disponible: boolean
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+  marca?: Marca
+  categoria?: Categoria
+}
+
+export interface Movimiento {
+  id: number
+  user_id: number
+  objeto_id: number
+  registrado_por: number
+  tipo_movimiento: 'salida' | 'retorno'
+  fecha_hora: string
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+  objeto?: Objeto
+  user?: User
+  registradoPor?: User
+}
+
+export interface User {
+  id: number
+  username: string
+  dni: string
+  nombres: string
+  apellidos: string
+  whatsapp_number: string | null
+  role_id: number | null
+  name: string
+  role?: Role
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface Paginated<T> {
   data: T[]
   current_page: number
@@ -13,25 +77,6 @@ export interface Paginated<T> {
   per_page: number
   total: number
   links: Array<{ url: string | null; label: string; active: boolean }>
-}
-
-export interface User {
-  id: number
-  name: string
-  email: string
-  role: string
-  avatar: string
-  status: 'Active' | 'Pending' | 'Cancel' | 'online' | 'offline'
-  phone?: string
-  bio?: string
-  socialLinks?: SocialLinks
-}
-
-export interface SocialLinks {
-  facebook?: string
-  twitter?: string
-  linkedin?: string
-  instagram?: string
 }
 
 export interface Product {
@@ -74,18 +119,10 @@ export interface CalendarEvent {
   description?: string
 }
 
-export interface MenuItem {
-  name: string
-  path?: string
-  icon?: React.ComponentType
-  new?: boolean
-  pro?: boolean
-}
-
 export interface MenuGroup {
   title: string
   items: Array<{
-    icon?: any
+    icon?: unknown
     name: string
     path?: string
     subItems?: Array<{

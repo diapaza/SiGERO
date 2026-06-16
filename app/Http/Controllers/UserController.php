@@ -2,63 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): Response
     {
-        //
+        $users = User::with('role')->latest()->get();
+        $trashedCount = User::onlyTrashed()->count();
+
+        return Inertia::render('Users/Index', [
+            'users' => $users,
+            'trashedCount' => $trashedCount,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreUserRequest $request, UserService $service): RedirectResponse
     {
-        //
+        $service->create($request->validated());
+
+        return redirect()->route('users.index')->with('success', 'Usuario creado correctamente.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function update(UpdateUserRequest $request, User $user, UserService $service): RedirectResponse
     {
-        //
+        $service->update($user, $request->validated());
+
+        return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function destroy(User $user, UserService $service): RedirectResponse
     {
-        //
+        $deleted = $service->delete($user);
+
+        if (! $deleted) {
+            return back()->with('error', 'No se puede eliminar un usuario que tiene movimientos registrados.');
+        }
+
+        return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function trashed(): Response
     {
-        //
+        $users = User::with('role')->onlyTrashed()->latest('deleted_at')->get();
+
+        return Inertia::render('Users/Trashed', [
+            'users' => $users,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function restore(User $user, UserService $service): RedirectResponse
     {
-        //
-    }
+        $service->restore($user);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('users.trashed')->with('success', 'Usuario restaurado correctamente.');
     }
 }

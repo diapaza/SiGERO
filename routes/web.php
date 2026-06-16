@@ -1,7 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\MarcaController;
+use App\Http\Controllers\MovimientoController;
+use App\Http\Controllers\ObjetoController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -53,5 +58,55 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
         Route::get('/trashed', [RoleController::class, 'trashed'])->name('trashed');
         Route::post('/{role}/restore', [RoleController::class, 'restore'])->name('restore')->withTrashed();
+    });
+
+    // Categorías
+    Route::prefix('categorias')->name('categorias.')->group(function () {
+        Route::get('/', [CategoriaController::class, 'index'])->name('index');
+        Route::post('/', [CategoriaController::class, 'store'])->name('store');
+        Route::put('/{categoria}', [CategoriaController::class, 'update'])->name('update');
+        Route::delete('/{categoria}', [CategoriaController::class, 'destroy'])->name('destroy');
+        Route::get('/trashed', [CategoriaController::class, 'trashed'])->name('trashed');
+        Route::post('/{categoria}/restore', [CategoriaController::class, 'restore'])->name('restore')->withTrashed();
+    });
+
+    // Marcas
+    Route::prefix('marcas')->name('marcas.')->group(function () {
+        Route::get('/', [MarcaController::class, 'index'])->name('index');
+        Route::post('/', [MarcaController::class, 'store'])->name('store');
+        Route::put('/{marca}', [MarcaController::class, 'update'])->name('update');
+        Route::delete('/{marca}', [MarcaController::class, 'destroy'])->name('destroy');
+        Route::get('/trashed', [MarcaController::class, 'trashed'])->name('trashed');
+        Route::post('/{marca}/restore', [MarcaController::class, 'restore'])->name('restore')->withTrashed();
+    });
+
+    // Objetos
+    Route::prefix('objetos')->name('objetos.')->group(function () {
+        Route::get('/', [ObjetoController::class, 'index'])->name('index');
+        Route::post('/', [ObjetoController::class, 'store'])->name('store');
+        Route::put('/{objeto}', [ObjetoController::class, 'update'])->name('update');
+        Route::delete('/{objeto}', [ObjetoController::class, 'destroy'])->name('destroy');
+        Route::get('/trashed', [ObjetoController::class, 'trashed'])->name('trashed');
+        Route::post('/{objeto}/restore', [ObjetoController::class, 'restore'])->name('restore')->withTrashed();
+    });
+
+    // Movimientos
+    Route::prefix('movimientos')->name('movimientos.')->group(function () {
+        Route::get('/', [MovimientoController::class, 'index'])->name('index');
+        Route::post('/', [MovimientoController::class, 'store'])->name('store');
+        Route::put('/{movimiento}', [MovimientoController::class, 'update'])->name('update');
+        Route::delete('/{movimiento}', [MovimientoController::class, 'destroy'])->name('destroy');
+        Route::get('/trashed', [MovimientoController::class, 'trashed'])->name('trashed');
+        Route::post('/{movimiento}/restore', [MovimientoController::class, 'restore'])->name('restore')->withTrashed();
+    });
+
+    // Usuarios
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+        Route::get('/trashed', [UserController::class, 'trashed'])->name('trashed');
+        Route::post('/{user}/restore', [UserController::class, 'restore'])->name('restore')->withTrashed();
     });
 });

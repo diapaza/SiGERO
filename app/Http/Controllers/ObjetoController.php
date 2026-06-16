@@ -2,64 +2,73 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Objeto\StoreObjetoRequest;
+use App\Http\Requests\Objeto\UpdateObjetoRequest;
 use App\Models\Objeto;
-use Illuminate\Http\Request;
+use App\Services\ObjetoService;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ObjetoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): Response
     {
-        //
+        $objetos = Objeto::with(['marca', 'categoria'])->latest()->get();
+        $trashedCount = Objeto::onlyTrashed()->count();
+
+        return Inertia::render('Objetos/Index', [
+            'objetos' => $objetos,
+            'trashedCount' => $trashedCount,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreObjetoRequest $request, ObjetoService $service): RedirectResponse
     {
-        //
+        $service->create($request->validated());
+
+        return redirect()->route('objetos.index')->with('success', 'Objeto creado correctamente.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function update(UpdateObjetoRequest $request, Objeto $objeto, ObjetoService $service): RedirectResponse
     {
-        //
+        $service->update($objeto, $request->validated());
+
+        return redirect()->route('objetos.index')->with('success', 'Objeto actualizado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Objeto $objeto)
+    public function destroy(Objeto $objeto, ObjetoService $service): RedirectResponse
     {
-        //
+        $deleted = $service->delete($objeto);
+
+        if (! $deleted) {
+            return back()->with('error', 'No se puede eliminar un objeto que tiene movimientos registrados.');
+        }
+
+        return redirect()->route('objetos.index')->with('success', 'Objeto eliminado correctamente.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Objeto $objeto)
+    public function trashed(): Response
     {
-        //
+        $objetos = Objeto::with(['marca', 'categoria'])->onlyTrashed()->latest('deleted_at')->get();
+
+        return Inertia::render('Objetos/Trashed', [
+            'objetos' => $objetos,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Objeto $objeto)
+    public function restore(Objeto $objeto, ObjetoService $service): RedirectResponse
     {
-        //
-    }
+        $service->restore($objeto);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Objeto $objeto)
-    {
-        //
+        return redirect()->route('objetos.trashed')->with('success', 'Objeto restaurado correctamente.');
     }
 }

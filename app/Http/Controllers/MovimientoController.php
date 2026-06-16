@@ -2,64 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Movimiento\StoreMovimientoRequest;
+use App\Http\Requests\Movimiento\UpdateMovimientoRequest;
 use App\Models\Movimiento;
-use Illuminate\Http\Request;
+use App\Services\MovimientoService;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class MovimientoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): Response
     {
-        //
+        $movimientos = Movimiento::with(['objeto', 'user', 'registradoPor'])->latest('fecha_hora')->get();
+
+        return Inertia::render('Movimientos/Index', [
+            'movimientos' => $movimientos,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreMovimientoRequest $request, MovimientoService $service): RedirectResponse
     {
-        //
+        $service->create($request->validated());
+
+        return redirect()->route('movimientos.index')->with('success', 'Movimiento registrado correctamente.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function update(UpdateMovimientoRequest $request, Movimiento $movimiento, MovimientoService $service): RedirectResponse
     {
-        //
+        $service->update($movimiento, $request->validated());
+
+        return redirect()->route('movimientos.index')->with('success', 'Movimiento actualizado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Movimiento $movimiento)
+    public function destroy(Movimiento $movimiento, MovimientoService $service): RedirectResponse
     {
-        //
+        $service->delete($movimiento);
+
+        return redirect()->route('movimientos.index')->with('success', 'Movimiento eliminado correctamente.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Movimiento $movimiento)
+    public function trashed(): Response
     {
-        //
+        $movimientos = Movimiento::with(['objeto', 'user', 'registradoPor'])->onlyTrashed()->latest('deleted_at')->get();
+
+        return Inertia::render('Movimientos/Trashed', [
+            'movimientos' => $movimientos,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Movimiento $movimiento)
+    public function restore(Movimiento $movimiento, MovimientoService $service): RedirectResponse
     {
-        //
-    }
+        $service->restore($movimiento);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Movimiento $movimiento)
-    {
-        //
+        return redirect()->route('movimientos.trashed')->with('success', 'Movimiento restaurado correctamente.');
     }
 }

@@ -12,7 +12,7 @@ class Categoria extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'nombre'
+        'nombre',
     ];
 
     public function objetos(): HasMany
