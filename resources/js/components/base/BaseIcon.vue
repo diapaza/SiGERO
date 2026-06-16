@@ -1,12 +1,15 @@
 <template>
-  <component :is="icon" :class="['inline-flex items-center justify-center', className]" />
+  <component
+    :is="icon"
+    :size="size"
+    :class="['inline-flex items-center justify-center', className]"
+  />
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
+defineProps<{
   icon: object
   className?: string
-}>(), {
-  className: '',
-})
+  size?: number
+}>()
 </script>

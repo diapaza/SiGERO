@@ -11,7 +11,7 @@
             placeholder="Ingresa tu usuario"
           >
             <template #prepend>
-              <UserIcon class="fill-gray-500 dark:fill-gray-400" />
+              <UserIcon :size="20" class="fill-gray-500 dark:fill-gray-400" />
             </template>
           </BaseInput>
         </BaseFormField>
@@ -28,7 +28,7 @@
             placeholder="Ingresa tu contraseña"
           >
             <template #prepend>
-              <LockIcon class="fill-gray-500 dark:fill-gray-400" />
+              <LockIcon :size="18" class="fill-gray-500 dark:fill-gray-400" />
             </template>
           </BasePasswordInput>
         </BaseFormField>

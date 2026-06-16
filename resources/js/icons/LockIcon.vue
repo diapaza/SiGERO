@@ -1,7 +1,7 @@
 <template>
   <svg
-    width="22"
-    height="22"
+    :width="size"
+    :height="size"
     fill="none"
     viewBox="0 0 32 32"
     version="1.1"
@@ -13,3 +13,14 @@
     />
   </svg>
 </template>
+
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    size?: number
+  }>(),
+  {
+    size: 22,
+  },
+)
+</script>
