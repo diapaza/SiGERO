@@ -8,7 +8,7 @@
         <img src="/images/user/owner.jpg" alt="User" />
       </span>
 
-      <span class="block mr-1 font-medium text-theme-sm">Musharof </span>
+      <span class="block mr-1 font-medium text-theme-sm">{{ userName }}</span>
 
       <ChevronDownIcon :class="{ 'rotate-180': dropdownOpen }" />
     </button>
@@ -20,10 +20,10 @@
     >
       <div>
         <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-          Musharof Chowdhury
+          {{ userName }}
         </span>
         <span class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-          randomuser@pimjo.com
+          {{ userUsername }}
         </span>
       </div>
 
@@ -33,7 +33,6 @@
             :href="item.href"
             class="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
           >
-            <!-- SVG icon would go here -->
             <component
               :is="item.icon"
               class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
@@ -42,16 +41,17 @@
           </Link>
         </li>
       </ul>
-      <Link
-        href="/signin"
-        class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-        @click="signOut"
-      >
-        <LogoutIcon
-          class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
-        />
-        Sign out
-      </Link>
+      <form @submit.prevent="handleLogout">
+        <button
+          type="submit"
+          class="flex items-center gap-3 px-3 py-2 mt-3 w-full font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+        >
+          <LogoutIcon
+            class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
+          />
+          Cerrar sesión
+        </button>
+      </form>
     </div>
     <!-- Dropdown End -->
   </div>
@@ -59,9 +59,14 @@
 
 <script setup lang="ts">
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
-import { Link } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { Link, router, usePage } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
 import { useClickOutside } from '@/composables/useClickOutside'
+
+const page = usePage()
+
+const userName = computed(() => page.props.auth?.user?.name ?? 'Usuario')
+const userUsername = computed(() => page.props.auth?.user?.username ?? '')
 
 const dropdownOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
@@ -80,8 +85,9 @@ const closeDropdown = () => {
   dropdownOpen.value = false
 }
 
-const signOut = () => {
+const handleLogout = () => {
   closeDropdown()
+  router.post(route('logout'))
 }
 
 useClickOutside(dropdownRef, closeDropdown)

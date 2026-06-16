@@ -1,47 +1,49 @@
 <template>
-  <AuthLayout title="Sign In" description="Enter your email and password to sign in!">
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-      <BaseSocialButton provider="google" label="Sign in with Google" />
-      <BaseSocialButton provider="x" label="Sign in with X" />
-    </div>
-
-    <BaseDivider />
-
+  <AuthLayout title="Iniciar Sesión" description="Ingresa tu usuario y contraseña para continuar.">
     <form @submit.prevent="handleSubmit">
       <div class="space-y-5">
-        <BaseFormField label="Email" label-for="email" required>
+        <BaseFormField label="Usuario" label-for="username" :error="form.errors.username" required>
           <BaseInput
-            id="email"
-            v-model="email"
-            type="email"
-            name="email"
-            placeholder="info@gmail.com"
-          />
-        </BaseFormField>
-
-        <BaseFormField label="Password" label-for="password" required>
-          <BasePasswordInput id="password" v-model="password" placeholder="Enter your password" />
-        </BaseFormField>
-
-        <div class="flex items-center justify-between">
-          <BaseCheckbox v-model="keepLoggedIn" label="Keep me logged in" />
-          <Link
-            href="/reset-password"
-            class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
+            id="username"
+            v-model="form.username"
+            type="text"
+            name="username"
+            placeholder="Ingresa tu usuario"
           >
-            Forgot password?
-          </Link>
-        </div>
+            <template #prepend>
+              <UserIcon class="fill-gray-500 dark:fill-gray-400" />
+            </template>
+          </BaseInput>
+        </BaseFormField>
 
-        <BaseButton type="submit" variant="primary" class="w-full"> Sign In </BaseButton>
+        <BaseFormField
+          label="Contraseña"
+          label-for="password"
+          :error="form.errors.password"
+          required
+        >
+          <BasePasswordInput
+            id="password"
+            v-model="form.password"
+            placeholder="Ingresa tu contraseña"
+          >
+            <template #prepend>
+              <LockIcon class="fill-gray-500 dark:fill-gray-400" />
+            </template>
+          </BasePasswordInput>
+        </BaseFormField>
+
+        <BaseButton type="submit" variant="primary" class="w-full" :disabled="form.processing">
+          {{ form.processing ? 'Ingresando...' : 'Iniciar Sesión' }}
+        </BaseButton>
       </div>
     </form>
 
     <div class="mt-5">
       <p class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-        Don't have an account?
+        ¿No tienes cuenta?
         <Link href="/signup" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">
-          Sign Up
+          Registrarse
         </Link>
       </p>
     </div>
@@ -49,22 +51,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useForm } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
-import BaseSocialButton from '@/components/base/BaseSocialButton.vue'
-import BaseDivider from '@/components/base/BaseDivider.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
-import BaseCheckbox from '@/components/base/BaseCheckbox.vue'
 import BaseFormField from '@/components/base/BaseFormField.vue'
 import BasePasswordInput from '@/components/base/BasePasswordInput.vue'
+import UserIcon from '@/icons/UserIcon.vue'
+import LockIcon from '@/icons/LockIcon.vue'
 
-const email = ref('')
-const password = ref('')
-const keepLoggedIn = ref(false)
+const form = useForm({
+  username: '',
+  password: '',
+})
 
 const handleSubmit = () => {
-  // TODO: Implement sign-in logic
+  form.post(route('login'), {
+    onFinish: () => form.reset('password'),
+  })
 }
 </script>

@@ -17,8 +17,8 @@ class HandleInertiaRequests
             'auth' => [
                 'user' => $request->user() ? [
                     'id' => $request->user()->id,
+                    'username' => $request->user()->username,
                     'name' => $request->user()->name,
-                    'email' => $request->user()->email,
                 ] : null,
             ],
             'flash' => [
