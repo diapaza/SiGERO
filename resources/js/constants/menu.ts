@@ -8,6 +8,7 @@ import {
   TableIcon,
   ListIcon,
   PlugInIcon,
+  UserGroupIcon,
 } from '@/icons'
 import BoxCubeIcon from '@/icons/BoxCubeIcon.vue'
 
@@ -18,7 +19,12 @@ export const menuGroups: MenuGroup[] = [
       {
         icon: GridIcon,
         name: 'Dashboard',
-        subItems: [{ name: 'Ecommerce', path: '/', pro: false }],
+        path: '/',
+      },
+      {
+        icon: UserGroupIcon,
+        name: 'Roles',
+        path: '/roles',
       },
       {
         icon: CalenderIcon,

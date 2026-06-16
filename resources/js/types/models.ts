@@ -1,3 +1,20 @@
+export interface Role {
+  id: number
+  nombre: string
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface Paginated<T> {
+  data: T[]
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+  links: Array<{ url: string | null; label: string; active: boolean }>
+}
+
 export interface User {
   id: number
   name: string

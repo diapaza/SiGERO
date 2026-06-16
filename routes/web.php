@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -43,4 +44,14 @@ Route::middleware('auth')->group(function () {
     // Pages
     Route::get('/blank', fn () => Inertia::render('Pages/BlankPage'))->name('blank');
     Route::get('/error-404', fn () => Inertia::render('Errors/FourZeroFour'))->name('404');
+
+    // Roles
+    Route::prefix('roles')->name('roles.')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('index');
+        Route::post('/', [RoleController::class, 'store'])->name('store');
+        Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
+        Route::get('/trashed', [RoleController::class, 'trashed'])->name('trashed');
+        Route::post('/{role}/restore', [RoleController::class, 'restore'])->name('restore')->withTrashed();
+    });
 });

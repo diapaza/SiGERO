@@ -70,7 +70,7 @@
                         : 'menu-item-icon-inactive',
                     ]"
                   >
-                    <component :is="item.icon" />
+                    <component :is="item.icon" :size="24" />
                   </span>
                   <span v-if="isExpanded || isHovered || isMobileOpen" class="menu-item-text">{{
                     item.name
@@ -101,7 +101,7 @@
                       isActive(item.path) ? 'menu-item-icon-active' : 'menu-item-icon-inactive',
                     ]"
                   >
-                    <component :is="item.icon" />
+                    <component :is="item.icon" :size="24" />
                   </span>
                   <span v-if="isExpanded || isHovered || isMobileOpen" class="menu-item-text">{{
                     item.name
