@@ -20,11 +20,11 @@ export default defineConfig({
   },
   publicDir: 'public',
   server: {
-    host: '192.168.0.227',
+    host: 'localhost',
     port: 5173,
     strictPort: true,
     hmr: {
-      host: '192.168.0.227',
+      host: 'localhost',
     },
   },
   build: {

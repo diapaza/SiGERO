@@ -5,7 +5,7 @@
         class="relative flex flex-col justify-center w-full h-screen lg:flex-row dark:bg-gray-900"
       >
         <div class="flex flex-col flex-1 w-full lg:w-1/2">
-          <div class="w-full max-w-md pt-10 mx-auto">
+          <div v-if="page.props.auth?.user" class="w-full max-w-md pt-10 mx-auto">
             <Link
               :href="backTo"
               class="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -42,7 +42,8 @@
                 <img width="231" height="48" src="/images/logo/auth-logo.svg" alt="Logo" />
               </Link>
               <p class="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
+                Bienvenido al Sistema de Gestion de Equipos y Recursos Operativos de la Subunidad de
+                Redes y Comunicaciones.
               </p>
             </div>
           </div>
@@ -53,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import CommonGridShape from '@/components/shared/CommonGridShape.vue'
 import ChevronLeftIcon from '@/icons/ChevronLeftIcon.vue'
@@ -72,4 +73,6 @@ withDefaults(
     backLabel: 'Back to dashboard',
   },
 )
+
+const page = usePage()
 </script>
