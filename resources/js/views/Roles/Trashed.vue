@@ -132,7 +132,7 @@ const columns = computed<ColumnDef<Role>[]>(() => [
           variant: 'ghost',
           size: 'sm',
           onClick: () => restoreRole(role),
-          class: 'text-gray-500 hover:text-gray-700',
+          class: 'text-gray-500 hover:text-green-700',
         },
         () => h(RefreshIcon, { size: 16 }),
       )

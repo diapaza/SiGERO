@@ -9,6 +9,7 @@ import {
   ListIcon,
   PlugInIcon,
   UserGroupIcon,
+  UserRolesIcon,
 } from '@/icons'
 import BoxCubeIcon from '@/icons/BoxCubeIcon.vue'
 
@@ -22,7 +23,7 @@ export const menuGroups: MenuGroup[] = [
         path: '/',
       },
       {
-        icon: UserGroupIcon,
+        icon: UserRolesIcon,
         name: 'Roles',
         path: '/roles',
       },

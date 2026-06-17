@@ -16,26 +16,36 @@
               :start-icon="TrashIcon"
               @click="goToTrashed"
             >
-              <span>Ver eliminados ({{ trashedCount }})</span>
+              <span>Ver eliminados </span><span class="hidden md:inline">({{ trashedCount }})</span>
             </BaseButton>
             <BaseButton variant="primary" size="sm" @click="openCreateModal">
               <template #start>
                 <PlusIcon :size="18" />
               </template>
-              <span>Agregar Rol</span>
+              <span>Agregar <span class="hidden md:inline">rol</span></span>
             </BaseButton>
           </div>
         </template>
 
         <div class="mb-4">
-          <BaseInput v-model="search" placeholder="Buscar roles..." class-name="max-w-sm" />
+          <div class="flex items-center gap-2 max-w-sm">
+            <label for="search" class="text-base font-regular text-gray-700 whitespace-nowrap"
+              >Buscar:</label
+            >
+            <BaseInput
+              id="search"
+              v-model="search"
+              placeholder="Buscar roles..."
+              class-name="flex-1"
+            />
+          </div>
         </div>
 
         <BaseDataTable
+          v-model:global-filter="search"
           :columns="columns"
           :data="filteredRoles"
-          :global-filter="search"
-          :page-size="10"
+          :page-size="5"
         />
       </ComponentCard>
     </div>
@@ -210,9 +220,9 @@ const columns = computed<ColumnDef<Role>[]>(() => [
             variant: 'ghost',
             size: 'sm',
             onClick: () => openEditModal(role),
-            class: 'text-brand-500 hover:text-gray-700',
+            class: 'text-brand-500 hover:text-yellow-700',
           },
-          () => h(EditIcon, { size: 16 }),
+          () => h(EditIcon, { size: 18 }),
         ),
         h(
           BaseButton,
@@ -220,9 +230,9 @@ const columns = computed<ColumnDef<Role>[]>(() => [
             variant: 'ghost',
             size: 'sm',
             onClick: () => deleteRole(role),
-            class: 'text-error-500 hover:text-gray-700',
+            class: 'text-error-500 hover:text-red-700',
           },
-          () => h(TrashIcon, { size: 16 }),
+          () => h(TrashIcon, { size: 18 }),
         ),
       ])
     },

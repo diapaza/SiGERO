@@ -62,6 +62,7 @@ import UploadIcon from './UploadIcon.vue'
 import UserIcon from './UserIcon.vue'
 import UserCircleIcon from './UserCircleIcon.vue'
 import UserGroupIcon from './UserGroupIcon.vue'
+import UserRolesIcon from './UserRolesIcon.vue'
 import WarningIcon from './WarningIcon.vue'
 import XLogoIcon from './XLogoIcon.vue'
 
@@ -129,6 +130,8 @@ export {
   UploadIcon,
   UserCircleIcon,
   UserGroupIcon,
+  UserIcon,
+  UserRolesIcon,
   WarningIcon,
   XLogoIcon,
 }

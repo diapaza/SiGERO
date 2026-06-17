@@ -25,7 +25,6 @@
         >
           <HorizontalDots class="fill-current" />
         </button>
-        <SearchBar />
       </div>
 
       <div
