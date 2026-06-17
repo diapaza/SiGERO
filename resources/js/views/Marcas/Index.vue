@@ -4,8 +4,8 @@
 
     <div class="space-y-6">
       <ComponentCard
-        title="Gestión de Roles"
-        desc="Administre los roles del sistema. Cree, edite y elimine roles según las necesidades de su organización."
+        title="Gestión de Marcas"
+        desc="Administre las marcas del sistema. Cree, edite y elimine marcas según las necesidades de su organización."
       >
         <template #header>
           <div class="flex flex-wrap items-center gap-3">
@@ -22,7 +22,7 @@
               <template #start>
                 <PlusIcon :size="18" />
               </template>
-              <span>Agregar <span class="hidden md:inline">rol</span></span>
+              <span>Agregar <span class="hidden md:inline">marca</span></span>
             </BaseButton>
           </div>
         </template>
@@ -35,7 +35,7 @@
             <BaseInput
               id="search"
               v-model="search"
-              placeholder="Buscar roles..."
+              placeholder="Buscar marcas..."
               class-name="flex-1"
             />
           </div>
@@ -44,7 +44,7 @@
         <BaseDataTable
           v-model:global-filter="search"
           :columns="columns"
-          :data="filteredRoles"
+          :data="filteredMarcas"
           :page-size="5"
         />
       </ComponentCard>
@@ -52,14 +52,14 @@
 
     <BaseModal
       v-model:is-open="isModalOpen"
-      :title="editingRole ? 'Editar Rol' : 'Agregar Rol'"
+      :title="editingMarca ? 'Editar Marca' : 'Agregar Marca'"
       size="sm"
       @close="closeModal"
     >
       <template #body>
         <form class="space-y-4" @submit.prevent="submitForm">
           <BaseFormField
-            label="Nombre del rol"
+            label="Nombre de la marca"
             label-for="nombre"
             :required="true"
             :error="form.errors.nombre"
@@ -68,7 +68,7 @@
               id="nombre"
               v-model="form.nombre"
               type="text"
-              placeholder="Ingrese el nombre del rol"
+              placeholder="Ingrese el nombre de la marca"
               :state="form.errors.nombre ? 'error' : 'default'"
               class-name="w-full"
               @blur="validateSingleField('nombre')"
@@ -82,7 +82,7 @@
           Cancelar
         </BaseButton>
         <BaseButton variant="primary" :disabled="form.processing" @click="submitForm">
-          {{ form.processing ? 'Guardando...' : editingRole ? 'Actualizar' : 'Crear' }}
+          {{ form.processing ? 'Guardando...' : editingMarca ? 'Actualizar' : 'Crear' }}
         </BaseButton>
       </template>
     </BaseModal>
@@ -106,13 +106,13 @@ import { useForm } from '@inertiajs/vue3'
 import { useDialog } from '@/composables/useDialog'
 import { useValidation } from '@/composables/useValidation'
 import { toast } from 'vue-sonner'
-import type { Role } from '@/types/models'
+import type { Marca } from '@/types/models'
 import { formatDate } from '@/utils/date'
 
-const pageTitle = ref('Roles')
+const pageTitle = ref('Marcas')
 const search = ref('')
 const isModalOpen = ref(false)
-const editingRole = ref<Role | null>(null)
+const editingMarca = ref<Marca | null>(null)
 
 const page = usePage()
 const { confirm } = useDialog()
@@ -121,49 +121,49 @@ const form = useForm({
   nombre: '',
 })
 
-const { validate, validateSingleField } = useValidation(form, 'role', {
-  nombre: 'nombre del rol',
+const { validate, validateSingleField } = useValidation(form, 'marca', {
+  nombre: 'nombre de la marca',
 })
 
 const pageProps = computed(() => page.props as any)
-const roles = computed<Role[]>(() => pageProps.value.roles ?? [])
+const marcas = computed<Marca[]>(() => pageProps.value.marcas ?? [])
 const trashedCount = computed(() => pageProps.value.trashedCount ?? 0)
 
-const filteredRoles = computed(() => {
-  if (!search.value) return roles.value
+const filteredMarcas = computed(() => {
+  if (!search.value) return marcas.value
   const term = search.value.toLowerCase()
-  return roles.value.filter((role) => role.nombre.toLowerCase().includes(term))
+  return marcas.value.filter((marca) => marca.nombre.toLowerCase().includes(term))
 })
 
 const openCreateModal = () => {
-  editingRole.value = null
+  editingMarca.value = null
   form.reset()
   isModalOpen.value = true
 }
 
-const openEditModal = (role: Role) => {
-  editingRole.value = role
-  form.nombre = role.nombre
+const openEditModal = (marca: Marca) => {
+  editingMarca.value = marca
+  form.nombre = marca.nombre
   isModalOpen.value = true
 }
 
 const closeModal = () => {
   isModalOpen.value = false
-  editingRole.value = null
+  editingMarca.value = null
   form.reset()
   form.clearErrors()
 }
 
 const submitForm = () => {
   if (!validate()) return
-  if (editingRole.value) {
-    form.put(route('roles.update', editingRole.value.id), {
+  if (editingMarca.value) {
+    form.put(route('marcas.update', editingMarca.value.id), {
       onSuccess: () => {
         closeModal()
       },
     })
   } else {
-    form.post(route('roles.store'), {
+    form.post(route('marcas.store'), {
       onSuccess: () => {
         closeModal()
       },
@@ -171,25 +171,25 @@ const submitForm = () => {
   }
 }
 
-const deleteRole = async (role: Role) => {
+const deleteMarca = async (marca: Marca) => {
   const confirmed = await confirm({
-    title: 'Eliminar rol',
-    description: `¿Estás seguro de eliminar el rol "${role.nombre}"? Esta acción no se puede deshacer.`,
+    title: 'Eliminar marca',
+    description: `¿Estás seguro de eliminar la marca "${marca.nombre}"? Esta acción no se puede deshacer.`,
     icon: 'warning',
     confirmLabel: 'Eliminar',
     destructive: true,
   })
 
   if (confirmed) {
-    router.delete(route('roles.destroy', role.id))
+    router.delete(route('marcas.destroy', marca.id))
   }
 }
 
 const goToTrashed = () => {
-  router.get(route('roles.trashed'))
+  router.get(route('marcas.trashed'))
 }
 
-const columns = computed<ColumnDef<Role>[]>(() => [
+const columns = computed<ColumnDef<Marca>[]>(() => [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -209,14 +209,14 @@ const columns = computed<ColumnDef<Role>[]>(() => [
     id: 'acciones',
     header: 'Acciones',
     cell: (info) => {
-      const role = info.row.original
+      const marca = info.row.original
       return h('div', { class: 'flex items-center gap-2' }, [
         h(
           BaseButton,
           {
             variant: 'ghost',
             size: 'sm',
-            onClick: () => openEditModal(role),
+            onClick: () => openEditModal(marca),
             class: 'text-brand-500 hover:text-yellow-700',
           },
           () => h(EditIcon, { size: 18 }),
@@ -226,7 +226,7 @@ const columns = computed<ColumnDef<Role>[]>(() => [
           {
             variant: 'ghost',
             size: 'sm',
-            onClick: () => deleteRole(role),
+            onClick: () => deleteMarca(marca),
             class: 'text-error-500 hover:text-red-700',
           },
           () => h(TrashIcon, { size: 18 }),

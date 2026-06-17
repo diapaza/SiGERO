@@ -54,6 +54,7 @@ import SuccessIcon from './SuccessIcon.vue'
 import SunIcon from './SunIcon.vue'
 import SupportIcon from './SupportIcon.vue'
 import TableIcon from './TableIcon.vue'
+import TagIcon from './TagIcon.vue'
 import TaskIcon from './TaskIcon.vue'
 import TrashIcon from './TrashIcon.vue'
 import TrashIconLg from './TrashIconLg.vue'
@@ -123,6 +124,7 @@ export {
   SunIcon,
   SupportIcon,
   TableIcon,
+  TagIcon,
   TaskIcon,
   TrashIcon,
   TrashIconLg,

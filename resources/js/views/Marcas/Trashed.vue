@@ -4,35 +4,35 @@
 
     <div class="space-y-6">
       <ComponentCard
-        title="Roles Eliminados"
-        desc="Lista de roles que han sido eliminados. Puede restaurarlos para volver a estar activos."
+        title="Marcas Eliminadas"
+        desc="Lista de marcas que han sido eliminadas. Puede restaurarlas para volver a estar activas."
       >
         <template #header>
           <BaseButton variant="outline" size="sm" :start-icon="ChevronLeftIcon" @click="goBack">
-            Volver a Roles
+            Volver a Marcas
           </BaseButton>
         </template>
 
         <div class="mb-4">
           <BaseInput
             v-model="search"
-            placeholder="Buscar roles eliminados..."
+            placeholder="Buscar marcas eliminadas..."
             class-name="max-w-sm"
           />
         </div>
 
         <BaseDataTable
           :columns="columns"
-          :data="filteredRoles"
+          :data="filteredMarcas"
           :global-filter="search"
           :page-size="10"
         />
 
         <div
-          v-if="filteredRoles.length === 0"
+          v-if="filteredMarcas.length === 0"
           class="py-8 text-center text-gray-500 dark:text-gray-400"
         >
-          No hay roles eliminados.
+          No hay marcas eliminadas.
         </div>
       </ComponentCard>
     </div>
@@ -52,43 +52,43 @@ import BaseDataTable from '@/components/base/BaseDataTable.vue'
 import { ChevronLeftIcon, RefreshIcon } from '@/icons'
 import { useDialog } from '@/composables/useDialog'
 import { toast } from 'vue-sonner'
-import type { Role } from '@/types/models'
+import type { Marca } from '@/types/models'
 import { formatDate } from '@/utils/date'
 
-const pageTitle = ref('Roles Eliminados')
+const pageTitle = ref('Marcas Eliminadas')
 const search = ref('')
 
 const page = usePage()
 const { confirm } = useDialog()
 
 const pageProps = computed(() => page.props as any)
-const roles = computed<Role[]>(() => pageProps.value.roles ?? [])
+const marcas = computed<Marca[]>(() => pageProps.value.marcas ?? [])
 
-const filteredRoles = computed(() => {
-  if (!search.value) return roles.value
+const filteredMarcas = computed(() => {
+  if (!search.value) return marcas.value
   const term = search.value.toLowerCase()
-  return roles.value.filter((role) => role.nombre.toLowerCase().includes(term))
+  return marcas.value.filter((marca) => marca.nombre.toLowerCase().includes(term))
 })
 
-const restoreRole = async (role: Role) => {
+const restoreMarca = async (marca: Marca) => {
   const confirmed = await confirm({
-    title: 'Restaurar rol',
-    description: `¿Estás seguro de restaurar el rol "${role.nombre}"?`,
+    title: 'Restaurar marca',
+    description: `¿Estás seguro de restaurar la marca "${marca.nombre}"?`,
     icon: 'question',
     confirmLabel: 'Restaurar',
     destructive: false,
   })
 
   if (confirmed) {
-    router.post(route('roles.restore', role.id))
+    router.post(route('marcas.restore', marca.id))
   }
 }
 
 const goBack = () => {
-  router.get(route('roles.index'))
+  router.get(route('marcas.index'))
 }
 
-const columns = computed<ColumnDef<Role>[]>(() => [
+const columns = computed<ColumnDef<Marca>[]>(() => [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -108,13 +108,13 @@ const columns = computed<ColumnDef<Role>[]>(() => [
     id: 'acciones',
     header: 'Acciones',
     cell: (info) => {
-      const role = info.row.original
+      const marca = info.row.original
       return h(
         BaseButton,
         {
           variant: 'ghost',
           size: 'sm',
-          onClick: () => restoreRole(role),
+          onClick: () => restoreMarca(marca),
           class: 'text-gray-500 hover:text-green-700',
         },
         () => h(RefreshIcon, { size: 16 }),

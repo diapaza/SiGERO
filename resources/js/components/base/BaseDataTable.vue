@@ -47,7 +47,7 @@
               :colspan="table.getAllColumns().length"
               class="px-5 py-8 text-center text-gray-400 text-theme-sm dark:text-gray-500"
             >
-              No results found.
+              Resultados no encontrados.
             </td>
           </tr>
         </tbody>
