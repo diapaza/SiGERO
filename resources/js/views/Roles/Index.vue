@@ -107,6 +107,7 @@ import { useDialog } from '@/composables/useDialog'
 import { useValidation } from '@/composables/useValidation'
 import { toast } from 'vue-sonner'
 import type { Role } from '@/types/models'
+import { formatDate } from '@/utils/date'
 
 const pageTitle = ref('Roles')
 const search = ref('')
@@ -182,14 +183,7 @@ const deleteRole = async (role: Role) => {
   })
 
   if (confirmed) {
-    router.delete(route('roles.destroy', role.id), {
-      onSuccess: () => {
-        toast.success('Rol eliminado correctamente.')
-      },
-      onError: () => {
-        toast.error('No se puede eliminar un rol con usuarios asignados.')
-      },
-    })
+    router.delete(route('roles.destroy', role.id))
   }
 }
 
@@ -207,6 +201,11 @@ const columns = computed<ColumnDef<Role>[]>(() => [
     accessorKey: 'nombre',
     header: 'Nombre',
     cell: (info) => info.getValue(),
+  },
+  {
+    accessorKey: 'created_at',
+    header: 'Fecha de creación',
+    cell: (info) => formatDate(info.getValue() as string),
   },
   {
     id: 'acciones',
