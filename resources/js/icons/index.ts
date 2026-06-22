@@ -7,6 +7,7 @@ import BoxCubeIcon from './BoxCubeIcon.vue'
 import BoxIcon from './BoxIcon.vue'
 import Calendar2Line from './Calendar2Line.vue'
 import CalenderIcon from './CalenderIcon.vue'
+import CategoryListIcon from './CategoryListIcon.vue'
 import ChatIcon from './ChatIcon.vue'
 import CheckIcon from './CheckIcon.vue'
 import ChevronDownIcon from './ChevronDownIcon.vue'
@@ -77,6 +78,7 @@ export {
   BoxIcon,
   Calendar2Line,
   CalenderIcon,
+  CategoryListIcon,
   ChatIcon,
   CheckIcon,
   ChevronDownIcon,
