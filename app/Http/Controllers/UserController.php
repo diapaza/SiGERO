@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Models\Rol;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
@@ -15,10 +16,12 @@ class UserController extends Controller
     public function index(): Response
     {
         $users = User::with('role')->latest()->get();
+        $roles = Rol::latest()->get();
         $trashedCount = User::onlyTrashed()->count();
 
         return Inertia::render('Users/Index', [
             'users' => $users,
+            'roles' => $roles,
             'trashedCount' => $trashedCount,
             'flash' => [
                 'success' => session('success'),
@@ -43,6 +46,10 @@ class UserController extends Controller
 
     public function destroy(User $user, UserService $service): RedirectResponse
     {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'No puede eliminar su propio usuario.');
+        }
+
         $deleted = $service->delete($user);
 
         if (! $deleted) {

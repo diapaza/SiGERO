@@ -24,6 +24,10 @@ readonly class UserService
 
     public function delete(User $user): bool
     {
+        if ($user->id === auth()->id()) {
+            return false;
+        }
+
         if ($user->movimientos()->count() > 0) {
             return false;
         }

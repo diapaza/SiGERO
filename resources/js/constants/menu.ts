@@ -30,6 +30,11 @@ export const menuGroups: MenuGroup[] = [
         path: '/roles',
       },
       {
+        icon: UserGroupIcon,
+        name: 'Usuarios',
+        path: '/users',
+      },
+      {
         icon: TagIcon,
         name: 'Marcas',
         path: '/marcas',

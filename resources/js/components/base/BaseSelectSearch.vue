@@ -48,7 +48,7 @@
         class="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-theme-xs border border-gray-200 dark:bg-gray-900 dark:border-gray-700"
       >
         <!-- Search Input -->
-        <div class="p-2 border-b border-gray-200 dark:border-gray-700">
+        <div v-if="searchable" class="p-2 border-b border-gray-200 dark:border-gray-700">
           <div class="relative">
             <SearchIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
@@ -126,6 +126,7 @@ const props = withDefaults(
     modelValue?: string | number | null
     options?: SelectOption[]
     creatable?: boolean
+    searchable?: boolean
     placeholder?: string
     disabled?: boolean
     loading?: boolean
@@ -142,6 +143,7 @@ const props = withDefaults(
     modelValue: null,
     options: () => [],
     creatable: false,
+    searchable: true,
     placeholder: 'Select...',
     disabled: false,
     loading: false,
@@ -243,7 +245,7 @@ useClickOutside(selectRef, () => {
 
 watch(searchTerm, (val) => {
   emits('search', val)
-  if (!isOpen.value && val) {
+  if (props.searchable && !isOpen.value && val) {
     isOpen.value = true
     nextTick(() => searchInputRef.value?.focus())
   }
@@ -255,7 +257,9 @@ function onTriggerClick() {
   isOpen.value = !isOpen.value
   if (isOpen.value) {
     emits('open')
-    nextTick(() => searchInputRef.value?.focus())
+    if (props.searchable) {
+      nextTick(() => searchInputRef.value?.focus())
+    }
   } else {
     emits('close')
     searchTerm.value = ''
