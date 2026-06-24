@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Objeto\StoreObjetoRequest;
 use App\Http\Requests\Objeto\UpdateObjetoRequest;
+use App\Models\Categoria;
+use App\Models\Marca;
 use App\Models\Objeto;
+use App\Services\ImageService;
 use App\Services\ObjetoService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,10 +20,14 @@ class ObjetoController extends Controller
     public function index(): Response
     {
         $objetos = Objeto::with(['marca', 'categoria'])->latest()->get();
+        $marcas = Marca::latest()->get();
+        $categorias = Categoria::latest()->get();
         $trashedCount = Objeto::onlyTrashed()->count();
 
         return Inertia::render('Objetos/Index', [
             'objetos' => $objetos,
+            'marcas' => $marcas,
+            'categorias' => $categorias,
             'trashedCount' => $trashedCount,
             'flash' => [
                 'success' => session('success'),
@@ -29,7 +38,10 @@ class ObjetoController extends Controller
 
     public function store(StoreObjetoRequest $request, ObjetoService $service): RedirectResponse
     {
-        $service->create($request->validated());
+        $data = $request->validated();
+        $data['codigo'] = Objeto::generarSiguienteCodigo();
+
+        $service->create($data);
 
         return redirect()->route('objetos.index')->with('success', 'Objeto creado correctamente.');
     }
@@ -70,5 +82,28 @@ class ObjetoController extends Controller
         $service->restore($objeto);
 
         return redirect()->route('objetos.trashed')->with('success', 'Objeto restaurado correctamente.');
+    }
+
+    public function uploadImage(Request $request, ImageService $imageService): JsonResponse
+    {
+        $request->validate([
+            'foto' => ['required', 'image', 'max:512'],
+        ]);
+
+        $path = $imageService->process($request->file('foto'), 'objetos');
+
+        return response()->json([
+            'url' => asset('storage/' . $path),
+            'path' => $path,
+        ]);
+    }
+
+    public function deleteImage(Request $request, ImageService $imageService): JsonResponse
+    {
+        $request->validate(['path' => ['required', 'string']]);
+
+        $imageService->delete($request->path);
+
+        return response()->json(['success' => true]);
     }
 }

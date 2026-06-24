@@ -9,7 +9,7 @@ class StoreObjetoRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'codigo' => ['required', 'string', 'max:12', 'unique:objetos,codigo'],
+            'codigo' => ['nullable', 'string', 'max:12'],
             'nombre' => ['required', 'string', 'max:150'],
             'modelo' => ['nullable', 'string', 'max:250'],
             'descripcion' => ['nullable', 'string'],

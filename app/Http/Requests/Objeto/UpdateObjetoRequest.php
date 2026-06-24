@@ -12,12 +12,7 @@ class UpdateObjetoRequest extends BaseFormRequest
         $objeto = $this->route('objeto');
 
         return [
-            'codigo' => [
-                'required',
-                'string',
-                'max:12',
-                new UniqueIgnoringSoftDeletes('objetos', 'codigo', $objeto?->id),
-            ],
+            'codigo' => ['nullable', 'string', 'max:12'],
             'nombre' => ['required', 'string', 'max:150'],
             'modelo' => ['nullable', 'string', 'max:250'],
             'descripcion' => ['nullable', 'string'],

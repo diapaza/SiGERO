@@ -88,6 +88,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{objeto}', [ObjetoController::class, 'destroy'])->name('destroy');
         Route::get('/trashed', [ObjetoController::class, 'trashed'])->name('trashed');
         Route::post('/{objeto}/restore', [ObjetoController::class, 'restore'])->name('restore')->withTrashed();
+        Route::post('/upload-image', [ObjetoController::class, 'uploadImage'])->name('upload-image');
+        Route::post('/delete-image', [ObjetoController::class, 'deleteImage'])->name('delete-image');
     });
 
     // Movimientos

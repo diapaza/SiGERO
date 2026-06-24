@@ -63,6 +63,24 @@ class Objeto extends Model
         return self::where('codigo', $codigo)->firstOrFail();
     }
 
+    public static function generarSiguienteCodigo(): string
+    {
+        $ultimoCodigo = self::withTrashed()
+            ->whereRaw('LENGTH(codigo) = 4')
+            ->where('codigo', 'REGEXP', '^[0-9]{4}$')
+            ->orderByRaw('CAST(codigo AS UNSIGNED) DESC')
+            ->value('codigo');
+
+        if (! $ultimoCodigo) {
+            return '0001';
+        }
+
+        $numero = (int) $ultimoCodigo;
+        $siguiente = $numero + 1;
+
+        return str_pad($siguiente, 4, '0', STR_PAD_LEFT);
+    }
+
     public function ultimoMovimiento()
     {
         return $this->hasOne(Movimiento::class)->latestOfMany('fecha_hora');
