@@ -189,14 +189,14 @@
     >
       <template #body>
         <form class="space-y-4" @submit.prevent="submitEditForm">
-          <div class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-5 mt-4">
             <p class="text-sm text-gray-500">
               <span class="font-medium">Objeto:</span>
               {{ editingMovimiento?.objeto?.codigo }} - {{ editingMovimiento?.objeto?.nombre }}
             </p>
             <p class="text-sm text-gray-500">
               <span class="font-medium">Registrado por:</span>
-              {{ editingMovimiento?.registradoPor?.name }}
+              {{ editingMovimiento?.registrado_por?.name }}
             </p>
           </div>
 
@@ -372,7 +372,10 @@ const searchObjeto = async () => {
         form.user_id = String(lastMovement.user_id)
         foundUser.value = lastMovement.user ?? null
       }
-      // Focus submit button
+      setTimeout(() => {
+        const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement
+        submitBtn?.focus()
+      }, 100)
     } else {
       // Object is available - need DNI, focus DNI input
       form.user_id = ''
@@ -414,7 +417,10 @@ const searchUser = async () => {
     foundUser.value = response.data
     form.user_id = String(response.data.id)
     dniError.value = ''
-    // Focus submit button
+    setTimeout(() => {
+      const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement
+      submitBtn?.focus()
+    }, 100)
   } catch (error: any) {
     foundUser.value = null
     form.user_id = ''
@@ -429,10 +435,11 @@ const searchUser = async () => {
 // Submit registration form
 const submitForm = () => {
   if (!canSubmit.value) return
-  if (!validate()) return
 
   form.registrado_por = authUser.value?.id ?? ''
   form.fecha_hora = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+  if (!validate()) return
 
   form.post(route('movimientos.store'), {
     onSuccess: () => {
@@ -502,7 +509,7 @@ const filteredMovimientos = computed(() => {
       m.objeto?.codigo?.toLowerCase().includes(term) ||
       m.objeto?.nombre?.toLowerCase().includes(term) ||
       m.user?.name?.toLowerCase().includes(term) ||
-      m.registradoPor?.name?.toLowerCase().includes(term) ||
+      m.registrado_por?.name?.toLowerCase().includes(term) ||
       m.tipo_movimiento?.toLowerCase().includes(term),
   )
 })
@@ -512,7 +519,7 @@ const columns = computed<ColumnDef<Movimiento>[]>(() => [
   {
     accessorKey: 'id',
     header: 'ID',
-    cell: (info) => `#${info.getValue()}`,
+    cell: (info) => `${info.getValue()}`,
   },
   {
     accessorKey: 'user',
@@ -547,11 +554,11 @@ const columns = computed<ColumnDef<Movimiento>[]>(() => [
     },
   },
   {
-    accessorKey: 'registradoPor',
+    accessorKey: 'registrado_por',
     header: 'Registrado por',
     cell: (info) => {
       const movimiento = info.row.original
-      return movimiento.registradoPor?.name ?? '—'
+      return movimiento.registrado_por?.name ?? '—'
     },
   },
   {
@@ -609,4 +616,17 @@ watch(
     if (message) toast.error(message)
   },
 )
+
+// Auto-search: trigger search when input reaches expected length
+watch(codigoInput, (value) => {
+  if (value.length === 4 || value.length === 12) {
+    searchObjeto()
+  }
+})
+
+watch(dniInput, (value) => {
+  if (value.length === 8) {
+    searchUser()
+  }
+})
 </script>

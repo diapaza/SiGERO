@@ -52,7 +52,7 @@ export interface Movimiento {
   updated_at: string
   objeto?: Objeto
   user?: User
-  registradoPor?: User
+  registrado_por?: User
 }
 
 export interface User {

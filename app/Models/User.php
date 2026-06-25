@@ -42,6 +42,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = ['name'];
+
     /**
      * Get the attributes that should be cast.
      *
