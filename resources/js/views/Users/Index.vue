@@ -300,6 +300,7 @@ const openCreateModal = () => {
   form.reset()
   form.role_id = defaultRoleId.value
   form.password = generatePassword(form.nombres, form.apellidos)
+  form.password_confirmation = form.password
   isModalOpen.value = true
 }
 
@@ -461,6 +462,7 @@ const columns = computed<ColumnDef<User>[]>(() => [
 watch([() => form.nombres, () => form.apellidos], () => {
   if (!editingUser.value) {
     form.password = generatePassword(form.nombres, form.apellidos)
+    form.password_confirmation = form.password
   }
 })
 
