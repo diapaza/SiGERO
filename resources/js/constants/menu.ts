@@ -12,6 +12,7 @@ import {
   UserCheckIcon,
   TagIcon,
   CategoryListIcon,
+  ArrowsHorizontal,
 } from '@/icons'
 import BoxCubeIcon from '@/icons/BoxCubeIcon.vue'
 import ToolsIcon from '@/icons/ToolsIcon.vue'
@@ -49,6 +50,11 @@ export const menuGroups: MenuGroup[] = [
         icon: ToolsIcon,
         name: 'Objetos',
         path: '/objetos',
+      },
+      {
+        icon: ArrowsHorizontal,
+        name: 'Movimientos',
+        path: '/movimientos',
       },
       {
         icon: CalenderIcon,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Movimiento\StoreMovimientoRequest;
 use App\Http\Requests\Movimiento\UpdateMovimientoRequest;
 use App\Models\Movimiento;
+use App\Models\User;
 use App\Services\MovimientoService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -15,9 +16,11 @@ class MovimientoController extends Controller
     public function index(): Response
     {
         $movimientos = Movimiento::with(['objeto', 'user', 'registradoPor'])->latest('fecha_hora')->get();
+        $users = User::select('id', 'dni', 'nombres', 'apellidos', 'whatsapp_number')->get();
 
         return Inertia::render('Movimientos/Index', [
             'movimientos' => $movimientos,
+            'users' => $users,
             'flash' => [
                 'success' => session('success'),
                 'error' => session('error'),

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\MarcaController;
@@ -111,4 +112,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/trashed', [UserController::class, 'trashed'])->name('trashed');
         Route::post('/{user}/restore', [UserController::class, 'restore'])->name('restore')->withTrashed();
     });
+
+    // API - Búsquedas
+    Route::get('/api/objetos/search/{codigo}', [ApiController::class, 'searchObjeto'])->name('api.objetos.search');
+    Route::get('/api/users/search/{dni}', [ApiController::class, 'searchUser'])->name('api.users.search');
 });

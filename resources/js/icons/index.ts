@@ -1,4 +1,5 @@
 import ArrowDownIcon from './ArrowDownIcon.vue'
+import ArrowsHorizontal from './ArrowsHorizontal.vue'
 import ArrowUpIcon from './ArrowUpIcon.vue'
 import ArchiveIcon from './ArchiveIcon.vue'
 import BarChartIcon from './BarChartIcon.vue'
@@ -71,6 +72,7 @@ import XLogoIcon from './XLogoIcon.vue'
 export {
   ArchiveIcon,
   ArrowDownIcon,
+  ArrowsHorizontal,
   ArrowUpIcon,
   BarChartIcon,
   BellIcon,
