@@ -229,7 +229,7 @@
               <br />
               <BaseBadge
                 :color="viewingObjeto.disponible ? 'success' : 'error'"
-                :start-icon="viewingObjeto.disponible ? CheckIcon : CloseIcon"
+                :start-icon="viewingObjeto.disponible ? CheckSmallIcon : CloseSmallIcon"
                 size="sm"
               >
                 {{ viewingObjeto.disponible ? 'Si' : 'No' }}
@@ -284,7 +284,7 @@ import BaseCheckbox from '@/components/base/BaseCheckbox.vue'
 import BaseTextarea from '@/components/base/BaseTextarea.vue'
 import BaseImageDropzone from '@/components/base/BaseImageDropzone.vue'
 import BaseBadge from '@/components/base/BaseBadge.vue'
-import { PlusIcon, EditIcon, TrashIcon, EyeOffIcon, CheckIcon, CloseIcon } from '@/icons'
+import { PlusIcon, EditIcon, TrashIcon, EyeOffIcon, CloseSmallIcon, CheckSmallIcon } from '@/icons'
 import { useForm } from '@inertiajs/vue3'
 import { useDialog } from '@/composables/useDialog'
 import { useValidation } from '@/composables/useValidation'
@@ -542,7 +542,7 @@ const columns = computed<ColumnDef<Objeto>[]>(() => [
         BaseBadge,
         {
           color: disponible ? 'success' : 'error',
-          startIcon: disponible ? CheckIcon : CloseIcon,
+          startIcon: disponible ? CheckSmallIcon : CloseSmallIcon,
           size: 'sm',
         },
         () => (disponible ? 'Si' : 'No'),

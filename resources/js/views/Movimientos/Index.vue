@@ -77,7 +77,7 @@
           </div>
 
           <!-- DNI del Responsable (condicional) -->
-          <template v-if="foundObjeto && foundObjeto.disponible">
+          <template v-if="foundObjeto">
             <BaseFormField
               label="DNI del Responsable"
               label-for="dni"
@@ -90,6 +90,7 @@
                 v-model="dniInput"
                 type="text"
                 placeholder="Ingrese DNI (8 dígitos)"
+                :disabled="!foundObjeto.disponible"
                 :state="form.errors.user_id ? 'error' : 'default'"
                 class-name="flex-1"
                 @keydown.enter.prevent="searchUser"
@@ -371,6 +372,7 @@ const searchObjeto = async () => {
       if (lastMovement) {
         form.user_id = String(lastMovement.user_id)
         foundUser.value = lastMovement.user ?? null
+        dniInput.value = lastMovement.user?.dni ?? ''
       }
       setTimeout(() => {
         const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement

@@ -11,10 +11,12 @@ import CalenderIcon from './CalenderIcon.vue'
 import CategoryListIcon from './CategoryListIcon.vue'
 import ChatIcon from './ChatIcon.vue'
 import CheckIcon from './CheckIcon.vue'
+import CheckSmallIcon from './CheckSmallIcon.vue'
 import ChevronDownIcon from './ChevronDownIcon.vue'
 import ChevronLeftIcon from './ChevronLeftIcon.vue'
 import ChevronRightIcon from './ChevronRightIcon.vue'
 import CloseIcon from './CloseIcon.vue'
+import CloseSmallIcon from './CloseSmallIcon.vue'
 import DocsIcon from './DocsIcon.vue'
 import DraftIcon from './DraftIcon.vue'
 import EditIcon from './EditIcon.vue'
@@ -83,10 +85,12 @@ export {
   CategoryListIcon,
   ChatIcon,
   CheckIcon,
+  CheckSmallIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CloseIcon,
+  CloseSmallIcon,
   DocsIcon,
   DraftIcon,
   EditIcon,
