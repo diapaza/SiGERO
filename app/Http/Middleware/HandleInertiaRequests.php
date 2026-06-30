@@ -19,6 +19,7 @@ class HandleInertiaRequests
                     'id' => $request->user()->id,
                     'username' => $request->user()->username,
                     'name' => $request->user()->name,
+                    'role' => $request->user()->role,
                 ] : null,
             ],
             'flash' => [

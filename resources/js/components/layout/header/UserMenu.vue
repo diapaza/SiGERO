@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
+import { UserCircleIcon, ChevronDownIcon, LogoutIcon } from '@/icons'
 import UserAvatar from '@/components/shared/UserAvatar.vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
@@ -72,11 +72,7 @@ const userUsername = computed(() => page.props.auth?.user?.username ?? '')
 const dropdownOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
 
-const menuItems = [
-  { href: '/profile', icon: UserCircleIcon, text: 'Edit profile' },
-  { href: '/chat', icon: SettingsIcon, text: 'Account settings' },
-  { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
-]
+const menuItems = [{ href: '/profile', icon: UserCircleIcon, text: 'Mi perfil' }]
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value

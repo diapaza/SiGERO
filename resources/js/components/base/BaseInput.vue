@@ -1,6 +1,9 @@
 <template>
   <div :class="['relative w-full', wrapperClass]">
-    <div v-if="$slots.prepend" class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+    <div
+      v-if="$slots.prepend"
+      class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+    >
       <slot name="prepend" />
     </div>
 
@@ -26,25 +29,28 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
 
-const props = withDefaults(defineProps<{
-  modelValue?: string | number
-  type?: string
-  placeholder?: string
-  disabled?: boolean
-  id?: string
-  name?: string
-  state?: 'default' | 'error' | 'success'
-  className?: string
-  wrapperClass?: string
-}>(), {
-  modelValue: '',
-  type: 'text',
-  placeholder: '',
-  disabled: false,
-  state: 'default',
-  className: '',
-  wrapperClass: '',
-})
+const props = withDefaults(
+  defineProps<{
+    modelValue?: string | number
+    type?: string
+    placeholder?: string
+    disabled?: boolean
+    id?: string
+    name?: string
+    state?: 'default' | 'error' | 'success'
+    className?: string
+    wrapperClass?: string
+  }>(),
+  {
+    modelValue: '',
+    type: 'text',
+    placeholder: '',
+    disabled: false,
+    state: 'default',
+    className: '',
+    wrapperClass: '',
+  },
+)
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: string | number): void
@@ -58,9 +64,12 @@ const hasPrepend = computed(() => !!slots.prepend)
 const hasAppend = computed(() => !!slots.append)
 
 const stateClasses = {
-  default: 'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:focus:border-brand-800',
-  error: 'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700 dark:focus:border-error-800',
-  success: 'border-success-300 focus:border-success-300 focus:ring-success-500/10 dark:border-success-700 dark:focus:border-success-800',
+  default:
+    'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:focus:border-brand-800',
+  error:
+    'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700 dark:focus:border-error-800',
+  success:
+    'border-success-300 focus:border-success-300 focus:ring-success-500/10 dark:border-success-700 dark:focus:border-success-800',
 }
 
 const inputClasses = computed(() => [
@@ -68,6 +77,7 @@ const inputClasses = computed(() => [
   stateClasses[props.state],
   hasPrepend.value ? 'pl-11' : '',
   hasAppend.value ? 'pr-11' : '',
+  props.disabled ? 'bg-gray-100 cursor-not-allowed opacity-60 dark:bg-gray-800' : '',
   props.className,
 ])
 

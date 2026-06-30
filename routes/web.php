@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\MovimientoController;
 use App\Http\Controllers\ObjetoController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -22,12 +23,16 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
     // Dashboard
     Route::get('/', fn () => Inertia::render('Dashboard'))->name('dashboard');
 
     // Features
     Route::get('/calendar', fn () => Inertia::render('Others/Calendar'))->name('calendar');
-    Route::get('/profile', fn () => Inertia::render('Others/UserProfile'))->name('profile');
     Route::get('/form-elements', fn () => Inertia::render('Forms/FormElements'))->name('form-elements');
     Route::get('/basic-tables', fn () => Inertia::render('Tables/BasicTables'))->name('basic-tables');
     Route::get('/data-tables', fn () => Inertia::render('Tables/DataTables'))->name('data-tables');

@@ -55,6 +55,15 @@ export interface Movimiento {
   registrado_por?: User
 }
 
+export interface PendingReturn {
+  id: number
+  objeto_id: number
+  user_id: number
+  tipo_movimiento: 'salida'
+  fecha_hora: string
+  objeto?: Objeto
+}
+
 export interface User {
   id: number
   username: string

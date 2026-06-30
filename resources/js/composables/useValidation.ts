@@ -56,6 +56,17 @@ const rules: Record<string, EntityRules> = {
     whatsapp_number: { maxLength: 15 },
     password: { minLength: 8 },
   },
+  profile: {
+    username: { required: true, maxLength: 255 },
+    dni: { required: true, size: 8 },
+    nombres: { required: true, maxLength: 120 },
+    apellidos: { required: true, maxLength: 120 },
+    whatsapp_number: { maxLength: 15 },
+  },
+  profilePassword: {
+    current_password: { required: true },
+    password: { required: true, minLength: 8 },
+  },
 }
 
 function validateField(
@@ -111,6 +122,7 @@ const defaultLabels: Record<string, string> = {
   nombre: 'nombre',
   username: 'usuario',
   password: 'contraseña',
+  current_password: 'contraseña actual',
   dni: 'DNI',
   nombres: 'nombres',
   apellidos: 'apellidos',

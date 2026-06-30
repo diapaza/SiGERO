@@ -39,4 +39,18 @@ readonly class UserService
     {
         return $user->restore();
     }
+
+    public function updateProfile(User $user, array $data): User
+    {
+        $user->update($data);
+
+        return $user->fresh();
+    }
+
+    public function updatePassword(User $user, array $data): void
+    {
+        $user->update([
+            'password' => $data['password'],
+        ]);
+    }
 }
