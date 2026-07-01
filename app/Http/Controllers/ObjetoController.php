@@ -39,7 +39,10 @@ class ObjetoController extends Controller
     public function store(StoreObjetoRequest $request, ObjetoService $service): RedirectResponse
     {
         $data = $request->validated();
-        $data['codigo'] = Objeto::generarSiguienteCodigo();
+
+        if (empty($data['codigo'])) {
+            $data['codigo'] = Objeto::generarSiguienteCodigo();
+        }
 
         $service->create($data);
 
@@ -48,7 +51,10 @@ class ObjetoController extends Controller
 
     public function update(UpdateObjetoRequest $request, Objeto $objeto, ObjetoService $service): RedirectResponse
     {
-        $service->update($objeto, $request->validated());
+        $data = $request->validated();
+        unset($data['codigo']);
+
+        $service->update($objeto, $data);
 
         return redirect()->route('objetos.index')->with('success', 'Objeto actualizado correctamente.');
     }

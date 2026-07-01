@@ -28,7 +28,7 @@ const rules: Record<string, EntityRules> = {
     nombre: { required: true, maxLength: 255 },
   },
   objeto: {
-    codigo: { maxLength: 12 },
+    codigo: { maxLength: 12, pattern: /^(\d{4}|\d{12})?$/ },
     nombre: { required: true, maxLength: 150 },
     modelo: { maxLength: 250 },
     serie: { maxLength: 50 },

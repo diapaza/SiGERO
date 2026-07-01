@@ -59,112 +59,236 @@
     >
       <template #body>
         <form class="space-y-4" @submit.prevent="submitForm">
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <BaseFormField
-              label="Nombre"
-              label-for="nombre"
-              :required="true"
-              :error="form.errors.nombre"
-            >
-              <BaseInput
-                id="nombre"
-                v-model="form.nombre"
-                type="text"
-                placeholder="Ingrese el nombre"
-                :state="form.errors.nombre ? 'error' : 'default'"
-                class-name="w-full"
-                @blur="validateSingleField('nombre')"
-              />
-            </BaseFormField>
+          <template v-if="!editingObjeto">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <BaseFormField label="Código" label-for="codigo" :error="form.errors.codigo">
+                  <BaseInput
+                    id="codigo"
+                    v-model="form.codigo"
+                    type="text"
+                    placeholder="4 o 12 dígitos (vacío = auto-generar)"
+                    :state="form.errors.codigo ? 'error' : 'default'"
+                    class-name="w-full"
+                    @blur="validateSingleField('codigo')"
+                  />
+                </BaseFormField>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Deje vacío para auto-generar.
+                </p>
+              </div>
 
-            <BaseFormField label="Modelo" label-for="modelo" :error="form.errors.modelo">
-              <BaseInput
-                id="modelo"
-                v-model="form.modelo"
-                type="text"
-                placeholder="Ingrese el modelo"
-                :state="form.errors.modelo ? 'error' : 'default'"
-                class-name="w-full"
-                @blur="validateSingleField('modelo')"
-              />
-            </BaseFormField>
-          </div>
+              <BaseFormField
+                label="Nombre"
+                label-for="nombre"
+                :required="true"
+                :error="form.errors.nombre"
+              >
+                <BaseInput
+                  id="nombre"
+                  v-model="form.nombre"
+                  type="text"
+                  placeholder="Ingrese el nombre"
+                  :state="form.errors.nombre ? 'error' : 'default'"
+                  class-name="w-full"
+                  @blur="validateSingleField('nombre')"
+                />
+              </BaseFormField>
+            </div>
 
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <BaseFormField label="Marca" label-for="marca_id" :error="form.errors.marca_id">
-              <BaseSelectSearch
-                id="marca_id"
-                v-model="form.marca_id"
-                :options="marcaOptions"
-                creatable
-                create-label='Crear marca "{text}"'
-                placeholder="Buscar o crear marca..."
-                class-name="w-full"
-                @create="handleCreateMarca"
-              />
-            </BaseFormField>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BaseFormField label="Modelo" label-for="modelo" :error="form.errors.modelo">
+                <BaseInput
+                  id="modelo"
+                  v-model="form.modelo"
+                  type="text"
+                  placeholder="Ingrese el modelo"
+                  :state="form.errors.modelo ? 'error' : 'default'"
+                  class-name="w-full"
+                  @blur="validateSingleField('modelo')"
+                />
+              </BaseFormField>
 
-            <BaseFormField
-              label="Categoría"
-              label-for="categoria_id"
-              :error="form.errors.categoria_id"
-            >
-              <BaseSelectSearch
-                id="categoria_id"
-                v-model="form.categoria_id"
-                :options="categoriaOptions"
-                creatable
-                create-label='Crear categoría "{text}"'
-                placeholder="Buscar o crear categoría..."
-                class-name="w-full"
-                @create="handleCreateCategoria"
-              />
-            </BaseFormField>
-          </div>
+              <BaseFormField label="Marca" label-for="marca_id" :error="form.errors.marca_id">
+                <BaseSelectSearch
+                  id="marca_id"
+                  v-model="form.marca_id"
+                  :options="marcaOptions"
+                  creatable
+                  create-label='Crear marca "{text}"'
+                  placeholder="Buscar o crear marca..."
+                  class-name="w-full"
+                  @create="handleCreateMarca"
+                />
+              </BaseFormField>
+            </div>
 
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <BaseFormField label="Serie" label-for="serie" :error="form.errors.serie">
-              <BaseInput
-                id="serie"
-                v-model="form.serie"
-                type="text"
-                placeholder="Ingrese el número de serie"
-                :state="form.errors.serie ? 'error' : 'default'"
-                class-name="w-full"
-                @blur="validateSingleField('serie')"
-              />
-            </BaseFormField>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BaseFormField
+                label="Categoría"
+                label-for="categoria_id"
+                :error="form.errors.categoria_id"
+              >
+                <BaseSelectSearch
+                  id="categoria_id"
+                  v-model="form.categoria_id"
+                  :options="categoriaOptions"
+                  creatable
+                  create-label='Crear categoría "{text}"'
+                  placeholder="Buscar o crear categoría..."
+                  class-name="w-full"
+                  @create="handleCreateCategoria"
+                />
+              </BaseFormField>
 
-            <BaseFormField label="Disponible" label-for="disponible">
-              <BaseCheckbox id="disponible" v-model="form.disponible" label="Disponible" />
-            </BaseFormField>
-          </div>
+              <BaseFormField label="Serie" label-for="serie" :error="form.errors.serie">
+                <BaseInput
+                  id="serie"
+                  v-model="form.serie"
+                  type="text"
+                  placeholder="Ingrese el número de serie"
+                  :state="form.errors.serie ? 'error' : 'default'"
+                  class-name="w-full"
+                  @blur="validateSingleField('serie')"
+                />
+              </BaseFormField>
+            </div>
 
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <BaseFormField
-              label="Descripción"
-              label-for="descripcion"
-              :error="form.errors.descripcion"
-            >
-              <BaseTextarea
-                id="descripcion"
-                v-model="form.descripcion"
-                placeholder="Ingrese la descripción"
-                :rows="5"
-                :state="form.errors.descripcion ? 'error' : 'default'"
-                class-name="w-full"
-              />
-            </BaseFormField>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BaseFormField
+                label="Descripción"
+                label-for="descripcion"
+                :error="form.errors.descripcion"
+              >
+                <BaseTextarea
+                  id="descripcion"
+                  v-model="form.descripcion"
+                  placeholder="Ingrese la descripción"
+                  :rows="5"
+                  :state="form.errors.descripcion ? 'error' : 'default'"
+                  class-name="w-full"
+                />
+              </BaseFormField>
 
-            <BaseFormField label="Imagen" label-for="foto">
-              <BaseImageDropzone
-                v-model="form.foto"
-                :upload-url="uploadUrl"
-                @uploaded="onImageUploaded"
-                @removed="onImageRemoved"
-              />
-            </BaseFormField>
-          </div>
+              <BaseFormField label="Imagen" label-for="foto">
+                <BaseImageDropzone
+                  v-model="form.foto"
+                  :upload-url="uploadUrl"
+                  @uploaded="onImageUploaded"
+                  @removed="onImageRemoved"
+                />
+              </BaseFormField>
+            </div>
+          </template>
+
+          <template v-else>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BaseFormField
+                label="Nombre"
+                label-for="nombre"
+                :required="true"
+                :error="form.errors.nombre"
+              >
+                <BaseInput
+                  id="nombre"
+                  v-model="form.nombre"
+                  type="text"
+                  placeholder="Ingrese el nombre"
+                  :state="form.errors.nombre ? 'error' : 'default'"
+                  class-name="w-full"
+                  @blur="validateSingleField('nombre')"
+                />
+              </BaseFormField>
+
+              <BaseFormField label="Modelo" label-for="modelo" :error="form.errors.modelo">
+                <BaseInput
+                  id="modelo"
+                  v-model="form.modelo"
+                  type="text"
+                  placeholder="Ingrese el modelo"
+                  :state="form.errors.modelo ? 'error' : 'default'"
+                  class-name="w-full"
+                  @blur="validateSingleField('modelo')"
+                />
+              </BaseFormField>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BaseFormField label="Marca" label-for="marca_id" :error="form.errors.marca_id">
+                <BaseSelectSearch
+                  id="marca_id"
+                  v-model="form.marca_id"
+                  :options="marcaOptions"
+                  creatable
+                  create-label='Crear marca "{text}"'
+                  placeholder="Buscar o crear marca..."
+                  class-name="w-full"
+                  @create="handleCreateMarca"
+                />
+              </BaseFormField>
+
+              <BaseFormField
+                label="Categoría"
+                label-for="categoria_id"
+                :error="form.errors.categoria_id"
+              >
+                <BaseSelectSearch
+                  id="categoria_id"
+                  v-model="form.categoria_id"
+                  :options="categoriaOptions"
+                  creatable
+                  create-label='Crear categoría "{text}"'
+                  placeholder="Buscar o crear categoría..."
+                  class-name="w-full"
+                  @create="handleCreateCategoria"
+                />
+              </BaseFormField>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BaseFormField label="Serie" label-for="serie" :error="form.errors.serie">
+                <BaseInput
+                  id="serie"
+                  v-model="form.serie"
+                  type="text"
+                  placeholder="Ingrese el número de serie"
+                  :state="form.errors.serie ? 'error' : 'default'"
+                  class-name="w-full"
+                  @blur="validateSingleField('serie')"
+                />
+              </BaseFormField>
+
+              <BaseFormField label="Disponible" label-for="disponible">
+                <BaseCheckbox id="disponible" v-model="form.disponible" label="Disponible" />
+              </BaseFormField>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BaseFormField
+                label="Descripción"
+                label-for="descripcion"
+                :error="form.errors.descripcion"
+              >
+                <BaseTextarea
+                  id="descripcion"
+                  v-model="form.descripcion"
+                  placeholder="Ingrese la descripción"
+                  :rows="5"
+                  :state="form.errors.descripcion ? 'error' : 'default'"
+                  class-name="w-full"
+                />
+              </BaseFormField>
+
+              <BaseFormField label="Imagen" label-for="foto">
+                <BaseImageDropzone
+                  v-model="form.foto"
+                  :upload-url="uploadUrl"
+                  @uploaded="onImageUploaded"
+                  @removed="onImageRemoved"
+                />
+              </BaseFormField>
+            </div>
+          </template>
         </form>
       </template>
 
@@ -304,6 +428,7 @@ const page = usePage()
 const { confirm } = useDialog()
 
 const form = useForm({
+  codigo: '',
   nombre: '',
   modelo: '',
   descripcion: '',
@@ -315,6 +440,7 @@ const form = useForm({
 })
 
 const { validate, validateSingleField } = useValidation(form, 'objeto', {
+  codigo: 'código',
   nombre: 'nombre',
   modelo: 'modelo',
   marca_id: 'marca',
@@ -359,7 +485,6 @@ const filteredObjetos = computed(() => {
 const openCreateModal = () => {
   editingObjeto.value = null
   form.reset()
-  form.disponible = true
   uploadedImagePath.value = null
   isModalOpen.value = true
 }

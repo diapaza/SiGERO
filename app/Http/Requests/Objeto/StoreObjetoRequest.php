@@ -3,13 +3,20 @@
 namespace App\Http\Requests\Objeto;
 
 use App\Http\Requests\BaseFormRequest;
+use App\Rules\UniqueIgnoringSoftDeletes;
 
 class StoreObjetoRequest extends BaseFormRequest
 {
     public function rules(): array
     {
         return [
-            'codigo' => ['nullable', 'string', 'max:12'],
+            'codigo' => [
+                'nullable',
+                'string',
+                'max:12',
+                'regex:/^(\d{4}|\d{12})$/',
+                new UniqueIgnoringSoftDeletes('objetos', 'codigo'),
+            ],
             'nombre' => ['required', 'string', 'max:150'],
             'modelo' => ['nullable', 'string', 'max:250'],
             'descripcion' => ['nullable', 'string'],
