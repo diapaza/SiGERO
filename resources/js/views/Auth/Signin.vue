@@ -1,15 +1,29 @@
 <template>
   <AuthLayout title="Iniciar Sesión" description="Ingresa tu usuario y contraseña para continuar.">
+    <Alert
+      v-if="showCredentialsError"
+      variant="error"
+      title="Credenciales incorrectas"
+      message="Por favor, verifica tu usuario y contraseña e intenta de nuevo."
+      class="mb-5"
+    />
+
     <form @submit.prevent="handleSubmit">
       <div class="space-y-5">
-        <BaseFormField label="Usuario" label-for="username" :error="form.errors.username" required>
+        <BaseFormField
+          label="Usuario"
+          label-for="username"
+          :error="showCredentialsError ? '' : form.errors.username"
+          required
+        >
           <BaseInput
             id="username"
             v-model="form.username"
             type="text"
             name="username"
             placeholder="Ingresa tu usuario"
-            :state="form.errors.username ? 'error' : 'default'"
+            :state="form.errors.username && !showCredentialsError ? 'error' : 'default'"
+            @input="handleUsernameInput"
             @blur="validateSingleField('username')"
           >
             <template #prepend>
@@ -29,6 +43,7 @@
             v-model="form.password"
             placeholder="Ingresa tu contraseña"
             :state="form.errors.password ? 'error' : 'default'"
+            @input="validateSingleField('password')"
             @blur="validateSingleField('password')"
           >
             <template #prepend>
@@ -55,9 +70,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
+import Alert from '@/components/shared/Alert.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseFormField from '@/components/base/BaseFormField.vue'
@@ -76,11 +93,22 @@ const { validate, validateSingleField } = useValidation(form, 'login', {
   password: 'contraseña',
 })
 
+const showCredentialsError = ref(false)
+
+const handleUsernameInput = () => {
+  showCredentialsError.value = false
+  validateSingleField('username')
+}
+
 const handleSubmit = () => {
+  showCredentialsError.value = false
   if (!validate()) return
 
   form.post(route('login'), {
     onFinish: () => form.reset('password'),
+    onError: () => {
+      showCredentialsError.value = true
+    },
   })
 }
 </script>
