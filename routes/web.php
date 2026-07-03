@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\MovimientoController;
 use App\Http\Controllers\ObjetoController;
@@ -29,7 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
     // Dashboard
-    Route::get('/', fn () => Inertia::render('Dashboard'))->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Features
     Route::get('/calendar', fn () => Inertia::render('Others/Calendar'))->name('calendar');

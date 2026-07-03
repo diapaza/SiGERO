@@ -38,6 +38,7 @@ export interface Objeto {
   updated_at: string
   marca?: Marca
   categoria?: Categoria
+  ultimoMovimiento?: Movimiento
 }
 
 export interface Movimiento {
@@ -141,4 +142,22 @@ export interface MenuGroup {
       pro?: boolean
     }>
   }>
+}
+
+export interface Estadisticas {
+  total: number
+  disponibles: number
+  prestados: number
+  eliminados: number
+}
+
+export interface MovimientosPorMes {
+  mes: string
+  tipo_movimiento: 'salida' | 'retorno'
+  total: number
+}
+
+export interface ObjetosPorCategoria {
+  nombre: string
+  total: number
 }

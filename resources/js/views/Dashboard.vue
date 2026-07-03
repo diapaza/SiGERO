@@ -1,26 +1,43 @@
 <template>
   <AdminLayout>
     <PageBreadcrumb :page-title="currentPageTitle" />
-    <div
-      class="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12"
-    >
-      <div class="mx-auto w-full max-w-[630px] text-center">
-        <h3 class="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
-          Bienvenido al Dashboard
-        </h3>
+    <div class="space-y-6">
+      <DashboardStats :stats="estadisticas" :usuarios-total="usuariosTotal" />
 
-        <p class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-          Has iniciado sesión correctamente. Este es el panel principal del sistema.
-        </p>
-      </div>
+      <template v-if="isAdminOrPersonal">
+        <DashboardCharts
+          :movimientos-por-mes="movimientosPorMes"
+          :objetos-por-categoria="objetosPorCategoria"
+        />
+      </template>
+
+      <DashboardSalidas :objetos-prestados="objetosPrestados" />
     </div>
   </AdminLayout>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
+import DashboardStats from '@/views/dashboard/DashboardStats.vue'
+import DashboardCharts from '@/views/dashboard/DashboardCharts.vue'
+import DashboardSalidas from '@/views/dashboard/DashboardSalidas.vue'
+import type { Estadisticas, MovimientosPorMes, ObjetosPorCategoria, Objeto } from '@/types/models'
 
-const currentPageTitle = ref('Dashboard')
+const props = defineProps<{
+  estadisticas: Estadisticas
+  usuariosTotal: number
+  movimientosPorMes: MovimientosPorMes[]
+  objetosPorCategoria: ObjetosPorCategoria[]
+  objetosPrestados: Objeto[]
+}>()
+
+const currentPageTitle = 'Dashboard'
+
+const user = computed(() => (usePage().props.auth as any).user)
+const isAdminOrPersonal = computed(() =>
+  ['Administrador', 'Personal'].includes(user.value?.role?.nombre),
+)
 </script>

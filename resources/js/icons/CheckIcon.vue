@@ -2,24 +2,13 @@
   <svg
     :width="size"
     :height="size"
-    viewBox="0 0 14 14"
+    viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path
-      d="M11.6668 3.5L5.25016 9.91667L2.3335 7"
-      stroke-width="1.94437"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="currentColor" />
   </svg>
 </template>
-
-<style scoped>
-svg {
-  stroke: currentColor;
-}
-</style>
 
 <script setup lang="ts">
 withDefaults(
@@ -27,7 +16,7 @@ withDefaults(
     size?: number
   }>(),
   {
-    size: 14,
+    size: 24,
   },
 )
 </script>
