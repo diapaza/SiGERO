@@ -19,13 +19,29 @@ class HandleInertiaRequests
 
         Inertia::share([
             'auth' => [
-                'user' => $request->user() ? [
+                'user' => fn () => $request->user() ? [
                     'id' => $request->user()->id,
                     'username' => $request->user()->username,
                     'name' => $request->user()->name,
-                    'role' => $request->user()->role,
+                    'roles' => $request->user()->getRoleNames()->toArray(),
+                    'permissions' => $request->user()->getAllPermissions()->pluck('name')->toArray(),
                 ] : null,
             ],
+            'notifications' => fn () => $request->user()
+                ? $request->user()
+                    ->notifications()
+                    ->take(10)
+                    ->get()
+                    ->map(fn ($notification) => [
+                        'id' => $notification->id,
+                        'type' => $notification->data['type'] ?? 'general',
+                        'title' => $notification->data['title'] ?? 'Notificación',
+                        'message' => $notification->data['message'] ?? '',
+                        'created_at' => $notification->created_at,
+                        'read' => $notification->read_at !== null,
+                    ])
+                : [],
+            'unreadNotifications' => fn () => $request->user()?->unreadNotifications()->count() ?? 0,
             'errors' => fn () => (object) collect($errors?->getBag('default')->toArray())
                 ->map(fn (array $messages) => $messages[0] ?? '')
                 ->filter()
