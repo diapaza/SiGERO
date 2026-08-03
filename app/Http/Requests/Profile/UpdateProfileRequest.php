@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Profile;
 
 use App\Http\Requests\BaseFormRequest;
-use App\Rules\UniqueIgnoringSoftDeletes;
 
 class UpdateProfileRequest extends BaseFormRequest
 {
@@ -17,7 +16,7 @@ class UpdateProfileRequest extends BaseFormRequest
                 'required',
                 'string',
                 'size:8',
-                new UniqueIgnoringSoftDeletes('users', 'dni', $user->id),
+                'unique:users,dni,' . $user->id,
             ],
             'nombres' => ['required', 'string', 'max:120'],
             'apellidos' => ['required', 'string', 'max:120'],
@@ -29,7 +28,7 @@ class UpdateProfileRequest extends BaseFormRequest
                 'required',
                 'string',
                 'max:255',
-                new UniqueIgnoringSoftDeletes('users', 'username', $user->id),
+                'unique:users,username,' . $user->id,
             ];
         }
 

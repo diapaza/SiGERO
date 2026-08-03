@@ -3,16 +3,22 @@
 namespace App\Services;
 
 use App\Models\Objeto;
+use Illuminate\Database\Eloquent\Model;
 
-readonly class ObjetoService
+readonly class ObjetoService extends BaseCrudService
 {
     public function __construct(
         private Objeto $model,
-    ) {}
+    ) {
+        parent::__construct($model);
+    }
 
     public function create(array $data): Objeto
     {
-        $objeto = $this->model->create($data);
+        unset($data['disponible']);
+        $data['disponible'] = true;
+
+        $objeto = parent::create($data);
 
         if ($objeto->foto) {
             $newPath = app(ImageService::class)->renameImage($objeto->foto, $objeto->codigo);
@@ -22,9 +28,13 @@ readonly class ObjetoService
         return $objeto;
     }
 
-    public function update(Objeto $objeto, array $data): Objeto
+    public function update(Model $entity, array $data): Model
     {
-        $objeto->update($data);
+        /** @var Objeto $objeto */
+        $objeto = $entity;
+        unset($data['disponible']);
+        parent::update($objeto, $data);
+        $objeto = $objeto->fresh();
 
         if ($objeto->foto) {
             $currentFilename = basename($objeto->foto);
@@ -39,21 +49,11 @@ readonly class ObjetoService
         return $objeto->fresh();
     }
 
-    public function delete(Objeto $objeto): bool
+    protected function hasDependents(Model $entity): bool
     {
-        if ($objeto->movimientos()->count() > 0) {
-            return false;
-        }
+        /** @var Objeto $objeto */
+        $objeto = $entity;
 
-        if ($objeto->foto) {
-            app(ImageService::class)->delete($objeto->foto);
-        }
-
-        return $objeto->delete();
-    }
-
-    public function restore(Objeto $objeto): bool
-    {
-        return $objeto->restore();
+        return $objeto->movimientos()->count() > 0;
     }
 }

@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
 readonly class ImageService
 {
+    private const ALLOWED_DIRECTORIES = ['objetos'];
+
     private ImageManager $manager;
 
     public function __construct()
@@ -49,12 +52,47 @@ readonly class ImageService
 
     public function delete(string $path): bool
     {
-        $fullPath = storage_path("app/public/{$path}");
+        $fullPath = $this->resolvePublicPath($path);
+
+        if (! $fullPath) {
+            return false;
+        }
 
         if (file_exists($fullPath)) {
             return unlink($fullPath);
         }
 
         return false;
+    }
+
+    /**
+     * Resuelve una ruta relativa a un archivo real dentro de los directorios
+     * permitidos, previniendo path traversal.
+     */
+    private function resolvePublicPath(string $path): ?string
+    {
+        $base = realpath(storage_path('app/public'));
+
+        if (! $base) {
+            return null;
+        }
+
+        $segments = explode('/', str_replace('\\', '/', $path));
+
+        if (count($segments) < 2 || ! in_array($segments[0], self::ALLOWED_DIRECTORIES, true)) {
+            return null;
+        }
+
+        $fullPath = realpath(storage_path("app/public/{$path}"));
+
+        if ($fullPath === false) {
+            return null;
+        }
+
+        if (! Str::startsWith($fullPath, $base . DIRECTORY_SEPARATOR)) {
+            return null;
+        }
+
+        return $fullPath;
     }
 }

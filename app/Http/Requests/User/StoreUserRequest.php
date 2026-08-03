@@ -14,7 +14,8 @@ class StoreUserRequest extends BaseFormRequest
             'nombres' => ['required', 'string', 'max:120'],
             'apellidos' => ['required', 'string', 'max:120'],
             'whatsapp_number' => ['nullable', 'string', 'max:15'],
-            'role_id' => ['nullable', 'exists:roles,id'],
+            'roles' => ['nullable', 'array'],
+            'roles.*' => ['string', 'exists:roles,name'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }

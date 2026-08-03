@@ -3,27 +3,65 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
-readonly class UserService
+readonly class UserService extends BaseCrudService
 {
     public function __construct(
         private User $model,
-    ) {}
+        private NotificationService $notifications,
+    ) {
+        parent::__construct($model);
+    }
 
     public function create(array $data): User
     {
-        return $this->model->create($data);
+        $roles = $data['roles'] ?? [];
+        unset($data['roles']);
+
+        $user = parent::create($data);
+
+        if (! empty($roles)) {
+            $user->syncRoles($roles);
+        }
+
+        $this->notifications->cuentaCreada($user);
+
+        return $user;
     }
 
-    public function update(User $user, array $data): User
+    public function update(Model $entity, array $data): Model
     {
-        $user->update($data);
+        /** @var User $user */
+        $user = $entity;
+        $roles = $data['roles'] ?? null;
+        unset($data['roles']);
 
-        return $user->fresh();
+        $rolesAnteriores = $user->roles->pluck('name')->sort()->values();
+
+        parent::update($user, $data);
+
+        if ($roles !== null) {
+            $user->syncRoles($roles);
+        }
+
+        $rolesNuevos = $user->roles->pluck('name')->sort()->values();
+
+        $rolesCambiaron = $rolesAnteriores->diff($rolesNuevos)->isNotEmpty()
+            || $rolesNuevos->diff($rolesAnteriores)->isNotEmpty();
+
+        if ($roles !== null && $rolesCambiaron) {
+            $this->notifications->permisosActualizados($user, auth()->user());
+        }
+
+        return $user->fresh(['roles']);
     }
 
-    public function delete(User $user): bool
+    public function delete(Model $entity): bool
     {
+        /** @var User $user */
+        $user = $entity;
+
         if ($user->id === auth()->id()) {
             return false;
         }
@@ -32,12 +70,9 @@ readonly class UserService
             return false;
         }
 
-        return $user->delete();
-    }
+        $user->syncRoles([]);
 
-    public function restore(User $user): bool
-    {
-        return $user->restore();
+        return $user->delete();
     }
 
     public function updateProfile(User $user, array $data): User
@@ -52,5 +87,12 @@ readonly class UserService
         $user->update([
             'password' => $data['password'],
         ]);
+    }
+
+    public function syncPermissions(User $user, array $permissionNames): void
+    {
+        $user->syncPermissions($permissionNames);
+
+        $this->notifications->permisosActualizados($user, auth()->user());
     }
 }

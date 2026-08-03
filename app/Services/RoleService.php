@@ -2,37 +2,36 @@
 
 namespace App\Services;
 
-use App\Models\Rol;
+use App\Models\Role;
+use Illuminate\Database\Eloquent\Model;
 
-readonly class RoleService
+readonly class RoleService extends BaseCrudService
 {
-    public function __construct(
-        private Rol $model,
-    ) {}
-
-    public function create(array $data): Rol
+    public function create(array $data): Role
     {
-        return $this->model->create($data);
+        $data['guard_name'] = $data['guard_name'] ?? 'web';
+
+        return parent::create($data);
     }
 
-    public function update(Rol $role, array $data): Rol
+    public function delete(Model $entity): bool
     {
-        $role->update($data);
-
-        return $role->fresh();
-    }
-
-    public function delete(Rol $role): bool
-    {
-        if ($role->users()->count() > 0) {
+        if ($this->hasDependents($entity)) {
             return false;
         }
+
+        /** @var Role $role */
+        $role = $entity;
+        $role->permissions()->detach();
 
         return $role->delete();
     }
 
-    public function restore(Rol $role): bool
+    protected function hasDependents(Model $entity): bool
     {
-        return $role->restore();
+        /** @var Role $role */
+        $role = $entity;
+
+        return $role->users()->count() > 0;
     }
 }

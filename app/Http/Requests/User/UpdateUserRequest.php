@@ -3,7 +3,6 @@
 namespace App\Http\Requests\User;
 
 use App\Http\Requests\BaseFormRequest;
-use App\Rules\UniqueIgnoringSoftDeletes;
 
 class UpdateUserRequest extends BaseFormRequest
 {
@@ -16,18 +15,19 @@ class UpdateUserRequest extends BaseFormRequest
                 'required',
                 'string',
                 'max:255',
-                new UniqueIgnoringSoftDeletes('users', 'username', $user?->id),
+                'unique:users,username,' . $user?->id,
             ],
             'dni' => [
                 'required',
                 'string',
                 'size:8',
-                new UniqueIgnoringSoftDeletes('users', 'dni', $user?->id),
+                'unique:users,dni,' . $user?->id,
             ],
             'nombres' => ['required', 'string', 'max:120'],
             'apellidos' => ['required', 'string', 'max:120'],
             'whatsapp_number' => ['nullable', 'string', 'max:15'],
-            'role_id' => ['nullable', 'exists:roles,id'],
+            'roles' => ['nullable', 'array'],
+            'roles.*' => ['string', 'exists:roles,name'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ];
     }

@@ -20,7 +20,6 @@ class UpdateObjetoRequest extends BaseFormRequest
             'categoria_id' => ['nullable', 'exists:categorias,id'],
             'foto' => ['nullable', 'string', 'max:2048'],
             'serie' => ['nullable', 'string', 'max:50'],
-            'disponible' => ['boolean'],
         ];
     }
 }

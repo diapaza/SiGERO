@@ -59,13 +59,13 @@
               :key="option.value"
               :class="getOptionClasses(option, index)"
               role="option"
-              :aria-selected="option.value === modelValue"
+              :aria-selected="isSelected(option.value)"
               @mousedown.prevent="selectOption(option)"
               @mouseenter="highlightedIndex = index"
             >
               <span class="block truncate flex-1">{{ option.label }}</span>
               <CheckIcon
-                v-if="option.value === modelValue"
+                v-if="isSelected(option.value)"
                 class="h-4 w-4 stroke-brand-500 shrink-0"
               />
             </li>
@@ -172,7 +172,7 @@ const getOptionClasses = (option: SelectOption, index: number) => [
   highlightedIndex.value === index
     ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400'
     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/[0.03]',
-  option.value === props.modelValue ? 'font-medium' : '',
+  isSelected(option.value) ? 'font-medium' : '',
 ]
 
 const getCreateOptionClasses = computed(() => [
@@ -190,12 +190,19 @@ const inputRef = ref<HTMLInputElement | null>(null)
 
 const optionsRef = computed(() => props.options)
 
+const isSelected = (value: string | number): boolean => {
+  if (props.modelValue === null || props.modelValue === undefined || props.modelValue === '') {
+    return false
+  }
+  return String(value) === String(props.modelValue)
+}
+
 const filteredOptions = useFilteredOptions(optionsRef, searchTerm, props.filterBy)
 
 const selectedOption = computed(() => {
   const val = props.modelValue
   if (val === null || val === undefined || val === '') return null
-  return props.options.find((opt) => opt.value === val) || null
+  return props.options.find((opt) => isSelected(opt.value)) || null
 })
 
 const displayValue = computed(() => {

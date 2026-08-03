@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Objeto extends Model
@@ -36,13 +37,11 @@ class Objeto extends Model
         return $this->hasMany(Movimiento::class);
     }
 
-    // Objetos disponibles
     public function scopeDisponibles($query)
     {
         return $query->where('disponible', 1);
     }
 
-    // Objetos prestados
     public function scopePrestados($query)
     {
         return $query->where('disponible', 0);
@@ -81,9 +80,16 @@ class Objeto extends Model
         return str_pad($siguiente, 4, '0', STR_PAD_LEFT);
     }
 
-    public function ultimoMovimiento()
+    public function ultimoMovimiento(): HasOne
     {
         return $this->hasOne(Movimiento::class)->latestOfMany('fecha_hora');
+    }
+
+    public function movimientoActivo(): HasOne
+    {
+        return $this->hasOne(Movimiento::class)
+            ->where('tipo_movimiento', 'salida')
+            ->latestOfMany('fecha_hora');
     }
 
     public function marca(): BelongsTo

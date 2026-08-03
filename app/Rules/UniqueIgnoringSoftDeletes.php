@@ -28,7 +28,8 @@ class UniqueIgnoringSoftDeletes implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $query = DB::table($this->table)
-            ->where($this->column, $value);
+            ->where($this->column, $value)
+            ->whereNull('deleted_at');
 
         if ($this->ignoreId !== null) {
             $query->where('id', '!=', $this->ignoreId);

@@ -90,7 +90,7 @@
                 v-model="dniInput"
                 type="text"
                 placeholder="Ingrese DNI (8 dígitos)"
-                :disabled="!foundObjeto.disponible"
+                :disabled="!foundObjeto.disponible && foundUser !== null"
                 :state="form.errors.user_id ? 'error' : 'default'"
                 class-name="flex-1"
                 @keydown.enter.prevent="searchUser"
@@ -262,7 +262,7 @@
 
 <script setup lang="ts">
 import { ref, computed, h, watch } from 'vue'
-import { usePage, router, useForm } from '@inertiajs/vue3'
+import { usePage, useForm } from '@inertiajs/vue3'
 import type { ColumnDef } from '@tanstack/vue-table'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
@@ -277,19 +277,22 @@ import BaseSelectSearch from '@/components/base/BaseSelectSearch.vue'
 import BaseBadge from '@/components/base/BaseBadge.vue'
 import { EditIcon, SendIcon, CheckIcon, WarningIcon } from '@/icons'
 import { useValidation } from '@/composables/useValidation'
-import { toast } from 'vue-sonner'
+import { usePermissions } from '@/composables/usePermissions'
+import { useCrudColumns } from '@/composables/useCrudColumns'
+import { useFlashMessages } from '@/composables/useFlashMessages'
 import type { Movimiento, User } from '@/types/models'
-import { formatDate, formatDateTime } from '@/utils/date'
+import { formatDateTime } from '@/utils/date'
 
 const pageTitle = ref('Movimientos')
 const search = ref('')
 
 // Auth user
 const page = usePage()
+const { hasPermission } = usePermissions()
+const { pageProps } = useFlashMessages()
 const authUser = computed(() => (page.props.auth as any)?.user ?? null)
 
 // Data from controller
-const pageProps = computed(() => page.props as any)
 const movimientos = computed<Movimiento[]>(() => pageProps.value.movimientos ?? [])
 const users = computed<User[]>(() => pageProps.value.users ?? [])
 
@@ -337,7 +340,7 @@ const userOptions = computed(() =>
 // Auto-tab: when objeto is found, focus next field
 const canSubmit = computed(() => {
   if (!foundObjeto.value) return false
-  if (foundObjeto.value.disponible && !foundUser.value) return false
+  if (!foundUser.value) return false
   return true
 })
 
@@ -516,80 +519,61 @@ const filteredMovimientos = computed(() => {
   )
 })
 
+const { customColumn, badgeColumn } = useCrudColumns<Movimiento>()
+
 // Table columns
-const columns = computed<ColumnDef<Movimiento>[]>(() => [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: (info) => `${info.getValue()}`,
-  },
-  {
-    accessorKey: 'user',
-    header: 'Quien lo tiene',
-    cell: (info) => {
-      const movimiento = info.row.original
-      return movimiento.user?.name ?? '—'
-    },
-  },
-  {
-    accessorKey: 'telefono',
-    header: 'Teléfono',
-    cell: (info) => {
-      const movimiento = info.row.original
-      return movimiento.user?.whatsapp_number ?? 'No registrado'
-    },
-  },
-  {
-    accessorKey: 'objeto',
-    header: 'Código',
-    cell: (info) => {
-      const movimiento = info.row.original
-      return movimiento.objeto?.codigo ?? '—'
-    },
-  },
-  {
-    accessorKey: 'objetoNombre',
-    header: 'Objeto',
-    cell: (info) => {
-      const movimiento = info.row.original
-      return movimiento.objeto?.nombre ?? '—'
-    },
-  },
-  {
-    accessorKey: 'registrado_por',
-    header: 'Registrado por',
-    cell: (info) => {
-      const movimiento = info.row.original
-      return movimiento.registrado_por?.name ?? '—'
-    },
-  },
-  {
-    accessorKey: 'fecha_hora',
-    header: 'Fecha',
-    cell: (info) => formatDateTime(info.getValue() as string),
-  },
-  {
-    accessorKey: 'tipo_movimiento',
-    header: 'Tipo',
-    cell: (info) => {
-      const tipo = info.getValue() as string
-      return h(
-        BaseBadge,
-        {
-          color: tipo === 'salida' ? 'warning' : 'success',
-          size: 'sm',
-        },
-        () => (tipo === 'salida' ? 'Salida' : 'Retorno'),
-      )
-    },
-  },
-  {
-    id: 'acciones',
-    header: 'Acciones',
-    cell: (info) => {
-      const movimiento = info.row.original
-      return h('div', { class: 'flex items-center gap-2' }, [
-        h(
+const columns = computed<ColumnDef<Movimiento>[]>(() => {
+  const cols: ColumnDef<Movimiento>[] = [
+    customColumn({
+      accessorKey: 'id',
+      header: 'ID',
+      cell: (info) => `${info.getValue()}`,
+    }),
+    customColumn({
+      accessorKey: 'user',
+      header: 'Quien lo tiene',
+      cell: (info) => info.row.original.user?.name ?? '—',
+    }),
+    customColumn({
+      accessorKey: 'telefono',
+      header: 'Teléfono',
+      cell: (info) => info.row.original.user?.whatsapp_number ?? 'No registrado',
+    }),
+    customColumn({
+      accessorKey: 'objeto',
+      header: 'Código',
+      cell: (info) => info.row.original.objeto?.codigo ?? '—',
+    }),
+    customColumn({
+      accessorKey: 'objetoNombre',
+      header: 'Objeto',
+      cell: (info) => info.row.original.objeto?.nombre ?? '—',
+    }),
+    customColumn({
+      accessorKey: 'registrado_por',
+      header: 'Registrado por',
+      cell: (info) => info.row.original.registrado_por?.name ?? '—',
+    }),
+    customColumn({
+      accessorKey: 'fecha_hora',
+      header: 'Fecha',
+      cell: (info) => formatDateTime(info.getValue() as string),
+    }),
+    badgeColumn(
+      'tipo_movimiento',
+      'Tipo',
+      { salida: 'warning', retorno: 'success' },
+      { salida: 'Salida', retorno: 'Retorno' },
+    ),
+  ]
+
+  if (hasPermission('registrar movimientos')) {
+    cols.push({
+      id: 'acciones',
+      header: 'Acciones',
+      cell: (info) => {
+        const movimiento = info.row.original
+        return h(
           BaseButton,
           {
             variant: 'ghost',
@@ -598,26 +582,13 @@ const columns = computed<ColumnDef<Movimiento>[]>(() => [
             class: 'text-brand-500 hover:text-yellow-700',
           },
           () => h(EditIcon, { size: 18 }),
-        ),
-      ])
-    },
-  },
-])
+        )
+      },
+    })
+  }
 
-// Flash messages
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
+  return cols
+})
 
 // Auto-search: trigger search when input reaches expected length
 watch(codigoInput, (value) => {

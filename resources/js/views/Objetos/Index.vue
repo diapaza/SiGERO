@@ -18,7 +18,12 @@
             >
               <span>Ver eliminados </span><span class="hidden md:inline">({{ trashedCount }})</span>
             </BaseButton>
-            <BaseButton variant="primary" size="sm" @click="openCreateModal">
+            <BaseButton
+              v-if="hasPermission('gestionar objetos')"
+              variant="primary"
+              size="sm"
+              @click="openCreateModal"
+            >
               <template #start>
                 <PlusIcon :size="18" />
               </template>
@@ -44,7 +49,7 @@
         <BaseDataTable
           v-model:global-filter="search"
           :columns="columns"
-          :data="filteredObjetos"
+          :data="filteredEntities"
           :page-size="5"
         />
       </ComponentCard>
@@ -52,14 +57,14 @@
 
     <!-- Modal Crear / Editar -->
     <BaseModal
-      v-model:is-open="isModalOpen"
-      :title="editingObjeto ? 'Editar Objeto' : 'Agregar Objeto'"
+      v-model:is-open="modal.isOpen.value"
+      :title="editingEntity ? 'Editar Objeto' : 'Agregar Objeto'"
       size="lg"
       @close="closeModal"
     >
       <template #body>
         <form class="space-y-4" @submit.prevent="submitForm">
-          <template v-if="!editingObjeto">
+          <template v-if="!editingEntity">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <BaseFormField label="Código" label-for="codigo" :error="form.errors.codigo">
@@ -258,8 +263,17 @@
                 />
               </BaseFormField>
 
-              <BaseFormField label="Disponible" label-for="disponible">
-                <BaseCheckbox id="disponible" v-model="form.disponible" label="Disponible" />
+              <BaseFormField label="Estado" label-for="disponible">
+                <BaseBadge
+                  :color="editingEntity?.disponible ? 'success' : 'error'"
+                  :start-icon="editingEntity?.disponible ? CheckSmallIcon : CloseSmallIcon"
+                  size="sm"
+                >
+                  {{ editingEntity?.disponible ? 'Disponible' : 'Prestado' }}
+                </BaseBadge>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Se actualiza automáticamente con los movimientos.
+                </p>
               </BaseFormField>
             </div>
 
@@ -297,7 +311,7 @@
           Cancelar
         </BaseButton>
         <BaseButton variant="primary" :disabled="form.processing" @click="submitForm">
-          {{ form.processing ? 'Guardando...' : editingObjeto ? 'Actualizar' : 'Crear' }}
+          {{ form.processing ? 'Guardando...' : editingEntity ? 'Actualizar' : 'Crear' }}
         </BaseButton>
       </template>
     </BaseModal>
@@ -391,8 +405,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, watch } from 'vue'
-import { usePage, router } from '@inertiajs/vue3'
+import { ref, computed, h } from 'vue'
+import { router } from '@inertiajs/vue3'
 import type { ColumnDef } from '@tanstack/vue-table'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
@@ -404,40 +418,58 @@ import BaseDataTable from '@/components/base/BaseDataTable.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseFormField from '@/components/base/BaseFormField.vue'
 import BaseSelectSearch from '@/components/base/BaseSelectSearch.vue'
-import BaseCheckbox from '@/components/base/BaseCheckbox.vue'
 import BaseTextarea from '@/components/base/BaseTextarea.vue'
 import BaseImageDropzone from '@/components/base/BaseImageDropzone.vue'
 import BaseBadge from '@/components/base/BaseBadge.vue'
-import { PlusIcon, EditIcon, TrashIcon, EyeOffIcon, CloseSmallIcon, CheckSmallIcon } from '@/icons'
-import { useForm } from '@inertiajs/vue3'
-import { useDialog } from '@/composables/useDialog'
+import { PlusIcon, TrashIcon, EyeOffIcon, CloseSmallIcon, CheckSmallIcon, EditIcon } from '@/icons'
+import { useCrudIndex } from '@/composables/useCrudIndex'
+import { useCrudColumns } from '@/composables/useCrudColumns'
 import { useValidation } from '@/composables/useValidation'
+import { usePermissions } from '@/composables/usePermissions'
 import { toast } from 'vue-sonner'
 import type { Objeto, Marca, Categoria } from '@/types/models'
 import { formatDate } from '@/utils/date'
 
 const pageTitle = ref('Objetos')
-const search = ref('')
-const isModalOpen = ref(false)
 const isViewModalOpen = ref(false)
-const editingObjeto = ref<Objeto | null>(null)
 const viewingObjeto = ref<Objeto | null>(null)
 const uploadedImagePath = ref<string | null>(null)
 
-const page = usePage()
-const { confirm } = useDialog()
+const { hasPermission } = usePermissions()
 
-const form = useForm({
-  codigo: '',
-  nombre: '',
-  modelo: '',
-  descripcion: '',
-  marca_id: '',
-  categoria_id: '',
-  foto: '',
-  serie: '',
-  disponible: true,
+const {
+  search,
+  editingEntity,
+  form,
+  filteredEntities,
+  trashedCount,
+  modal,
+  pageProps,
+  openCreateModal: baseOpenCreateModal,
+  openEditModal: baseOpenEditModal,
+  closeModal: baseCloseModal,
+  submitForm: baseSubmitForm,
+  deleteEntity,
+  goToTrashed,
+} = useCrudIndex<Objeto>({
+  entityName: 'objeto',
+  entityLabel: 'objeto',
+  routePrefix: 'objetos',
+  searchFields: ['codigo', 'nombre'],
+  createFormFields: {
+    codigo: '',
+    nombre: '',
+    modelo: '',
+    descripcion: '',
+    marca_id: '',
+    categoria_id: '',
+    foto: '',
+    serie: '',
+  },
 })
+
+const { idColumn, fieldColumn, dateColumn, customColumn, badgeColumn, addActionsColumn } =
+  useCrudColumns<Objeto>()
 
 const { validate, validateSingleField } = useValidation(form, 'objeto', {
   codigo: 'código',
@@ -449,11 +481,8 @@ const { validate, validateSingleField } = useValidation(form, 'objeto', {
   descripcion: 'descripción',
 })
 
-const pageProps = computed(() => page.props as any)
-const objetos = computed<Objeto[]>(() => pageProps.value.objetos ?? [])
 const marcas = computed<Marca[]>(() => pageProps.value.marcas ?? [])
 const categorias = computed<Categoria[]>(() => pageProps.value.categorias ?? [])
-const trashedCount = computed(() => pageProps.value.trashedCount ?? 0)
 const uploadUrl = route('objetos.upload-image')
 
 const marcaOptions = computed(() =>
@@ -470,37 +499,14 @@ const categoriaOptions = computed(() =>
   })),
 )
 
-const filteredObjetos = computed(() => {
-  if (!search.value) return objetos.value
-  const term = search.value.toLowerCase()
-  return objetos.value.filter(
-    (obj) =>
-      obj.codigo.toLowerCase().includes(term) ||
-      obj.nombre.toLowerCase().includes(term) ||
-      obj.marca?.nombre?.toLowerCase().includes(term) ||
-      obj.categoria?.nombre?.toLowerCase().includes(term),
-  )
-})
-
 const openCreateModal = () => {
-  editingObjeto.value = null
-  form.reset()
+  baseOpenCreateModal()
   uploadedImagePath.value = null
-  isModalOpen.value = true
 }
 
 const openEditModal = (objeto: Objeto) => {
-  editingObjeto.value = objeto
-  form.nombre = objeto.nombre
-  form.modelo = objeto.modelo ?? ''
-  form.descripcion = objeto.descripcion ?? ''
-  form.marca_id = objeto.marca_id ? String(objeto.marca_id) : ''
-  form.categoria_id = objeto.categoria_id ? String(objeto.categoria_id) : ''
-  form.foto = objeto.foto ?? ''
-  form.serie = objeto.serie ?? ''
-  form.disponible = objeto.disponible
+  baseOpenEditModal(objeto)
   uploadedImagePath.value = null
-  isModalOpen.value = true
 }
 
 const openViewModal = (objeto: Objeto) => {
@@ -512,11 +518,8 @@ const closeModal = () => {
   if (uploadedImagePath.value) {
     axios.post(route('objetos.delete-image'), { path: uploadedImagePath.value })
   }
-  isModalOpen.value = false
-  editingObjeto.value = null
+  baseCloseModal()
   uploadedImagePath.value = null
-  form.reset()
-  form.clearErrors()
 }
 
 const closeViewModal = () => {
@@ -576,13 +579,13 @@ const handleCreateCategoria = async (name: string) => {
 const submitForm = () => {
   if (!validate()) return
 
-  if (editingObjeto.value) {
+  if (editingEntity.value) {
     form
       .transform((data) => ({
         ...data,
         foto: data.foto || '',
       }))
-      .put(route('objetos.update', editingObjeto.value.id), {
+      .put(route('objetos.update', editingEntity.value.id), {
         onSuccess: () => {
           uploadedImagePath.value = null
           closeModal()
@@ -603,134 +606,85 @@ const submitForm = () => {
   }
 }
 
-const deleteObjeto = async (objeto: Objeto) => {
-  const confirmed = await confirm({
-    title: 'Eliminar objeto',
-    description: `¿Estás seguro de eliminar el objeto "${objeto.nombre}"? Esta acción no se puede deshacer.`,
-    icon: 'warning',
-    confirmLabel: 'Eliminar',
-    destructive: true,
-  })
+const deleteObjeto = (objeto: Objeto) => deleteEntity(objeto, objeto.nombre)
 
-  if (confirmed) {
-    router.delete(route('objetos.destroy', objeto.id))
+const columns = computed<ColumnDef<Objeto>[]>(() => {
+  const cols: ColumnDef<Objeto>[] = [
+    fieldColumn('codigo', 'Código'),
+    fieldColumn('nombre', 'Nombre'),
+    fieldColumn('modelo', 'Modelo', 'Sin modelo'),
+    fieldColumn('serie', 'Serie', 'Sin serie'),
+    customColumn({
+      accessorKey: 'marca',
+      header: 'Marca',
+      cell: (info) => info.row.original.marca?.nombre ?? 'Sin marca',
+    }),
+    customColumn({
+      accessorKey: 'categoria',
+      header: 'Categoría',
+      cell: (info) => info.row.original.categoria?.nombre ?? 'Sin categoría',
+    }),
+    badgeColumn(
+      'disponible',
+      'Disponible',
+      { true: 'success', false: 'error' },
+      { true: 'Si', false: 'No' },
+    ),
+    dateColumn('created_at', 'Fecha de creación'),
+  ]
+
+  if (hasPermission('gestionar objetos')) {
+    cols.push({
+      id: 'acciones',
+      header: 'Acciones',
+      cell: (info) => {
+        const objeto = info.row.original
+        const buttons: any[] = []
+
+        buttons.push(
+          h(
+            BaseButton,
+            {
+              variant: 'ghost',
+              size: 'sm',
+              onClick: () => openViewModal(objeto),
+              class: 'text-blue-500 hover:text-blue-700',
+            },
+            () => h(EyeOffIcon, { size: 18 }),
+          ),
+        )
+
+        buttons.push(
+          h(
+            BaseButton,
+            {
+              variant: 'ghost',
+              size: 'sm',
+              onClick: () => openEditModal(objeto),
+              class: 'text-brand-500 hover:text-yellow-700',
+            },
+            () => h(EditIcon, { size: 18 }),
+          ),
+        )
+
+        buttons.push(
+          h(
+            BaseButton,
+            {
+              variant: 'ghost',
+              size: 'sm',
+              onClick: () => deleteObjeto(objeto),
+              class: 'text-error-500 hover:text-red-700',
+            },
+            () => h(TrashIcon, { size: 18 }),
+          ),
+        )
+
+        return h('div', { class: 'flex items-center gap-2' }, buttons)
+      },
+    })
   }
-}
 
-const goToTrashed = () => {
-  router.get(route('objetos.trashed'))
-}
-
-const columns = computed<ColumnDef<Objeto>[]>(() => [
-  {
-    accessorKey: 'codigo',
-    header: 'Código',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'nombre',
-    header: 'Nombre',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'modelo',
-    header: 'Modelo',
-    cell: (info) => info.getValue() ?? 'Sin modelo',
-  },
-  {
-    accessorKey: 'serie',
-    header: 'Serie',
-    cell: (info) => info.getValue() ?? 'Sin serie',
-  },
-  {
-    accessorKey: 'marca',
-    header: 'Marca',
-    cell: (info) => {
-      const objeto = info.row.original
-      return objeto.marca?.nombre ?? 'Sin marca'
-    },
-  },
-  {
-    accessorKey: 'categoria',
-    header: 'Categoría',
-    cell: (info) => {
-      const objeto = info.row.original
-      return objeto.categoria?.nombre ?? 'Sin categoría'
-    },
-  },
-  {
-    accessorKey: 'disponible',
-    header: 'Disponible',
-    cell: (info) => {
-      const disponible = info.getValue() as boolean
-      return h(
-        BaseBadge,
-        {
-          color: disponible ? 'success' : 'error',
-          startIcon: disponible ? CheckSmallIcon : CloseSmallIcon,
-          size: 'sm',
-        },
-        () => (disponible ? 'Si' : 'No'),
-      )
-    },
-  },
-  {
-    accessorKey: 'created_at',
-    header: 'Fecha de creación',
-    cell: (info) => formatDate(info.getValue() as string),
-  },
-  {
-    id: 'acciones',
-    header: 'Acciones',
-    cell: (info) => {
-      const objeto = info.row.original
-      return h('div', { class: 'flex items-center gap-2' }, [
-        h(
-          BaseButton,
-          {
-            variant: 'ghost',
-            size: 'sm',
-            onClick: () => openViewModal(objeto),
-            class: 'text-blue-500 hover:text-blue-700',
-          },
-          () => h(EyeOffIcon, { size: 18 }),
-        ),
-        h(
-          BaseButton,
-          {
-            variant: 'ghost',
-            size: 'sm',
-            onClick: () => openEditModal(objeto),
-            class: 'text-brand-500 hover:text-yellow-700',
-          },
-          () => h(EditIcon, { size: 18 }),
-        ),
-        h(
-          BaseButton,
-          {
-            variant: 'ghost',
-            size: 'sm',
-            onClick: () => deleteObjeto(objeto),
-            class: 'text-error-500 hover:text-red-700',
-          },
-          () => h(TrashIcon, { size: 18 }),
-        ),
-      ])
-    },
-  },
-])
-
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
+  return cols
+})
 </script>

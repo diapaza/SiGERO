@@ -293,7 +293,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { usePage, useForm } from '@inertiajs/vue3'
+import { useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
 import UserAvatar from '@/components/shared/UserAvatar.vue'
@@ -302,7 +302,7 @@ import BasePasswordInput from '@/components/base/BasePasswordInput.vue'
 import BaseFormField from '@/components/base/BaseFormField.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import { useValidation } from '@/composables/useValidation'
-import { toast } from 'vue-sonner'
+import { useFlashMessages } from '@/composables/useFlashMessages'
 import type { User, PendingReturn } from '@/types/models'
 
 const props = defineProps<{
@@ -312,10 +312,12 @@ const props = defineProps<{
 const pageTitle = ref('Mi Perfil')
 const activeTab = ref<'profile' | 'password' | 'pending'>('profile')
 
-const page = usePage()
-const pageProps = computed(() => page.props as any)
+const { pageProps } = useFlashMessages()
 const user = computed<User>(() => pageProps.value.user)
-const isAdmin = computed(() => user.value.role?.nombre === 'Administrador')
+const isAdmin = computed(() => {
+  const roles = user.value.roles ?? []
+  return roles.some((r) => r.name === 'Administrador')
+})
 
 const tabs = computed(() => {
   const baseTabs: Array<{ id: 'profile' | 'password' | 'pending'; label: string }> = [
@@ -399,11 +401,7 @@ const { validate: validatePassword, validateSingleField: validatePasswordField }
 const submitProfile = () => {
   if (!validateProfile()) return
 
-  profileForm.put(route('profile.update'), {
-    onSuccess: () => {
-      toast.success('Perfil actualizado correctamente.')
-    },
-  })
+  profileForm.put(route('profile.update'))
 }
 
 const submitPassword = () => {
@@ -412,22 +410,7 @@ const submitPassword = () => {
   passwordForm.put(route('profile.password'), {
     onSuccess: () => {
       passwordForm.reset()
-      toast.success('Contraseña actualizada correctamente.')
     },
   })
 }
-
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
 </script>

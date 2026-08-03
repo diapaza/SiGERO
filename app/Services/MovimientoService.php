@@ -3,72 +3,147 @@
 namespace App\Services;
 
 use App\Models\Movimiento;
+use App\Models\Objeto;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
-readonly class MovimientoService
+readonly class MovimientoService extends BaseCrudService
 {
     public function __construct(
         private Movimiento $model,
-    ) {}
+        private NotificationService $notifications,
+    ) {
+        parent::__construct($model);
+    }
 
     public function create(array $data): Movimiento
     {
-        $movimiento = $this->model->create($data);
-
-        $this->updateObjetoDisponibilidad(
-            $movimiento->objeto_id,
-            $data['tipo_movimiento'] === 'salida' ? false : true,
+        $this->assertTipoValido(
+            $data['objeto_id'],
+            $data['tipo_movimiento'],
         );
+
+        $movimiento = parent::create($data);
+
+        $this->recalcularDisponibilidad($movimiento->objeto_id);
+
+        $this->notifyMovimiento($movimiento);
 
         return $movimiento;
     }
 
-    public function update(Movimiento $movimiento, array $data): Movimiento
+    public function update(Model $entity, array $data): Model
     {
-        $tipoAnterior = $movimiento->tipo_movimiento;
-        $movimiento->update($data);
+        /** @var Movimiento $movimiento */
+        $movimiento = $entity;
 
-        $tipoNuevo = $data['tipo_movimiento'];
+        $tipoAnterior = $movimiento->tipo_movimiento?->value;
+        $tipoNuevo = $data['tipo_movimiento'] ?? $tipoAnterior;
+
+        $this->assertTipoValido(
+            $movimiento->objeto_id,
+            $tipoNuevo,
+            excludeMovimientoId: $movimiento->id,
+        );
+
+        parent::update($movimiento, $data);
+        $movimiento = $movimiento->fresh();
 
         if ($tipoAnterior !== $tipoNuevo) {
-            $this->updateObjetoDisponibilidad(
-                $movimiento->objeto_id,
-                $tipoNuevo === 'salida' ? false : true,
-            );
+            $this->recalcularDisponibilidad($movimiento->objeto_id);
         }
 
-        return $movimiento->fresh();
+        return $movimiento;
     }
 
-    public function delete(Movimiento $movimiento): bool
+    public function delete(Model $entity): bool
     {
-        $result = $movimiento->delete();
+        /** @var Movimiento $movimiento */
+        $movimiento = $entity;
+        $result = parent::delete($movimiento);
 
         if ($result) {
-            $this->updateObjetoDisponibilidad(
-                $movimiento->objeto_id,
-                $movimiento->tipo_movimiento === 'salida' ? true : false,
-            );
+            $this->recalcularDisponibilidad($movimiento->objeto_id);
         }
 
         return $result;
     }
 
-    public function restore(Movimiento $movimiento): bool
+    public function restore(Model $entity): bool
     {
-        $result = $movimiento->restore();
+        /** @var Movimiento $movimiento */
+        $movimiento = $entity;
+        $result = parent::restore($movimiento);
 
         if ($result) {
-            $this->updateObjetoDisponibilidad(
-                $movimiento->objeto_id,
-                $movimiento->tipo_movimiento === 'salida' ? false : true,
-            );
+            $this->recalcularDisponibilidad($movimiento->objeto_id);
         }
 
         return $result;
     }
 
-    private function updateObjetoDisponibilidad(int $objetoId, bool $disponible): void
+    /**
+     * Valida los invariantes del préstamo: un objeto solo puede tener una salida
+     * activa a la vez, y un retorno solo es válido si el objeto está prestado.
+     */
+    private function assertTipoValido(
+        int $objetoId,
+        string $tipo,
+        ?int $excludeMovimientoId = null,
+    ): void {
+        $objeto = Objeto::find($objetoId);
+
+        if (! $objeto) {
+            abort(422, 'El objeto no existe.');
+        }
+
+        $ultimoMovimiento = Movimiento::where('objeto_id', $objetoId)
+            ->when($excludeMovimientoId, fn ($query) => $query->where('id', '!=', $excludeMovimientoId))
+            ->latest('fecha_hora')
+            ->first();
+
+        $estaPrestado = $ultimoMovimiento?->tipo_movimiento?->value === 'salida';
+
+        if ($tipo === 'salida' && $estaPrestado) {
+            abort(422, 'El objeto ya está prestado.');
+        }
+
+        if ($tipo === 'retorno' && ! $estaPrestado) {
+            abort(422, 'El objeto no está prestado.');
+        }
+    }
+
+    /**
+     * Deriva el flag `disponible` del historial real de movimientos.
+     * Un objeto está disponible salvo que su último movimiento sea una salida.
+     */
+    private function recalcularDisponibilidad(int $objetoId): void
     {
-        \App\Models\Objeto::where('id', $objetoId)->update(['disponible' => $disponible]);
+        $ultimoMovimiento = Movimiento::where('objeto_id', $objetoId)
+            ->latest('fecha_hora')
+            ->first();
+
+        $disponible = $ultimoMovimiento?->tipo_movimiento?->value !== 'salida';
+
+        Objeto::where('id', $objetoId)->update(['disponible' => $disponible]);
+    }
+
+    private function notifyMovimiento(Movimiento $movimiento): void
+    {
+        $registradoPor = User::find($movimiento->registrado_por);
+
+        if (! $registradoPor) {
+            return;
+        }
+
+        $movimiento->load('objeto');
+
+        if ($movimiento->tipo_movimiento->value === 'salida') {
+            $this->notifications->salidaRegistrada($movimiento, $registradoPor);
+
+            return;
+        }
+
+        $this->notifications->retornoRegistrado($movimiento, $registradoPor);
     }
 }

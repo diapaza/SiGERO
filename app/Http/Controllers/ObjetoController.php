@@ -12,28 +12,40 @@ use App\Services\ObjetoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
 
-class ObjetoController extends Controller
+class ObjetoController extends BaseCrudController
 {
-    public function index(): Response
+    protected function modelClass(): string
     {
-        $objetos = Objeto::with(['marca', 'categoria'])->latest()->get();
-        $marcas = Marca::latest()->get();
-        $categorias = Categoria::latest()->get();
-        $trashedCount = Objeto::onlyTrashed()->count();
+        return Objeto::class;
+    }
 
-        return Inertia::render('Objetos/Index', [
-            'objetos' => $objetos,
-            'marcas' => $marcas,
-            'categorias' => $categorias,
-            'trashedCount' => $trashedCount,
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ],
-        ]);
+    protected function viewPath(): string
+    {
+        return 'Objetos';
+    }
+
+    protected function routePrefix(): string
+    {
+        return 'objetos';
+    }
+
+    protected function label(): string
+    {
+        return 'Objeto';
+    }
+
+    protected function relations(): array
+    {
+        return ['marca', 'categoria'];
+    }
+
+    protected function indexExtras(Request $request): array
+    {
+        return [
+            'marcas' => Marca::latest()->get(),
+            'categorias' => Categoria::latest()->get(),
+        ];
     }
 
     public function store(StoreObjetoRequest $request, ObjetoService $service): RedirectResponse
@@ -68,19 +80,6 @@ class ObjetoController extends Controller
         }
 
         return redirect()->route('objetos.index')->with('success', 'Objeto eliminado correctamente.');
-    }
-
-    public function trashed(): Response
-    {
-        $objetos = Objeto::with(['marca', 'categoria'])->onlyTrashed()->latest('deleted_at')->get();
-
-        return Inertia::render('Objetos/Trashed', [
-            'objetos' => $objetos,
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ],
-        ]);
     }
 
     public function restore(Objeto $objeto, ObjetoService $service): RedirectResponse

@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Role;
 
 use App\Http\Requests\BaseFormRequest;
-use App\Rules\UniqueIgnoringSoftDeletes;
 
 class UpdateRoleRequest extends BaseFormRequest
 {
@@ -12,12 +11,13 @@ class UpdateRoleRequest extends BaseFormRequest
         $role = $this->route('role');
 
         return [
-            'nombre' => [
+            'name' => [
                 'required',
                 'string',
                 'max:255',
-                new UniqueIgnoringSoftDeletes('roles', 'nombre', $role?->id),
+                'unique:roles,name,' . $role?->id,
             ],
+            'guard_name' => ['nullable', 'string', 'max:255'],
         ];
     }
 }
