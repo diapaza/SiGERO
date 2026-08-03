@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Rol;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -16,17 +16,23 @@ class DatabaseSeeder extends Seeder
         $roles = ['Administrador', 'Personal', 'Practicante'];
 
         foreach ($roles as $role) {
-            Rol::create(['nombre' => $role]);
+            Role::create([
+                'name' => $role,
+                'guard_name' => 'web',
+            ]);
         }
 
-        User::create([
+        $this->call(PermissionSeeder::class);
+
+        $admin = User::create([
             'username' => 'admin',
             'dni' => '12345678',
             'password' => 'Admin123$',
             'nombres' => 'Administrador',
             'apellidos' => 'Redes',
             'whatsapp_number' => '987654321',
-            'role_id' => 1,
         ]);
+
+        $admin->assignRole('Administrador');
     }
 }
