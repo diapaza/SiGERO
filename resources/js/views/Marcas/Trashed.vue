@@ -40,8 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, watch } from 'vue'
-import { usePage, router } from '@inertiajs/vue3'
+import { ref, computed, h } from 'vue'
+import { router } from '@inertiajs/vue3'
 import type { ColumnDef } from '@tanstack/vue-table'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
@@ -51,17 +51,16 @@ import BaseInput from '@/components/base/BaseInput.vue'
 import BaseDataTable from '@/components/base/BaseDataTable.vue'
 import { ChevronLeftIcon, RefreshIcon } from '@/icons'
 import { useDialog } from '@/composables/useDialog'
-import { toast } from 'vue-sonner'
+import { useFlashMessages } from '@/composables/useFlashMessages'
 import type { Marca } from '@/types/models'
 import { formatDate } from '@/utils/date'
 
 const pageTitle = ref('Marcas Eliminadas')
 const search = ref('')
 
-const page = usePage()
+const { pageProps } = useFlashMessages()
 const { confirm } = useDialog()
 
-const pageProps = computed(() => page.props as any)
 const marcas = computed<Marca[]>(() => pageProps.value.marcas ?? [])
 
 const filteredMarcas = computed(() => {
@@ -122,18 +121,4 @@ const columns = computed<ColumnDef<Marca>[]>(() => [
     },
   },
 ])
-
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
 </script>

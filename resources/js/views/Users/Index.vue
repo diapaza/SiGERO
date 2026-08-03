@@ -18,7 +18,12 @@
             >
               <span>Ver eliminados </span><span class="hidden md:inline">({{ trashedCount }})</span>
             </BaseButton>
-            <BaseButton variant="primary" size="sm" @click="openCreateModal">
+            <BaseButton
+              v-if="hasPermission('crear usuarios')"
+              variant="primary"
+              size="sm"
+              @click="openCreateModal"
+            >
               <template #start>
                 <PlusIcon :size="18" />
               </template>
@@ -44,15 +49,15 @@
         <BaseDataTable
           v-model:global-filter="search"
           :columns="columns"
-          :data="filteredUsers"
+          :data="filteredEntities"
           :page-size="5"
         />
       </ComponentCard>
     </div>
 
     <BaseModal
-      v-model:is-open="isModalOpen"
-      :title="editingUser ? 'Editar Usuario' : 'Agregar Usuario'"
+      v-model:is-open="modal.isOpen.value"
+      :title="editingEntity ? 'Editar Usuario' : 'Agregar Usuario'"
       size="md"
       @close="closeModal"
     >
@@ -142,10 +147,10 @@
               />
             </BaseFormField>
 
-            <BaseFormField label="Rol" label-for="role_id" :error="form.errors.role_id">
+            <BaseFormField label="Rol" label-for="roles" :error="form.errors.roles">
               <BaseSelectSearch
-                id="role_id"
-                v-model="form.role_id"
+                id="roles"
+                v-model="form.roles[0]"
                 :options="roleOptions"
                 :searchable="false"
                 placeholder="Seleccione un rol"
@@ -157,27 +162,27 @@
           <BaseFormField
             label="Contraseña"
             label-for="password"
-            :required="!editingUser"
+            :required="!editingEntity"
             :error="form.errors.password"
           >
             <BasePasswordInput
               id="password"
               v-model="form.password"
               :placeholder="
-                editingUser
+                editingEntity
                   ? 'Dejar vacío para mantener la actual'
                   : 'Contraseña generada automáticamente'
               "
               class-name="w-full"
               @blur="validateSingleField('password')"
             />
-            <p v-if="!editingUser" class="mt-1 text-sm text-gray-500">
+            <p v-if="!editingEntity" class="mt-1 text-sm text-gray-500">
               Se genera automáticamente. Puede editarla si lo desea.
             </p>
           </BaseFormField>
 
           <BaseFormField
-            v-if="editingUser && form.password"
+            v-if="editingEntity && form.password"
             label="Confirmar contraseña"
             label-for="password_confirmation"
             :error="form.errors.password_confirmation"
@@ -197,16 +202,23 @@
           Cancelar
         </BaseButton>
         <BaseButton variant="primary" :disabled="form.processing" @click="submitForm">
-          {{ form.processing ? 'Guardando...' : editingUser ? 'Actualizar' : 'Crear' }}
+          {{ form.processing ? 'Guardando...' : editingEntity ? 'Actualizar' : 'Crear' }}
         </BaseButton>
       </template>
     </BaseModal>
+
+    <PermissionsModal
+      :is-open="isPermissionsModalOpen"
+      :user="selectedUserForPermissions"
+      :all-permissions="allPermissions"
+      :user-permissions="selectedUserPermissions"
+      @close="closePermissionsModal"
+    />
   </AdminLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, h, watch } from 'vue'
-import { usePage, router } from '@inertiajs/vue3'
 import type { ColumnDef } from '@tanstack/vue-table'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
@@ -218,73 +230,94 @@ import BaseModal from '@/components/base/BaseModal.vue'
 import BaseFormField from '@/components/base/BaseFormField.vue'
 import BaseSelectSearch from '@/components/base/BaseSelectSearch.vue'
 import BasePasswordInput from '@/components/base/BasePasswordInput.vue'
-import { PlusIcon, EditIcon, TrashIcon } from '@/icons'
-import { useForm } from '@inertiajs/vue3'
-import { useDialog } from '@/composables/useDialog'
+import PermissionsModal from '@/components/PermissionsModal.vue'
+import { PlusIcon, TrashIcon, LockIcon, EditIcon } from '@/icons'
+import { useCrudIndex } from '@/composables/useCrudIndex'
+import { useCrudColumns } from '@/composables/useCrudColumns'
 import { useValidation } from '@/composables/useValidation'
-import { toast } from 'vue-sonner'
-import type { User, Role } from '@/types/models'
+import type { User, Role, Permission } from '@/types/models'
 import { formatDate } from '@/utils/date'
 
 const pageTitle = ref('Usuarios')
-const search = ref('')
-const isModalOpen = ref(false)
-const editingUser = ref<User | null>(null)
 
-const page = usePage()
-const { confirm } = useDialog()
-
-const form = useForm({
-  username: '',
-  dni: '',
-  nombres: '',
-  apellidos: '',
-  whatsapp_number: '',
-  role_id: '',
-  password: '',
-  password_confirmation: '',
+const {
+  search,
+  editingEntity,
+  form,
+  filteredEntities,
+  trashedCount,
+  modal,
+  hasPermission,
+  pageProps,
+  openCreateModal: baseOpenCreateModal,
+  openEditModal: baseOpenEditModal,
+  closeModal: baseCloseModal,
+  submitForm: baseSubmitForm,
+  deleteEntity,
+  goToTrashed,
+} = useCrudIndex<User>({
+  entityName: 'user',
+  entityLabel: 'usuario',
+  routePrefix: 'users',
+  searchFields: ['username', 'dni', 'nombres', 'apellidos'],
+  createFormFields: {
+    username: '',
+    dni: '',
+    nombres: '',
+    apellidos: '',
+    whatsapp_number: '',
+    roles: [''],
+    password: '',
+    password_confirmation: '',
+  },
 })
 
-const { validate, validateSingleField } = useValidation(form, 'user', {
+const { idColumn, fieldColumn, dateColumn, customColumn, addActionsColumn } = useCrudColumns<User>()
+
+const validationLabels = {
   username: 'nombre de usuario',
   dni: 'DNI',
   nombres: 'nombres',
   apellidos: 'apellidos',
   whatsapp_number: 'número de WhatsApp',
   password: 'contraseña',
-})
+}
 
-const pageProps = computed(() => page.props as any)
-const users = computed<User[]>(() => pageProps.value.users ?? [])
+const { validate: validateCreate, validateSingleField: validateSingleFieldCreate } = useValidation(
+  form,
+  'user',
+  validationLabels,
+)
+const { validate: validateUpdate, validateSingleField: validateSingleFieldUpdate } = useValidation(
+  form,
+  'userUpdate',
+  validationLabels,
+)
+
+const validate = () => (editingEntity.value ? validateUpdate() : validateCreate())
+const validateSingleField = (field: string) =>
+  editingEntity.value ? validateSingleFieldUpdate(field) : validateSingleFieldCreate(field)
+
 const roles = computed<Role[]>(() => pageProps.value.roles ?? [])
-const trashedCount = computed(() => pageProps.value.trashedCount ?? 0)
 const authUserId = computed(() => pageProps.value.auth?.user?.id)
+const allPermissions = computed<Permission[]>(() => pageProps.value.allPermissions ?? [])
 
 const roleOptions = computed(() =>
   roles.value.map((role) => ({
-    value: String(role.id),
-    label: role.nombre,
+    value: role.name,
+    label: role.name,
   })),
 )
 
-const defaultRoleId = computed(() => {
-  const practicante = roles.value.find(
-    (r) => r.nombre.toLowerCase().includes('practicante') || r.id === 3,
-  )
-  return practicante ? String(practicante.id) : roles.value[0] ? String(roles.value[0].id) : ''
+const defaultRoleName = computed(() => {
+  const practicante = roles.value.find((r) => r.name.toLowerCase().includes('practicante'))
+  return practicante ? practicante.name : (roles.value[0]?.name ?? '')
 })
 
-const filteredUsers = computed(() => {
-  if (!search.value) return users.value
-  const term = search.value.toLowerCase()
-  return users.value.filter(
-    (user) =>
-      user.username.toLowerCase().includes(term) ||
-      user.dni.toLowerCase().includes(term) ||
-      user.nombres.toLowerCase().includes(term) ||
-      user.apellidos.toLowerCase().includes(term),
-  )
-})
+const getUserRoles = (user: User): string => {
+  if (!user.roles || user.roles.length === 0) return '-'
+  return user.roles.map((r) => r.name).join(', ')
+}
 
 const generatePassword = (nombres: string, apellidos: string): string => {
   const nombre = nombres.split(' ')[0] || ''
@@ -296,187 +329,157 @@ const generatePassword = (nombres: string, apellidos: string): string => {
 }
 
 const openCreateModal = () => {
-  editingUser.value = null
-  form.reset()
-  form.role_id = defaultRoleId.value
+  baseOpenCreateModal()
+  form.roles = [defaultRoleName.value]
   form.password = generatePassword(form.nombres, form.apellidos)
   form.password_confirmation = form.password
-  isModalOpen.value = true
 }
 
 const openEditModal = (user: User) => {
-  editingUser.value = user
-  form.username = user.username
-  form.dni = user.dni
-  form.nombres = user.nombres
-  form.apellidos = user.apellidos
-  form.whatsapp_number = user.whatsapp_number ?? ''
-  form.role_id = user.role_id ? String(user.role_id) : ''
+  baseOpenEditModal(user)
+  form.roles = user.roles.length > 0 ? [user.roles[0].name] : ['']
   form.password = ''
   form.password_confirmation = ''
-  isModalOpen.value = true
 }
 
 const closeModal = () => {
-  isModalOpen.value = false
-  editingUser.value = null
-  form.reset()
-  form.clearErrors()
+  baseCloseModal()
 }
 
 const submitForm = () => {
   if (!validate()) return
 
-  if (editingUser.value) {
-    const data: Record<string, unknown> = {
-      username: form.username,
-      dni: form.dni,
-      nombres: form.nombres,
-      apellidos: form.apellidos,
-      whatsapp_number: form.whatsapp_number,
-      role_id: form.role_id,
-    }
+  const data: Record<string, unknown> = {
+    username: form.username,
+    dni: form.dni,
+    nombres: form.nombres,
+    apellidos: form.apellidos,
+    whatsapp_number: form.whatsapp_number,
+    roles: form.roles.filter((r: string) => r !== ''),
+  }
 
-    if (form.password) {
-      data.password = form.password
-      data.password_confirmation = form.password_confirmation
-    }
+  if (form.password) {
+    data.password = form.password
+    data.password_confirmation = form.password_confirmation
+  }
 
+  if (editingEntity.value) {
     form
       .transform(() => data)
-      .put(route('users.update', editingUser.value.id), {
-        onSuccess: () => {
-          closeModal()
-        },
+      .put(route('users.update', editingEntity.value!.id), {
+        onSuccess: () => closeModal(),
       })
   } else {
-    form.post(route('users.store'), {
-      onSuccess: () => {
-        closeModal()
+    form
+      .transform(() => data)
+      .post(route('users.store'), {
+        onSuccess: () => closeModal(),
+      })
+  }
+}
+
+const deleteUser = (user: User) => deleteEntity(user, user.username)
+
+// Permissions modal
+const isPermissionsModalOpen = ref(false)
+const selectedUserForPermissions = ref<User | null>(null)
+const selectedUserPermissions = ref<string[]>([])
+
+const openPermissionsModal = (user: User) => {
+  selectedUserForPermissions.value = user
+  selectedUserPermissions.value = user.all_permissions?.map((p) => p.name) ?? []
+  isPermissionsModalOpen.value = true
+}
+
+const closePermissionsModal = () => {
+  isPermissionsModalOpen.value = false
+  selectedUserForPermissions.value = null
+  selectedUserPermissions.value = []
+}
+
+const columns = computed<ColumnDef<User>[]>(() => {
+  const cols: ColumnDef<User>[] = [
+    idColumn(),
+    fieldColumn('username', 'Usuario'),
+    fieldColumn('dni', 'DNI'),
+    fieldColumn('nombres', 'Nombres'),
+    fieldColumn('apellidos', 'Apellidos'),
+    fieldColumn('whatsapp_number', 'WhatsApp'),
+    customColumn({
+      accessorKey: 'roles',
+      header: 'Rol',
+      cell: (info) => getUserRoles(info.row.original),
+    }),
+    dateColumn('created_at', 'Fecha de creación'),
+  ]
+
+  if (hasPermission('editar usuarios') || hasPermission('eliminar usuarios')) {
+    const isCurrentUser = (user: User) => user.id === authUserId.value
+
+    cols.push({
+      id: 'acciones',
+      header: 'Acciones',
+      cell: (info) => {
+        const user = info.row.original
+        const buttons: any[] = []
+
+        if (hasPermission('editar usuarios')) {
+          buttons.push(
+            h(
+              BaseButton,
+              {
+                variant: 'ghost',
+                size: 'sm',
+                onClick: () => openEditModal(user),
+                class: 'text-brand-500 hover:text-yellow-700',
+              },
+              () => h(EditIcon, { size: 18 }),
+            ),
+          )
+        }
+
+        if (hasPermission('editar usuarios')) {
+          buttons.push(
+            h(
+              BaseButton,
+              {
+                variant: 'ghost',
+                size: 'sm',
+                onClick: () => openPermissionsModal(user),
+                class: 'text-blue-500 hover:text-blue-700',
+              },
+              () => h(LockIcon, { size: 18 }),
+            ),
+          )
+        }
+
+        if (hasPermission('eliminar usuarios') && !isCurrentUser(user)) {
+          buttons.push(
+            h(
+              BaseButton,
+              {
+                variant: 'ghost',
+                size: 'sm',
+                onClick: () => deleteUser(user),
+                class: 'text-error-500 hover:text-red-700',
+              },
+              () => h(TrashIcon, { size: 18 }),
+            ),
+          )
+        }
+
+        return h('div', { class: 'flex items-center gap-2' }, buttons)
       },
     })
   }
-}
 
-const deleteUser = async (user: User) => {
-  const confirmed = await confirm({
-    title: 'Eliminar usuario',
-    description: `¿Estás seguro de eliminar el usuario "${user.username}"? Esta acción no se puede deshacer.`,
-    icon: 'warning',
-    confirmLabel: 'Eliminar',
-    destructive: true,
-  })
-
-  if (confirmed) {
-    router.delete(route('users.destroy', user.id))
-  }
-}
-
-const goToTrashed = () => {
-  router.get(route('users.trashed'))
-}
-
-const columns = computed<ColumnDef<User>[]>(() => [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'username',
-    header: 'Usuario',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'dni',
-    header: 'DNI',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'nombres',
-    header: 'Nombres',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'apellidos',
-    header: 'Apellidos',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'whatsapp_number',
-    header: 'WhatsApp',
-    cell: (info) => info.getValue() ?? '-',
-  },
-  {
-    accessorKey: 'role',
-    header: 'Rol',
-    cell: (info) => {
-      const user = info.row.original
-      return user.role?.nombre ?? '-'
-    },
-  },
-  {
-    accessorKey: 'created_at',
-    header: 'Fecha de creación',
-    cell: (info) => formatDate(info.getValue() as string),
-  },
-  {
-    id: 'acciones',
-    header: 'Acciones',
-    cell: (info) => {
-      const user = info.row.original
-      const isCurrentUser = user.id === authUserId.value
-      const buttons = [
-        h(
-          BaseButton,
-          {
-            variant: 'ghost',
-            size: 'sm',
-            onClick: () => openEditModal(user),
-            class: 'text-brand-500 hover:text-yellow-700',
-          },
-          () => h(EditIcon, { size: 18 }),
-        ),
-      ]
-
-      if (!isCurrentUser) {
-        buttons.push(
-          h(
-            BaseButton,
-            {
-              variant: 'ghost',
-              size: 'sm',
-              onClick: () => deleteUser(user),
-              class: 'text-error-500 hover:text-red-700',
-            },
-            () => h(TrashIcon, { size: 18 }),
-          ),
-        )
-      }
-
-      return h('div', { class: 'flex items-center gap-2' }, buttons)
-    },
-  },
-])
+  return cols
+})
 
 watch([() => form.nombres, () => form.apellidos], () => {
-  if (!editingUser.value) {
+  if (!editingEntity.value) {
     form.password = generatePassword(form.nombres, form.apellidos)
     form.password_confirmation = form.password
   }
 })
-
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
 </script>

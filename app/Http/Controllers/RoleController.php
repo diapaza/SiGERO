@@ -4,27 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Role\StoreRoleRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
-use App\Models\Rol;
+use App\Models\Role;
 use App\Services\RoleService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
-use Inertia\Inertia;
-use Inertia\Response;
 
-class RoleController extends Controller
+class RoleController extends BaseCrudController
 {
-    public function index(): Response
+    protected function modelClass(): string
     {
-        $roles = Rol::latest()->get();
-        $trashedCount = Rol::onlyTrashed()->count();
+        return Role::class;
+    }
 
-        return Inertia::render('Roles/Index', [
-            'roles' => $roles,
-            'trashedCount' => $trashedCount,
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ],
-        ]);
+    protected function viewPath(): string
+    {
+        return 'Roles';
+    }
+
+    protected function routePrefix(): string
+    {
+        return 'roles';
+    }
+
+    protected function label(): string
+    {
+        return 'Rol';
+    }
+
+    protected function usesSoftDeletes(): bool
+    {
+        return false;
+    }
+
+    protected function indexQuery(): ?Builder
+    {
+        return Role::query()->withCount('users');
     }
 
     public function store(StoreRoleRequest $request, RoleService $service): RedirectResponse
@@ -34,14 +48,14 @@ class RoleController extends Controller
         return redirect()->route('roles.index')->with('success', 'Rol creado correctamente.');
     }
 
-    public function update(UpdateRoleRequest $request, Rol $role, RoleService $service): RedirectResponse
+    public function update(UpdateRoleRequest $request, Role $role, RoleService $service): RedirectResponse
     {
         $service->update($role, $request->validated());
 
         return redirect()->route('roles.index')->with('success', 'Rol actualizado correctamente.');
     }
 
-    public function destroy(Rol $role, RoleService $service): RedirectResponse
+    public function destroy(Role $role, RoleService $service): RedirectResponse
     {
         $deleted = $service->delete($role);
 
@@ -50,25 +64,5 @@ class RoleController extends Controller
         }
 
         return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
-    }
-
-    public function trashed(): Response
-    {
-        $roles = Rol::onlyTrashed()->latest('deleted_at')->get();
-
-        return Inertia::render('Roles/Trashed', [
-            'roles' => $roles,
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ],
-        ]);
-    }
-
-    public function restore(Rol $role, RoleService $service): RedirectResponse
-    {
-        $service->restore($role);
-
-        return redirect()->route('roles.trashed')->with('success', 'Rol restaurado correctamente.');
     }
 }

@@ -8,6 +8,7 @@ import 'vue-sonner/style.css'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { createApp, h } from 'vue'
 import type { DefineComponent } from 'vue'
+import { ZiggyVue } from 'ziggy-js'
 import pinia from './stores'
 import VueApexCharts from 'vue3-apexcharts'
 import AppLayout from './App.vue'
@@ -26,6 +27,7 @@ createInertiaApp({
     app.use(pinia)
     app.use(VueApexCharts)
     app.use(plugin)
+    app.use(ZiggyVue)
     app.mount(el)
   },
   progress: {

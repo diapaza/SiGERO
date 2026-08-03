@@ -7,24 +7,27 @@ use App\Http\Requests\Categoria\UpdateCategoriaRequest;
 use App\Models\Categoria;
 use App\Services\CategoriaService;
 use Illuminate\Http\RedirectResponse;
-use Inertia\Inertia;
-use Inertia\Response;
 
-class CategoriaController extends Controller
+class CategoriaController extends BaseCrudController
 {
-    public function index(): Response
+    protected function modelClass(): string
     {
-        $categorias = Categoria::latest()->get();
-        $trashedCount = Categoria::onlyTrashed()->count();
+        return Categoria::class;
+    }
 
-        return Inertia::render('Categorias/Index', [
-            'categorias' => $categorias,
-            'trashedCount' => $trashedCount,
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ],
-        ]);
+    protected function viewPath(): string
+    {
+        return 'Categorias';
+    }
+
+    protected function routePrefix(): string
+    {
+        return 'categorias';
+    }
+
+    protected function label(): string
+    {
+        return 'Categoría';
     }
 
     public function store(StoreCategoriaRequest $request, CategoriaService $service): RedirectResponse
@@ -50,19 +53,6 @@ class CategoriaController extends Controller
         }
 
         return redirect()->route('categorias.index')->with('success', 'Categoría eliminada correctamente.');
-    }
-
-    public function trashed(): Response
-    {
-        $categorias = Categoria::onlyTrashed()->latest('deleted_at')->get();
-
-        return Inertia::render('Categorias/Trashed', [
-            'categorias' => $categorias,
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ],
-        ]);
     }
 
     public function restore(Categoria $categoria, CategoriaService $service): RedirectResponse

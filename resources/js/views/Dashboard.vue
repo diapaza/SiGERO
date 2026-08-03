@@ -4,7 +4,7 @@
     <div class="space-y-6">
       <DashboardStats :stats="estadisticas" :usuarios-total="usuariosTotal" />
 
-      <template v-if="isAdminOrPersonal">
+      <template v-if="hasReportPermission">
         <DashboardCharts
           :movimientos-por-mes="movimientosPorMes"
           :objetos-por-categoria="objetosPorCategoria"
@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { usePage } from '@inertiajs/vue3'
+import { usePage, usePoll } from '@inertiajs/vue3'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
 import DashboardStats from '@/views/dashboard/DashboardStats.vue'
@@ -36,8 +36,16 @@ const props = defineProps<{
 
 const currentPageTitle = 'Dashboard'
 
-const user = computed(() => (usePage().props.auth as any).user)
-const isAdminOrPersonal = computed(() =>
-  ['Administrador', 'Personal'].includes(user.value?.role?.nombre),
-)
+const userPermissions = computed(() => (usePage().props.auth as any)?.user?.permissions ?? [])
+const hasReportPermission = computed(() => userPermissions.value.includes('ver reportes'))
+
+usePoll(30000, {
+  only: [
+    'estadisticas',
+    'usuariosTotal',
+    'movimientosPorMes',
+    'objetosPorCategoria',
+    'objetosPrestados',
+  ],
+})
 </script>

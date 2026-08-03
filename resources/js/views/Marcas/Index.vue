@@ -18,7 +18,12 @@
             >
               <span>Ver eliminados </span><span class="hidden md:inline">({{ trashedCount }})</span>
             </BaseButton>
-            <BaseButton variant="primary" size="sm" @click="openCreateModal">
+            <BaseButton
+              v-if="hasPermission('gestionar marcas')"
+              variant="primary"
+              size="sm"
+              @click="openCreateModal"
+            >
               <template #start>
                 <PlusIcon :size="18" />
               </template>
@@ -44,15 +49,15 @@
         <BaseDataTable
           v-model:global-filter="search"
           :columns="columns"
-          :data="filteredMarcas"
+          :data="filteredEntities"
           :page-size="5"
         />
       </ComponentCard>
     </div>
 
     <BaseModal
-      v-model:is-open="isModalOpen"
-      :title="editingMarca ? 'Editar Marca' : 'Agregar Marca'"
+      v-model:is-open="modal.isOpen.value"
+      :title="editingEntity ? 'Editar Marca' : 'Agregar Marca'"
       size="sm"
       @close="closeModal"
     >
@@ -82,7 +87,7 @@
           Cancelar
         </BaseButton>
         <BaseButton variant="primary" :disabled="form.processing" @click="submitForm">
-          {{ form.processing ? 'Guardando...' : editingMarca ? 'Actualizar' : 'Crear' }}
+          {{ form.processing ? 'Guardando...' : editingEntity ? 'Actualizar' : 'Crear' }}
         </BaseButton>
       </template>
     </BaseModal>
@@ -90,8 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, watch } from 'vue'
-import { usePage, router } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
@@ -101,152 +105,63 @@ import BaseInput from '@/components/base/BaseInput.vue'
 import BaseDataTable from '@/components/base/BaseDataTable.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseFormField from '@/components/base/BaseFormField.vue'
-import { PlusIcon, EditIcon, TrashIcon } from '@/icons'
-import { useForm } from '@inertiajs/vue3'
-import { useDialog } from '@/composables/useDialog'
+import { PlusIcon, TrashIcon } from '@/icons'
+import { useCrudIndex } from '@/composables/useCrudIndex'
+import { useCrudColumns } from '@/composables/useCrudColumns'
 import { useValidation } from '@/composables/useValidation'
-import { toast } from 'vue-sonner'
 import type { Marca } from '@/types/models'
-import { formatDate } from '@/utils/date'
 
 const pageTitle = ref('Marcas')
-const search = ref('')
-const isModalOpen = ref(false)
-const editingMarca = ref<Marca | null>(null)
 
-const page = usePage()
-const { confirm } = useDialog()
-
-const form = useForm({
-  nombre: '',
+const {
+  search,
+  editingEntity,
+  form,
+  filteredEntities,
+  trashedCount,
+  modal,
+  hasPermission,
+  openCreateModal,
+  openEditModal,
+  closeModal,
+  submitForm: baseSubmitForm,
+  deleteEntity,
+  goToTrashed,
+} = useCrudIndex<Marca>({
+  entityName: 'marca',
+  entityLabel: 'marca',
+  routePrefix: 'marcas',
+  searchFields: ['nombre'],
+  createFormFields: { nombre: '' },
 })
+
+const { idColumn, fieldColumn, dateColumn, addActionsColumn } = useCrudColumns<Marca>()
 
 const { validate, validateSingleField } = useValidation(form, 'marca', {
   nombre: 'nombre de la marca',
 })
 
-const pageProps = computed(() => page.props as any)
-const marcas = computed<Marca[]>(() => pageProps.value.marcas ?? [])
-const trashedCount = computed(() => pageProps.value.trashedCount ?? 0)
-
-const filteredMarcas = computed(() => {
-  if (!search.value) return marcas.value
-  const term = search.value.toLowerCase()
-  return marcas.value.filter((marca) => marca.nombre.toLowerCase().includes(term))
-})
-
-const openCreateModal = () => {
-  editingMarca.value = null
-  form.reset()
-  isModalOpen.value = true
-}
-
-const openEditModal = (marca: Marca) => {
-  editingMarca.value = marca
-  form.nombre = marca.nombre
-  isModalOpen.value = true
-}
-
-const closeModal = () => {
-  isModalOpen.value = false
-  editingMarca.value = null
-  form.reset()
-  form.clearErrors()
-}
-
 const submitForm = () => {
   if (!validate()) return
-  if (editingMarca.value) {
-    form.put(route('marcas.update', editingMarca.value.id), {
-      onSuccess: () => {
-        closeModal()
-      },
-    })
-  } else {
-    form.post(route('marcas.store'), {
-      onSuccess: () => {
-        closeModal()
-      },
-    })
-  }
+  baseSubmitForm()
 }
 
-const deleteMarca = async (marca: Marca) => {
-  const confirmed = await confirm({
-    title: 'Eliminar marca',
-    description: `¿Estás seguro de eliminar la marca "${marca.nombre}"? Esta acción no se puede deshacer.`,
-    icon: 'warning',
-    confirmLabel: 'Eliminar',
-    destructive: true,
-  })
+const columns = computed<ColumnDef<Marca>[]>(() => {
+  const cols: ColumnDef<Marca>[] = [
+    idColumn(),
+    fieldColumn('nombre', 'Nombre'),
+    dateColumn('created_at', 'Fecha de creación'),
+  ]
 
-  if (confirmed) {
-    router.delete(route('marcas.destroy', marca.id))
-  }
-}
-
-const goToTrashed = () => {
-  router.get(route('marcas.trashed'))
-}
-
-const columns = computed<ColumnDef<Marca>[]>(() => [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'nombre',
-    header: 'Nombre',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'created_at',
-    header: 'Fecha de creación',
-    cell: (info) => formatDate(info.getValue() as string),
-  },
-  {
-    id: 'acciones',
-    header: 'Acciones',
-    cell: (info) => {
-      const marca = info.row.original
-      return h('div', { class: 'flex items-center gap-2' }, [
-        h(
-          BaseButton,
-          {
-            variant: 'ghost',
-            size: 'sm',
-            onClick: () => openEditModal(marca),
-            class: 'text-brand-500 hover:text-yellow-700',
-          },
-          () => h(EditIcon, { size: 18 }),
-        ),
-        h(
-          BaseButton,
-          {
-            variant: 'ghost',
-            size: 'sm',
-            onClick: () => deleteMarca(marca),
-            class: 'text-error-500 hover:text-red-700',
-          },
-          () => h(TrashIcon, { size: 18 }),
-        ),
-      ])
+  return addActionsColumn(cols, {
+    permission: 'gestionar marcas',
+    edit: { onClick: openEditModal },
+    delete: {
+      onClick: (marca: Marca) => deleteEntity(marca, marca.nombre),
+      title: 'Eliminar marca',
+      description: '¿Estás seguro de eliminar la marca',
+      displayName: (marca: Marca) => marca.nombre,
     },
-  },
-])
-
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
+  })
+})
 </script>

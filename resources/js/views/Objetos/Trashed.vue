@@ -1,76 +1,35 @@
 <template>
-  <AdminLayout>
-    <PageBreadcrumb :page-title="pageTitle" />
-
-    <div class="space-y-6">
-      <ComponentCard
-        title="Objetos Eliminados"
-        desc="Lista de objetos que han sido eliminados. Puede restaurarlos para volver a estar activos."
-      >
-        <template #header>
-          <BaseButton variant="outline" size="sm" :start-icon="ChevronLeftIcon" @click="goBack">
-            Volver a Objetos
-          </BaseButton>
-        </template>
-
-        <div class="mb-4">
-          <BaseInput
-            v-model="search"
-            placeholder="Buscar objetos eliminados..."
-            class-name="max-w-sm"
-          />
-        </div>
-
-        <BaseDataTable
-          :columns="columns"
-          :data="filteredObjetos"
-          :global-filter="search"
-          :page-size="10"
-        />
-
-        <div
-          v-if="filteredObjetos.length === 0"
-          class="py-8 text-center text-gray-500 dark:text-gray-400"
-        >
-          No hay objetos eliminados.
-        </div>
-      </ComponentCard>
-    </div>
-  </AdminLayout>
+  <TrashedEntities
+    :entities="objetos"
+    route-prefix="objetos"
+    entity-label="objeto"
+    page-title="Objetos Eliminados"
+    card-title="Objetos Eliminados"
+    card-desc="Lista de objetos que han sido eliminados. Puede restaurarlos para volver a estar activos."
+    back-label="Volver a Objetos"
+    search-placeholder="Buscar objetos eliminados..."
+    empty-message="No hay objetos eliminados."
+    :columns="columns"
+    :search-fields="['codigo', 'nombre']"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, watch } from 'vue'
-import { usePage, router } from '@inertiajs/vue3'
+import { computed, h } from 'vue'
+import { router } from '@inertiajs/vue3'
 import type { ColumnDef } from '@tanstack/vue-table'
-import AdminLayout from '@/components/layout/AdminLayout.vue'
-import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
-import ComponentCard from '@/components/shared/ComponentCard.vue'
+import TrashedEntities from '@/components/shared/TrashedEntities.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
-import BaseInput from '@/components/base/BaseInput.vue'
-import BaseDataTable from '@/components/base/BaseDataTable.vue'
-import { ChevronLeftIcon, RefreshIcon } from '@/icons'
+import { RefreshIcon } from '@/icons'
 import { useDialog } from '@/composables/useDialog'
-import { toast } from 'vue-sonner'
+import { useFlashMessages } from '@/composables/useFlashMessages'
 import type { Objeto } from '@/types/models'
 import { formatDate } from '@/utils/date'
 
-const pageTitle = ref('Objetos Eliminados')
-const search = ref('')
-
-const page = usePage()
+const { pageProps } = useFlashMessages()
 const { confirm } = useDialog()
 
-const pageProps = computed(() => page.props as any)
 const objetos = computed<Objeto[]>(() => pageProps.value.objetos ?? [])
-
-const filteredObjetos = computed(() => {
-  if (!search.value) return objetos.value
-  const term = search.value.toLowerCase()
-  return objetos.value.filter(
-    (obj) => obj.codigo.toLowerCase().includes(term) || obj.nombre.toLowerCase().includes(term),
-  )
-})
 
 const restoreObjeto = async (objeto: Objeto) => {
   const confirmed = await confirm({
@@ -84,10 +43,6 @@ const restoreObjeto = async (objeto: Objeto) => {
   if (confirmed) {
     router.post(route('objetos.restore', objeto.id))
   }
-}
-
-const goBack = () => {
-  router.get(route('objetos.index'))
 }
 
 const columns = computed<ColumnDef<Objeto>[]>(() => [
@@ -140,18 +95,4 @@ const columns = computed<ColumnDef<Objeto>[]>(() => [
     },
   },
 ])
-
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
 </script>

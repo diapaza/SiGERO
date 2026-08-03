@@ -3,36 +3,21 @@
 namespace App\Services;
 
 use App\Models\Marca;
+use Illuminate\Database\Eloquent\Model;
 
-readonly class MarcaService
+readonly class MarcaService extends BaseCrudService
 {
     public function __construct(
         private Marca $model,
-    ) {}
-
-    public function create(array $data): Marca
-    {
-        return $this->model->create($data);
+    ) {
+        parent::__construct($model);
     }
 
-    public function update(Marca $marca, array $data): Marca
+    protected function hasDependents(Model $entity): bool
     {
-        $marca->update($data);
+        /** @var Marca $marca */
+        $marca = $entity;
 
-        return $marca->fresh();
-    }
-
-    public function delete(Marca $marca): bool
-    {
-        if ($marca->objetos()->count() > 0) {
-            return false;
-        }
-
-        return $marca->delete();
-    }
-
-    public function restore(Marca $marca): bool
-    {
-        return $marca->restore();
+        return $marca->objetos()->count() > 0;
     }
 }

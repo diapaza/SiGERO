@@ -29,7 +29,7 @@ class ProfileController extends Controller
             ->get();
 
         return Inertia::render('Others/UserProfile', [
-            'user' => $user->load('role'),
+            'user' => $user->load('roles'),
             'pendingReturns' => $pendingReturns,
         ]);
     }

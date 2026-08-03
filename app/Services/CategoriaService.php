@@ -3,36 +3,21 @@
 namespace App\Services;
 
 use App\Models\Categoria;
+use Illuminate\Database\Eloquent\Model;
 
-readonly class CategoriaService
+readonly class CategoriaService extends BaseCrudService
 {
     public function __construct(
         private Categoria $model,
-    ) {}
-
-    public function create(array $data): Categoria
-    {
-        return $this->model->create($data);
+    ) {
+        parent::__construct($model);
     }
 
-    public function update(Categoria $categoria, array $data): Categoria
+    protected function hasDependents(Model $entity): bool
     {
-        $categoria->update($data);
+        /** @var Categoria $categoria */
+        $categoria = $entity;
 
-        return $categoria->fresh();
-    }
-
-    public function delete(Categoria $categoria): bool
-    {
-        if ($categoria->objetos()->count() > 0) {
-            return false;
-        }
-
-        return $categoria->delete();
-    }
-
-    public function restore(Categoria $categoria): bool
-    {
-        return $categoria->restore();
+        return $categoria->objetos()->count() > 0;
     }
 }

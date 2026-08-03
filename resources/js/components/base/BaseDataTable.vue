@@ -193,6 +193,7 @@ const table = useVueTable({
     pagination.value =
       typeof updaterOrValue === 'function' ? updaterOrValue(pagination.value) : updaterOrValue
   },
+  getRowId: (row, index) => String((row as any)?.id ?? index),
   getCoreRowModel: getCoreRowModel(),
   getSortedRowModel: getSortedRowModel(),
   getFilteredRowModel: getFilteredRowModel(),

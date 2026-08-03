@@ -19,7 +19,7 @@ const rules: Record<string, EntityRules> = {
     password: { required: true },
   },
   role: {
-    nombre: { required: true, maxLength: 255 },
+    name: { required: true, maxLength: 255 },
   },
   categoria: {
     nombre: { required: true, maxLength: 255 },

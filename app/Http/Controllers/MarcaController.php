@@ -7,24 +7,27 @@ use App\Http\Requests\Marca\UpdateMarcaRequest;
 use App\Models\Marca;
 use App\Services\MarcaService;
 use Illuminate\Http\RedirectResponse;
-use Inertia\Inertia;
-use Inertia\Response;
 
-class MarcaController extends Controller
+class MarcaController extends BaseCrudController
 {
-    public function index(): Response
+    protected function modelClass(): string
     {
-        $marcas = Marca::latest()->get();
-        $trashedCount = Marca::onlyTrashed()->count();
+        return Marca::class;
+    }
 
-        return Inertia::render('Marcas/Index', [
-            'marcas' => $marcas,
-            'trashedCount' => $trashedCount,
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ],
-        ]);
+    protected function viewPath(): string
+    {
+        return 'Marcas';
+    }
+
+    protected function routePrefix(): string
+    {
+        return 'marcas';
+    }
+
+    protected function label(): string
+    {
+        return 'Marca';
     }
 
     public function store(StoreMarcaRequest $request, MarcaService $service): RedirectResponse
@@ -50,19 +53,6 @@ class MarcaController extends Controller
         }
 
         return redirect()->route('marcas.index')->with('success', 'Marca eliminada correctamente.');
-    }
-
-    public function trashed(): Response
-    {
-        $marcas = Marca::onlyTrashed()->latest('deleted_at')->get();
-
-        return Inertia::render('Marcas/Trashed', [
-            'marcas' => $marcas,
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ],
-        ]);
     }
 
     public function restore(Marca $marca, MarcaService $service): RedirectResponse

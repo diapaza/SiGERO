@@ -38,7 +38,7 @@ class DashboardController extends Controller
                 'total' => $cat->objetos_count,
             ]);
 
-        $objetosPrestados = Objeto::with(['ultimoMovimiento.user', 'ultimoMovimiento.registradoPor'])
+        $objetosPrestados = Objeto::with(['movimientoActivo.user', 'movimientoActivo.registradoPor'])
             ->where('disponible', false)
             ->latest('updated_at')
             ->limit(10)

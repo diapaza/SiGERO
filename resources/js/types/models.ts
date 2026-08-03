@@ -1,7 +1,16 @@
 export interface Role {
   id: number
-  nombre: string
-  deleted_at: string | null
+  name: string
+  guard_name: string
+  created_at: string
+  updated_at: string
+  users_count?: number
+}
+
+export interface Permission {
+  id: number
+  name: string
+  guard_name: string
   created_at: string
   updated_at: string
 }
@@ -38,14 +47,14 @@ export interface Objeto {
   updated_at: string
   marca?: Marca
   categoria?: Categoria
-  ultimoMovimiento?: Movimiento
+  ultimo_movimiento?: Movimiento
+  movimiento_activo?: Movimiento
 }
 
 export interface Movimiento {
   id: number
   user_id: number
   objeto_id: number
-  registrado_por: number
   tipo_movimiento: 'salida' | 'retorno'
   fecha_hora: string
   deleted_at: string | null
@@ -72,9 +81,9 @@ export interface User {
   nombres: string
   apellidos: string
   whatsapp_number: string | null
-  role_id: number | null
   name: string
-  role?: Role
+  roles: Role[]
+  all_permissions?: Permission[]
   deleted_at: string | null
   created_at: string
   updated_at: string
@@ -87,46 +96,17 @@ export interface Paginated<T> {
   per_page: number
   total: number
   links: Array<{ url: string | null; label: string; active: boolean }>
-}
-
-export interface Product {
-  id: number
-  name: string
-  variants: number
-  image: string
-  category: string
-  price: string
-  status: 'Delivered' | 'Pending' | 'Canceled'
+  prev_page_url: string | null
+  next_page_url: string | null
 }
 
 export interface Notification {
-  id: number
-  userName: string
-  userImage: string
-  action: string
-  project: string
-  type: string
-  time: string
-  status: 'online' | 'offline'
-}
-
-export interface TeamMember {
-  name: string
-  role: string
-  avatar: string
-  project: string
-  team: string[]
-  status: 'Active' | 'Pending' | 'Cancel'
-  budget: string
-}
-
-export interface CalendarEvent {
-  id: number
+  id: string
+  type: 'vencida' | 'salida' | 'retorno' | 'permisos' | 'cuenta' | 'general'
   title: string
-  start: Date
-  end?: Date
-  color: string
-  description?: string
+  message: string
+  created_at: string
+  read: boolean
 }
 
 export interface MenuGroup {
@@ -135,6 +115,7 @@ export interface MenuGroup {
     icon?: unknown
     name: string
     path?: string
+    permission?: string
     subItems?: Array<{
       name: string
       path: string

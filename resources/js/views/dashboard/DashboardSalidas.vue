@@ -41,7 +41,7 @@ const columns: ColumnDef<Objeto>[] = [
     accessorKey: 'persona',
     header: 'Persona',
     cell: ({ row }) => {
-      const user = row.original.ultimoMovimiento?.user
+      const user = row.original.movimiento_activo?.user
       return h('span', { class: 'text-gray-600 dark:text-gray-300' }, user?.name ?? '')
     },
   },
@@ -49,7 +49,7 @@ const columns: ColumnDef<Objeto>[] = [
     accessorKey: 'telefono',
     header: 'Teléfono',
     cell: ({ row }) => {
-      const user = row.original.ultimoMovimiento?.user
+      const user = row.original.movimiento_activo?.user
       return h('span', { class: 'text-gray-600 dark:text-gray-300' }, user?.whatsapp_number ?? '-')
     },
   },
@@ -57,7 +57,7 @@ const columns: ColumnDef<Objeto>[] = [
     accessorKey: 'fecha_salida',
     header: 'Fecha de Salida',
     cell: ({ row }) => {
-      const fecha = row.original.ultimoMovimiento?.fecha_hora
+      const fecha = row.original.movimiento_activo?.fecha_hora
       return h(
         'span',
         { class: 'text-gray-600 dark:text-gray-300' },

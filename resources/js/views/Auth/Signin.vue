@@ -57,22 +57,12 @@
         </BaseButton>
       </div>
     </form>
-
-    <div class="mt-5">
-      <p class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-        ¿No tienes cuenta?
-        <Link href="/signup" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">
-          Registrate aquí.
-        </Link>
-      </p>
-    </div>
   </AuthLayout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import { Link } from '@inertiajs/vue3'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
 import Alert from '@/components/shared/Alert.vue'
 import BaseInput from '@/components/base/BaseInput.vue'

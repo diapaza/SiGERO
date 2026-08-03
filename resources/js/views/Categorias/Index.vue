@@ -18,7 +18,12 @@
             >
               <span>Ver eliminados </span><span class="hidden md:inline">({{ trashedCount }})</span>
             </BaseButton>
-            <BaseButton variant="primary" size="sm" @click="openCreateModal">
+            <BaseButton
+              v-if="hasPermission('gestionar categorias')"
+              variant="primary"
+              size="sm"
+              @click="openCreateModal"
+            >
               <template #start>
                 <PlusIcon :size="18" />
               </template>
@@ -44,15 +49,15 @@
         <BaseDataTable
           v-model:global-filter="search"
           :columns="columns"
-          :data="filteredCategorias"
+          :data="filteredEntities"
           :page-size="5"
         />
       </ComponentCard>
     </div>
 
     <BaseModal
-      v-model:is-open="isModalOpen"
-      :title="editingCategoria ? 'Editar Categoría' : 'Agregar Categoría'"
+      v-model:is-open="modal.isOpen.value"
+      :title="editingEntity ? 'Editar Categoría' : 'Agregar Categoría'"
       size="sm"
       @close="closeModal"
     >
@@ -82,7 +87,7 @@
           Cancelar
         </BaseButton>
         <BaseButton variant="primary" :disabled="form.processing" @click="submitForm">
-          {{ form.processing ? 'Guardando...' : editingCategoria ? 'Actualizar' : 'Crear' }}
+          {{ form.processing ? 'Guardando...' : editingEntity ? 'Actualizar' : 'Crear' }}
         </BaseButton>
       </template>
     </BaseModal>
@@ -90,8 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, watch } from 'vue'
-import { usePage, router } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
@@ -101,152 +105,63 @@ import BaseInput from '@/components/base/BaseInput.vue'
 import BaseDataTable from '@/components/base/BaseDataTable.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseFormField from '@/components/base/BaseFormField.vue'
-import { PlusIcon, EditIcon, TrashIcon } from '@/icons'
-import { useForm } from '@inertiajs/vue3'
-import { useDialog } from '@/composables/useDialog'
+import { PlusIcon, TrashIcon } from '@/icons'
+import { useCrudIndex } from '@/composables/useCrudIndex'
+import { useCrudColumns } from '@/composables/useCrudColumns'
 import { useValidation } from '@/composables/useValidation'
-import { toast } from 'vue-sonner'
 import type { Categoria } from '@/types/models'
-import { formatDate } from '@/utils/date'
 
 const pageTitle = ref('Categorías')
-const search = ref('')
-const isModalOpen = ref(false)
-const editingCategoria = ref<Categoria | null>(null)
 
-const page = usePage()
-const { confirm } = useDialog()
-
-const form = useForm({
-  nombre: '',
+const {
+  search,
+  editingEntity,
+  form,
+  filteredEntities,
+  trashedCount,
+  modal,
+  hasPermission,
+  openCreateModal,
+  openEditModal,
+  closeModal,
+  submitForm: baseSubmitForm,
+  deleteEntity,
+  goToTrashed,
+} = useCrudIndex<Categoria>({
+  entityName: 'categoria',
+  entityLabel: 'categoría',
+  routePrefix: 'categorias',
+  searchFields: ['nombre'],
+  createFormFields: { nombre: '' },
 })
+
+const { idColumn, fieldColumn, dateColumn, addActionsColumn } = useCrudColumns<Categoria>()
 
 const { validate, validateSingleField } = useValidation(form, 'categoria', {
   nombre: 'nombre de la categoría',
 })
 
-const pageProps = computed(() => page.props as any)
-const categorias = computed<Categoria[]>(() => pageProps.value.categorias ?? [])
-const trashedCount = computed(() => pageProps.value.trashedCount ?? 0)
-
-const filteredCategorias = computed(() => {
-  if (!search.value) return categorias.value
-  const term = search.value.toLowerCase()
-  return categorias.value.filter((categoria) => categoria.nombre.toLowerCase().includes(term))
-})
-
-const openCreateModal = () => {
-  editingCategoria.value = null
-  form.reset()
-  isModalOpen.value = true
-}
-
-const openEditModal = (categoria: Categoria) => {
-  editingCategoria.value = categoria
-  form.nombre = categoria.nombre
-  isModalOpen.value = true
-}
-
-const closeModal = () => {
-  isModalOpen.value = false
-  editingCategoria.value = null
-  form.reset()
-  form.clearErrors()
-}
-
 const submitForm = () => {
   if (!validate()) return
-  if (editingCategoria.value) {
-    form.put(route('categorias.update', editingCategoria.value.id), {
-      onSuccess: () => {
-        closeModal()
-      },
-    })
-  } else {
-    form.post(route('categorias.store'), {
-      onSuccess: () => {
-        closeModal()
-      },
-    })
-  }
+  baseSubmitForm()
 }
 
-const deleteCategoria = async (categoria: Categoria) => {
-  const confirmed = await confirm({
-    title: 'Eliminar categoría',
-    description: `¿Estás seguro de eliminar la categoría "${categoria.nombre}"? Esta acción no se puede deshacer.`,
-    icon: 'warning',
-    confirmLabel: 'Eliminar',
-    destructive: true,
-  })
+const columns = computed<ColumnDef<Categoria>[]>(() => {
+  const cols: ColumnDef<Categoria>[] = [
+    idColumn(),
+    fieldColumn('nombre', 'Nombre'),
+    dateColumn('created_at', 'Fecha de creación'),
+  ]
 
-  if (confirmed) {
-    router.delete(route('categorias.destroy', categoria.id))
-  }
-}
-
-const goToTrashed = () => {
-  router.get(route('categorias.trashed'))
-}
-
-const columns = computed<ColumnDef<Categoria>[]>(() => [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'nombre',
-    header: 'Nombre',
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: 'created_at',
-    header: 'Fecha de creación',
-    cell: (info) => formatDate(info.getValue() as string),
-  },
-  {
-    id: 'acciones',
-    header: 'Acciones',
-    cell: (info) => {
-      const categoria = info.row.original
-      return h('div', { class: 'flex items-center gap-2' }, [
-        h(
-          BaseButton,
-          {
-            variant: 'ghost',
-            size: 'sm',
-            onClick: () => openEditModal(categoria),
-            class: 'text-brand-500 hover:text-yellow-700',
-          },
-          () => h(EditIcon, { size: 18 }),
-        ),
-        h(
-          BaseButton,
-          {
-            variant: 'ghost',
-            size: 'sm',
-            onClick: () => deleteCategoria(categoria),
-            class: 'text-error-500 hover:text-red-700',
-          },
-          () => h(TrashIcon, { size: 18 }),
-        ),
-      ])
+  return addActionsColumn(cols, {
+    permission: 'gestionar categorias',
+    edit: { onClick: openEditModal },
+    delete: {
+      onClick: (categoria: Categoria) => deleteEntity(categoria, categoria.nombre),
+      title: 'Eliminar categoría',
+      description: '¿Estás seguro de eliminar la categoría',
+      displayName: (categoria: Categoria) => categoria.nombre,
     },
-  },
-])
-
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
+  })
+})
 </script>

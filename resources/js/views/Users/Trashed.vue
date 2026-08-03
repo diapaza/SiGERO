@@ -40,8 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, watch } from 'vue'
-import { usePage, router } from '@inertiajs/vue3'
+import { ref, computed, h } from 'vue'
+import { router } from '@inertiajs/vue3'
 import type { ColumnDef } from '@tanstack/vue-table'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/shared/PageBreadcrumb.vue'
@@ -51,17 +51,16 @@ import BaseInput from '@/components/base/BaseInput.vue'
 import BaseDataTable from '@/components/base/BaseDataTable.vue'
 import { ChevronLeftIcon, RefreshIcon } from '@/icons'
 import { useDialog } from '@/composables/useDialog'
-import { toast } from 'vue-sonner'
+import { useFlashMessages } from '@/composables/useFlashMessages'
 import type { User } from '@/types/models'
 import { formatDate } from '@/utils/date'
 
 const pageTitle = ref('Usuarios Eliminados')
 const search = ref('')
 
-const page = usePage()
+const { pageProps } = useFlashMessages()
 const { confirm } = useDialog()
 
-const pageProps = computed(() => page.props as any)
 const users = computed<User[]>(() => pageProps.value.users ?? [])
 
 const filteredUsers = computed(() => {
@@ -115,11 +114,12 @@ const columns = computed<ColumnDef<User>[]>(() => [
     cell: (info) => info.getValue(),
   },
   {
-    accessorKey: 'role',
+    accessorKey: 'roles',
     header: 'Rol',
     cell: (info) => {
       const user = info.row.original
-      return user.role?.nombre ?? '-'
+      if (!user.roles || user.roles.length === 0) return '-'
+      return user.roles.map((r) => r.name).join(', ')
     },
   },
   {
@@ -145,18 +145,4 @@ const columns = computed<ColumnDef<User>[]>(() => [
     },
   },
 ])
-
-watch(
-  () => pageProps.value.flash?.success,
-  (message) => {
-    if (message) toast.success(message)
-  },
-)
-
-watch(
-  () => pageProps.value.flash?.error,
-  (message) => {
-    if (message) toast.error(message)
-  },
-)
 </script>
