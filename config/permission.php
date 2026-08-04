@@ -1,12 +1,16 @@
 <?php
 
+use App\Models\Permission;
+use App\Models\Role;
+use Spatie\Permission\DefaultTeamResolver;
+
 return [
 
     'models' => [
 
-        'permission' => App\Models\Permission::class,
+        'permission' => Permission::class,
 
-        'role' => App\Models\Role::class,
+        'role' => Role::class,
 
     ],
 
@@ -40,7 +44,7 @@ return [
 
     'teams' => false,
 
-    'team_resolver' => Spatie\Permission\DefaultTeamResolver::class,
+    'team_resolver' => DefaultTeamResolver::class,
 
     'use_passport_client_credentials' => false,
 

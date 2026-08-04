@@ -5,8 +5,11 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Inertia\Inertia;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,9 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -34,6 +37,18 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($e->getStatusCode() === 404) {
                     return Inertia::render('Errors/FourZeroFour', [], 404);
                 }
+            }
+        });
+
+        $exceptions->renderable(function (HttpException $e, Request $request) {
+            // Sesión/CSRF expirada: volver a iniciar sesión.
+            if ($e->getStatusCode() === 419) {
+                return redirect()->route('signin');
+            }
+
+            // Exceso de intentos de inicio de sesión.
+            if ($e->getStatusCode() === 429) {
+                return back()->with('error', 'Demasiados intentos. Intente de nuevo en unos minutos.');
             }
         });
     })->create();

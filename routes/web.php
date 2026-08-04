@@ -20,7 +20,7 @@ Route::get('/403', fn () => Inertia::render('Errors/FourZeroThree'))->name('erro
 // Auth routes (guest only)
 Route::middleware('guest')->group(function () {
     Route::get('/signin', [AuthController::class, 'create'])->name('signin');
-    Route::post('/signin', [AuthController::class, 'login'])->name('login');
+    Route::post('/signin', [AuthController::class, 'login'])->middleware('throttle:login')->name('login');
 });
 
 // Protected routes (authenticated)
