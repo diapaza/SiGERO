@@ -1,5 +1,10 @@
 <template>
-  <span :class="['inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-sm font-medium', colorClasses]">
+  <span
+    :class="[
+      'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-sm font-medium',
+      colorClasses,
+    ]"
+  >
     <TrendArrowIcon :direction="direction" :color="computedColor" :size="12" />
     {{ percentage }}
   </span>
@@ -9,14 +14,17 @@
 import { computed } from 'vue'
 import TrendArrowIcon from '@/icons/TrendArrowIcon.vue'
 
-const props = withDefaults(defineProps<{
-  direction?: 'up' | 'down'
-  percentage?: string | number
-  color?: 'red' | 'green'
-}>(), {
-  direction: 'up',
-  percentage: '',
-})
+const props = withDefaults(
+  defineProps<{
+    direction?: 'up' | 'down'
+    percentage?: string | number
+    color?: 'red' | 'green'
+  }>(),
+  {
+    direction: 'up',
+    percentage: '',
+  },
+)
 
 const computedColor = computed(() => {
   if (props.color) return props.color

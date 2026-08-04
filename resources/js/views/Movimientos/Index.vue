@@ -281,7 +281,7 @@ import { usePermissions } from '@/composables/usePermissions'
 import { useCrudColumns } from '@/composables/useCrudColumns'
 import { useFlashMessages } from '@/composables/useFlashMessages'
 import type { Movimiento, User } from '@/types/models'
-import { formatDateTime } from '@/utils/date'
+import { formatDateTime, toLocalDateTimeString } from '@/utils/date'
 
 const pageTitle = ref('Movimientos')
 const search = ref('')
@@ -442,7 +442,7 @@ const submitForm = () => {
   if (!canSubmit.value) return
 
   form.registrado_por = authUser.value?.id ?? ''
-  form.fecha_hora = new Date().toISOString().slice(0, 19).replace('T', ' ')
+  form.fecha_hora = toLocalDateTimeString(new Date())
 
   if (!validate()) return
 
@@ -494,7 +494,7 @@ const submitEditForm = () => {
   editForm.transform((data) => ({
     ...data,
     user_id: Number(data.user_id),
-    fecha_hora: data.fecha_hora ? new Date(data.fecha_hora).toISOString() : '',
+    fecha_hora: data.fecha_hora ? `${data.fecha_hora.replace('T', ' ')}:00` : '',
   }))
 
   editForm.put(route('movimientos.update', editingMovimiento.value.id), {

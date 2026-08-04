@@ -64,7 +64,7 @@ import { Link, router, usePage } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 import { useClickOutside } from '@/composables/useClickOutside'
 
-const page = usePage()
+const page = usePage<{ auth?: { user?: { name: string; username: string } | null } | null }>()
 
 const userName = computed(() => page.props.auth?.user?.name ?? 'Usuario')
 const userUsername = computed(() => page.props.auth?.user?.username ?? '')

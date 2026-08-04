@@ -84,6 +84,7 @@ export interface User {
   name: string
   roles: Role[]
   all_permissions?: Permission[]
+  role_permissions?: string[]
   deleted_at: string | null
   created_at: string
   updated_at: string
@@ -133,7 +134,8 @@ export interface Estadisticas {
 }
 
 export interface MovimientosPorMes {
-  mes: string
+  anio: number
+  mes: number
   tipo_movimiento: 'salida' | 'retorno'
   total: number
 }

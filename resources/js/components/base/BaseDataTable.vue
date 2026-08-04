@@ -92,11 +92,11 @@
             v-else
             :class="[
               'px-3 py-1 text-sm rounded-md min-w-[32px]',
-              page === table.getState().pagination.pageIndex + 1
+              Number(page) === table.getState().pagination.pageIndex + 1
                 ? 'bg-brand-500 text-white'
                 : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/[0.05]',
             ]"
-            @click="table.setPageIndex(page - 1)"
+            @click="table.setPageIndex(Number(page) - 1)"
           >
             {{ page }}
           </button>

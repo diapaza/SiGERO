@@ -1,7 +1,12 @@
 <template>
   <ComponentCard title="Objetos en Préstamo">
     <template #header>
-      <BaseButton size="sm" variant="outline" @click="router.visit(route('movimientos.index'))">
+      <BaseButton
+        v-if="hasPermission('registrar movimientos')"
+        size="sm"
+        variant="outline"
+        @click="router.visit(route('movimientos.index'))"
+      >
         Ver todos
       </BaseButton>
     </template>
@@ -15,6 +20,7 @@ import { router } from '@inertiajs/vue3'
 import BaseDataTable from '@/components/base/BaseDataTable.vue'
 import ComponentCard from '@/components/shared/ComponentCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import { usePermissions } from '@/composables/usePermissions'
 import { formatDateTime } from '@/utils/date'
 import type { Objeto } from '@/types/models'
 import type { ColumnDef } from '@tanstack/vue-table'
@@ -22,6 +28,8 @@ import type { ColumnDef } from '@tanstack/vue-table'
 defineProps<{
   objetosPrestados: Objeto[]
 }>()
+
+const { hasPermission } = usePermissions()
 
 const columns: ColumnDef<Objeto>[] = [
   {

@@ -8,41 +8,42 @@
       className,
       { 'cursor-not-allowed opacity-50': disabled },
     ]"
-    @click="handleClick"
     :disabled="disabled"
+    @click="handleClick"
   >
     <span v-if="$slots.start || startIcon" class="flex items-center">
       <slot name="start">
-        <component v-if="startIcon" :is="startIcon" />
+        <component :is="startIcon" v-if="startIcon" />
       </slot>
     </span>
     <slot />
     <span v-if="$slots.end || endIcon" class="flex items-center">
       <slot name="end">
-        <component v-if="endIcon" :is="endIcon" />
+        <component :is="endIcon" v-if="endIcon" />
       </slot>
     </span>
   </button>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
-const props = withDefaults(defineProps<{
-  type?: 'button' | 'submit' | 'reset'
-  size?: 'sm' | 'md' | 'lg'
-  variant?: 'primary' | 'outline' | 'secondary' | 'ghost' | 'danger'
-  disabled?: boolean
-  className?: string
-  startIcon?: object
-  endIcon?: object
-}>(), {
-  type: 'button',
-  size: 'md',
-  variant: 'primary',
-  disabled: false,
-  className: '',
-})
+const props = withDefaults(
+  defineProps<{
+    type?: 'button' | 'submit' | 'reset'
+    size?: 'sm' | 'md' | 'lg'
+    variant?: 'primary' | 'outline' | 'secondary' | 'ghost' | 'danger'
+    disabled?: boolean
+    className?: string
+    startIcon?: object
+    endIcon?: object
+  }>(),
+  {
+    type: 'button',
+    size: 'md',
+    variant: 'primary',
+    disabled: false,
+    className: '',
+  },
+)
 
 const emits = defineEmits<{
   (e: 'click', event: MouseEvent): void

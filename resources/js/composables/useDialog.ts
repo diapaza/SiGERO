@@ -41,7 +41,7 @@ function open<T>(type: DialogType, options: Record<string, any>): Promise<T> {
     state.destructive = options.destructive ?? false
     state.placeholder = options.placeholder ?? ''
     state.initialValue = options.initialValue ?? ''
-    state.resolve = resolve as ((value: any) => void)
+    state.resolve = resolve as (value: any) => void
     state.isOpen = true
   })
 }
@@ -50,39 +50,47 @@ function close(value?: any) {
   state.resolve?.(value)
   state.resolve = null
   state.isOpen = false
-  setTimeout(() => { state.type = null }, 300)
+  setTimeout(() => {
+    state.type = null
+  }, 300)
 }
 
 export function useDialog() {
-  function confirm(options: {
-    title?: string
-    description?: string
-    icon?: string
-    confirmLabel?: string
-    cancelLabel?: string
-    destructive?: boolean
-  } = {}): Promise<boolean> {
+  function confirm(
+    options: {
+      title?: string
+      description?: string
+      icon?: string
+      confirmLabel?: string
+      cancelLabel?: string
+      destructive?: boolean
+    } = {},
+  ): Promise<boolean> {
     return open<boolean>('confirm', options)
   }
 
-  function alert(options: {
-    title?: string
-    description?: string
-    icon?: string
-    confirmLabel?: string
-  } = {}): Promise<void> {
+  function alert(
+    options: {
+      title?: string
+      description?: string
+      icon?: string
+      confirmLabel?: string
+    } = {},
+  ): Promise<void> {
     return open<void>('alert', options)
   }
 
-  function prompt(options: {
-    title?: string
-    description?: string
-    icon?: string
-    confirmLabel?: string
-    cancelLabel?: string
-    placeholder?: string
-    initialValue?: string
-  } = {}): Promise<string | null> {
+  function prompt(
+    options: {
+      title?: string
+      description?: string
+      icon?: string
+      confirmLabel?: string
+      cancelLabel?: string
+      placeholder?: string
+      initialValue?: string
+    } = {},
+  ): Promise<string | null> {
     return open<string | null>('prompt', options)
   }
 

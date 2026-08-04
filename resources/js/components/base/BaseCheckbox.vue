@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import CheckIcon from '@/icons/CheckIcon.vue'
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     modelValue?: boolean
     label?: string

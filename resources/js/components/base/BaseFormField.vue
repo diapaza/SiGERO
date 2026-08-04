@@ -5,9 +5,7 @@
       :for="labelFor"
       :class="[
         'block text-sm font-medium',
-        disabled
-          ? 'text-gray-300 dark:text-white/15'
-          : 'text-gray-700 dark:text-gray-400',
+        disabled ? 'text-gray-300 dark:text-white/15' : 'text-gray-700 dark:text-gray-400',
         labelClass,
       ]"
     >
@@ -29,20 +27,23 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  label?: string
-  labelFor?: string
-  required?: boolean
-  error?: string
-  hint?: string
-  disabled?: boolean
-  labelClass?: string
-  wrapperClass?: string
-}>(), {
-  label: '',
-  required: false,
-  disabled: false,
-  labelClass: '',
-  wrapperClass: '',
-})
+withDefaults(
+  defineProps<{
+    label?: string
+    labelFor?: string
+    required?: boolean
+    error?: string
+    hint?: string
+    disabled?: boolean
+    labelClass?: string
+    wrapperClass?: string
+  }>(),
+  {
+    label: '',
+    required: false,
+    disabled: false,
+    labelClass: '',
+    wrapperClass: '',
+  },
+)
 </script>

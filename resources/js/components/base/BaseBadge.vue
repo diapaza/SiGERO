@@ -2,32 +2,35 @@
   <span :class="[baseStyles, sizeStyles[size], colorStyles, className]">
     <span v-if="$slots.start || startIcon" class="mr-1 inline-flex items-center">
       <slot name="start">
-        <component v-if="startIcon" :is="startIcon" />
+        <component :is="startIcon" v-if="startIcon" />
       </slot>
     </span>
     <slot />
     <span v-if="$slots.end || endIcon" class="ml-1 inline-flex items-center">
       <slot name="end">
-        <component v-if="endIcon" :is="endIcon" />
+        <component :is="endIcon" v-if="endIcon" />
       </slot>
     </span>
   </span>
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
-  variant?: 'light' | 'solid'
-  size?: 'sm' | 'md'
-  color?: 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light' | 'dark'
-  className?: string
-  startIcon?: object
-  endIcon?: object
-}>(), {
-  variant: 'light',
-  size: 'md',
-  color: 'primary',
-  className: '',
-})
+const props = withDefaults(
+  defineProps<{
+    variant?: 'light' | 'solid'
+    size?: 'sm' | 'md'
+    color?: 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light' | 'dark'
+    className?: string
+    startIcon?: object
+    endIcon?: object
+  }>(),
+  {
+    variant: 'light',
+    size: 'md',
+    color: 'primary',
+    className: '',
+  },
+)
 
 const baseStyles =
   'inline-flex items-center justify-center gap-1 rounded-full px-2.5 py-0.5 font-medium capitalize'

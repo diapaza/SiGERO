@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
 
@@ -25,12 +24,12 @@ interface Props {
     | 'candlestick'
   height?: number | string
   options: ApexOptions
-  series: Array<{ name: string; data: number[] }>
+  series: ApexOptions['series']
   chartId?: string
   containerClass?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   height: 350,
   chartId: () => `chart-${Math.random().toString(36).slice(2, 9)}`,
   containerClass: '',

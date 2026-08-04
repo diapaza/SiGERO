@@ -1,5 +1,5 @@
 <template>
-  <BaseModal v-model:isOpen="state.isOpen" size="sm" @close="handleClose">
+  <BaseModal v-model:is-open="state.isOpen" size="sm" @close="handleClose">
     <template #body>
       <div class="flex flex-col items-center text-center">
         <div
@@ -10,17 +10,11 @@
           <component :is="iconComponent" class="size-7" :class="iconColorClass" />
         </div>
 
-        <h3
-          v-if="state.title"
-          class="mt-4 text-lg font-semibold text-gray-800 dark:text-white/90"
-        >
+        <h3 v-if="state.title" class="mt-4 text-lg font-semibold text-gray-800 dark:text-white/90">
           {{ state.title }}
         </h3>
 
-        <p
-          v-if="state.description"
-          class="mt-2 text-sm text-gray-500 dark:text-gray-400"
-        >
+        <p v-if="state.description" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
           {{ state.description }}
         </p>
 
@@ -62,13 +56,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import { useDialog } from '@/composables/useDialog'
-import {
-  WarningIcon,
-  SuccessIcon,
-  ErrorIcon,
-  InfoCircleIcon,
-  QuestionIcon,
-} from '@/icons'
+import { WarningIcon, SuccessIcon, ErrorIcon, InfoCircleIcon, QuestionIcon } from '@/icons'
 import type { Component } from 'vue'
 
 const { state, close } = useDialog()
@@ -110,12 +98,15 @@ const confirmBtnClass = computed(() =>
     : 'bg-brand-500 hover:bg-brand-600 disabled:bg-brand-300',
 )
 
-watch(() => state.isOpen, (open) => {
-  if (open) {
-    inputValue.value = state.initialValue
-    nextTick(() => inputRef.value?.focus())
-  }
-})
+watch(
+  () => state.isOpen,
+  (open) => {
+    if (open) {
+      inputValue.value = state.initialValue
+      nextTick(() => inputRef.value?.focus())
+    }
+  },
+)
 
 function handleConfirm() {
   if (state.type === 'prompt') {

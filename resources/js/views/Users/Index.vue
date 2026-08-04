@@ -212,6 +212,7 @@
       :user="selectedUserForPermissions"
       :all-permissions="allPermissions"
       :user-permissions="selectedUserPermissions"
+      :role-permissions="selectedUserRolePermissions"
       @close="closePermissionsModal"
     />
   </AdminLayout>
@@ -236,7 +237,6 @@ import { useCrudIndex } from '@/composables/useCrudIndex'
 import { useCrudColumns } from '@/composables/useCrudColumns'
 import { useValidation } from '@/composables/useValidation'
 import type { User, Role, Permission } from '@/types/models'
-import { formatDate } from '@/utils/date'
 
 const pageTitle = ref('Usuarios')
 
@@ -252,7 +252,6 @@ const {
   openCreateModal: baseOpenCreateModal,
   openEditModal: baseOpenEditModal,
   closeModal: baseCloseModal,
-  submitForm: baseSubmitForm,
   deleteEntity,
   goToTrashed,
 } = useCrudIndex<User>({
@@ -272,7 +271,7 @@ const {
   },
 })
 
-const { idColumn, fieldColumn, dateColumn, customColumn, addActionsColumn } = useCrudColumns<User>()
+const { idColumn, fieldColumn, dateColumn, customColumn } = useCrudColumns<User>()
 
 const validationLabels = {
   username: 'nombre de usuario',
@@ -384,10 +383,12 @@ const deleteUser = (user: User) => deleteEntity(user, user.username)
 const isPermissionsModalOpen = ref(false)
 const selectedUserForPermissions = ref<User | null>(null)
 const selectedUserPermissions = ref<string[]>([])
+const selectedUserRolePermissions = ref<string[]>([])
 
 const openPermissionsModal = (user: User) => {
   selectedUserForPermissions.value = user
   selectedUserPermissions.value = user.all_permissions?.map((p) => p.name) ?? []
+  selectedUserRolePermissions.value = user.role_permissions ?? []
   isPermissionsModalOpen.value = true
 }
 
@@ -395,6 +396,7 @@ const closePermissionsModal = () => {
   isPermissionsModalOpen.value = false
   selectedUserForPermissions.value = null
   selectedUserPermissions.value = []
+  selectedUserRolePermissions.value = []
 }
 
 const columns = computed<ColumnDef<User>[]>(() => {

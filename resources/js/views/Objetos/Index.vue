@@ -448,7 +448,6 @@ const {
   openCreateModal: baseOpenCreateModal,
   openEditModal: baseOpenEditModal,
   closeModal: baseCloseModal,
-  submitForm: baseSubmitForm,
   deleteEntity,
   goToTrashed,
 } = useCrudIndex<Objeto>({
@@ -468,8 +467,7 @@ const {
   },
 })
 
-const { idColumn, fieldColumn, dateColumn, customColumn, badgeColumn, addActionsColumn } =
-  useCrudColumns<Objeto>()
+const { fieldColumn, dateColumn, customColumn, badgeColumn } = useCrudColumns<Objeto>()
 
 const { validate, validateSingleField } = useValidation(form, 'objeto', {
   codigo: 'código',

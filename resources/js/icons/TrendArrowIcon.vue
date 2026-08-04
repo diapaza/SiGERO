@@ -1,5 +1,11 @@
 <template>
-  <svg :width="size" :height="size" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    :width="size"
+    :height="size"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       v-if="direction === 'up'"
       fill-rule="evenodd"
@@ -18,13 +24,16 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  direction?: 'up' | 'down'
-  color?: 'red' | 'green'
-  size?: number
-}>(), {
-  direction: 'up',
-  color: undefined,
-  size: 16,
-})
+withDefaults(
+  defineProps<{
+    direction?: 'up' | 'down'
+    color?: 'red' | 'green'
+    size?: number
+  }>(),
+  {
+    direction: 'up',
+    color: undefined,
+    size: 16,
+  },
+)
 </script>

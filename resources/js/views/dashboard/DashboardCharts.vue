@@ -46,12 +46,15 @@ const monthNames = [
   'Dic',
 ]
 
-const barChartSeries = computed(() => {
-  const salidas = Array(12).fill(0)
-  const retornos = Array(12).fill(0)
+const barChartSeries = computed<Array<{ name: string; data: number[] }>>(() => {
+  const salidas: number[] = Array<number>(12).fill(0)
+  const retornos: number[] = Array<number>(12).fill(0)
 
+  const now = new Date()
   props.movimientosPorMes.forEach((item) => {
-    const monthIndex = parseInt(item.mes, 10) - 1
+    const monthsAgo = (now.getFullYear() - item.anio) * 12 + (now.getMonth() + 1 - item.mes)
+    if (monthsAgo < 0 || monthsAgo >= 12) return
+    const monthIndex = 11 - monthsAgo
     if (item.tipo_movimiento === 'salida') {
       salidas[monthIndex] = item.total
     } else {
@@ -96,9 +99,11 @@ const barChartOptions = computed<ApexOptions>(() => ({
     position: 'top',
     horizontalAlign: 'left',
     fontFamily: 'Outfit',
-    markers: { radius: 99 },
+    markers: { size: 6 },
   },
-  yaxis: { title: false },
+  yaxis: {
+    title: { text: '' },
+  },
   grid: {
     yaxis: { lines: { show: true } },
   },
@@ -111,7 +116,7 @@ const barChartOptions = computed<ApexOptions>(() => ({
   },
 }))
 
-const donutChartSeries = computed(() => props.objetosPorCategoria.map((cat) => cat.total))
+const donutChartSeries = computed<number[]>(() => props.objetosPorCategoria.map((cat) => cat.total))
 
 const donutChartOptions = computed<ApexOptions>(() => ({
   colors: ['#465fff', '#12b76a', '#f79009', '#f04438', '#0ba5ec', '#fb6514'],
@@ -144,22 +149,24 @@ const donutChartOptions = computed<ApexOptions>(() => ({
     show: true,
     position: 'bottom',
     fontFamily: 'Outfit',
-    markers: { radius: 99 },
+    markers: { size: 6 },
   },
   labels: props.objetosPorCategoria.map((cat) => cat.nombre),
   tooltip: {
     custom: ({ series, seriesIndex, w }) => {
       const color = w.globals.colors[seriesIndex]
       const label = w.globals.labels?.[seriesIndex] ?? ''
-      const total = series.reduce((a: number, b: number) => a + b, 0)
-      const percentage = ((series[seriesIndex] / total) * 100).toFixed(1)
+      const values: number[] = (w.globals.series as number[]) ?? []
+      const total = values.reduce((a: number, b: number) => a + b, 0)
+      const value = series[seriesIndex]?.[0] ?? 0
+      const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0'
       return `<div style="background:#fff;padding:12px 16px;border-radius:8px;border:1px solid #e4e7ec;box-shadow:0 4px 16px rgba(0,0,0,.08);font-family:Outfit,sans-serif;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="width:10px;height:10px;border-radius:50%;background:${color};display:inline-block;"></span>
           <span style="color:#344054;font-weight:500;font-size:14px;">${label}</span>
         </div>
         <div style="color:#667085;font-size:13px;margin-top:4px;margin-left:18px;">
-          ${percentage}% (${series[seriesIndex]} objetos)
+          ${percentage}% (${value} objetos)
         </div>
       </div>`
     },

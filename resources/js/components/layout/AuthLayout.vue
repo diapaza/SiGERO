@@ -74,5 +74,5 @@ withDefaults(
   },
 )
 
-const page = usePage()
+const page = usePage<{ auth?: { user?: { name: string; username: string } | null } | null }>()
 </script>

@@ -29,7 +29,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
 import { SuccessIcon, ErrorIcon, WarningIcon, InfoCircleIcon } from '@/icons'
-import { computed } from 'vue'
 
 interface AlertProps {
   variant: 'success' | 'error' | 'warning' | 'info'
@@ -40,7 +39,7 @@ interface AlertProps {
   linkText?: string
 }
 
-const props = withDefaults(defineProps<AlertProps>(), {
+withDefaults(defineProps<AlertProps>(), {
   showLink: false,
   linkHref: '#',
   linkText: 'Learn more',

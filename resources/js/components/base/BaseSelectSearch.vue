@@ -177,7 +177,7 @@ const getOptionClasses = (option: SelectOption, index: number) => [
 
 const getCreateOptionClasses = computed(() => [
   'relative flex items-center w-full px-3 py-2.5 text-sm cursor-pointer transition-colors border-t border-gray-200 dark:border-gray-700',
-  highlightedIndex.value === filteredOptions.length
+  highlightedIndex.value === filteredOptions.value.length
     ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400'
     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/[0.03]',
 ])

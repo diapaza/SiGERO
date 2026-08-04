@@ -15,23 +15,26 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{
-  modelValue?: string
-  rows?: number
-  placeholder?: string
-  disabled?: boolean
-  id?: string
-  name?: string
-  state?: 'default' | 'error' | 'success'
-  className?: string
-}>(), {
-  modelValue: '',
-  rows: 4,
-  placeholder: '',
-  disabled: false,
-  state: 'default',
-  className: '',
-})
+const props = withDefaults(
+  defineProps<{
+    modelValue?: string
+    rows?: number
+    placeholder?: string
+    disabled?: boolean
+    id?: string
+    name?: string
+    state?: 'default' | 'error' | 'success'
+    className?: string
+  }>(),
+  {
+    modelValue: '',
+    rows: 4,
+    placeholder: '',
+    disabled: false,
+    state: 'default',
+    className: '',
+  },
+)
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -39,9 +42,12 @@ const emits = defineEmits<{
 }>()
 
 const stateClasses = {
-  default: 'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:focus:border-brand-800',
-  error: 'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700 dark:focus:border-error-800',
-  success: 'border-success-300 focus:border-success-300 focus:ring-success-500/10 dark:border-success-700 dark:focus:border-success-800',
+  default:
+    'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:focus:border-brand-800',
+  error:
+    'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700 dark:focus:border-error-800',
+  success:
+    'border-success-300 focus:border-success-300 focus:ring-success-500/10 dark:border-success-700 dark:focus:border-success-800',
 }
 
 const textareaClasses = computed(() => [

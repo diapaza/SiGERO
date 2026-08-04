@@ -26,7 +26,7 @@ import DashboardCharts from '@/views/dashboard/DashboardCharts.vue'
 import DashboardSalidas from '@/views/dashboard/DashboardSalidas.vue'
 import type { Estadisticas, MovimientosPorMes, ObjetosPorCategoria, Objeto } from '@/types/models'
 
-const props = defineProps<{
+defineProps<{
   estadisticas: Estadisticas
   usuariosTotal: number
   movimientosPorMes: MovimientosPorMes[]
