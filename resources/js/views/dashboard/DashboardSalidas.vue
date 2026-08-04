@@ -14,6 +14,10 @@
   </ComponentCard>
 </template>
 
+/** * Tabla de "Objetos en Préstamo" del dashboard. * * Subcomponente de `Dashboard.vue`. Muestra
+hasta 10 objetos prestados con su * persona responsable, teléfono y fecha de salida (vía
+`movimiento_activo`). * El botón "Ver todos" solo aparece con permiso `registrar movimientos`. * *
+Props Inertia: `objetosPrestados`. */
 <script setup lang="ts">
 import { h } from 'vue'
 import { router } from '@inertiajs/vue3'

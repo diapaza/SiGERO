@@ -32,6 +32,9 @@
   </AdminLayout>
 </template>
 
+/** * Página genérica para listar y restaurar entidades eliminadas (soft deletes). * * Muestra una
+tabla con los registros en papelera, un buscador sobre los campos * indicados y un botón para volver
+al índice de la entidad. */
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
@@ -45,23 +48,36 @@ import BaseDataTable from '@/components/base/BaseDataTable.vue'
 import { ChevronLeftIcon } from '@/icons'
 
 interface Props {
+  /** Registros eliminados (soft deletes) de la entidad. */
   entities: any[]
+  /** Prefijo de las rutas de la entidad (ej. 'objetos'). */
   routePrefix: string
+  /** Nombre en singular de la entidad (ej. 'Objeto'). */
   entityLabel: string
+  /** Título de la página. */
   pageTitle: string
+  /** Título de la tarjeta. */
   cardTitle: string
+  /** Descripción de la tarjeta. */
   cardDesc: string
+  /** Texto del botón de retorno. */
   backLabel: string
+  /** Placeholder del campo de búsqueda. */
   searchPlaceholder: string
+  /** Mensaje mostrado cuando no hay registros. */
   emptyMessage: string
+  /** Definición de columnas de la tabla. */
   columns: ColumnDef<any>[]
+  /** Campos de la entidad sobre los que se realiza la búsqueda. */
   searchFields: string[]
 }
 
 const props = defineProps<Props>()
 
+// Término de búsqueda sobre los registros de la papelera.
 const search = ref('')
 
+/** Entidades filtradas según el término de búsqueda en los campos indicados. */
 const filteredEntities = computed(() => {
   if (!search.value) return props.entities
   const term = search.value.toLowerCase()
@@ -73,6 +89,7 @@ const filteredEntities = computed(() => {
   )
 })
 
+/** Navega de vuelta al índice de la entidad. */
 const goBack = () => {
   router.get(route(`${props.routePrefix}.index`))
 }

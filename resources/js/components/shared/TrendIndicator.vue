@@ -10,14 +10,19 @@
   </span>
 </template>
 
+/** * Indicador de tendencia para tarjetas de estadística. * * Muestra un porcentaje con una flecha
+de dirección (arriba/abajo) coloreada * según la tendencia (verde/rojo). */
 <script setup lang="ts">
 import { computed } from 'vue'
 import TrendArrowIcon from '@/icons/TrendArrowIcon.vue'
 
 const props = withDefaults(
   defineProps<{
+    /** Dirección de la tendencia: 'up' | 'down'. */
     direction?: 'up' | 'down'
+    /** Porcentaje de variación a mostrar. */
     percentage?: string | number
+    /** Color explícito del indicador: 'red' | 'green'. */
     color?: 'red' | 'green'
   }>(),
   {
@@ -26,11 +31,13 @@ const props = withDefaults(
   },
 )
 
+/** Color final del indicador (explícito o derivado de la dirección). */
 const computedColor = computed(() => {
   if (props.color) return props.color
   return props.direction === 'up' ? 'green' : 'red'
 })
 
+/** Clases de estilo del indicador según su color. */
 const colorClasses = computed(() => {
   const isGreen = computedColor.value === 'green'
   return isGreen

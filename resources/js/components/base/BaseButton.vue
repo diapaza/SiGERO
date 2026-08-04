@@ -25,15 +25,25 @@
   </button>
 </template>
 
+/** * Botón reutilizable. * * Soportta distintos tipos HTML, tamaños y variantes visuales, así como
+* iconos opcionales `start`/`end` mediante slots. No emite el evento `click` * cuando está
+deshabilitado. */
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
+    /** Tipo HTML del botón (button, submit o reset). */
     type?: 'button' | 'submit' | 'reset'
+    /** Tamaño del botón (pequeño, mediano o grande). */
     size?: 'sm' | 'md' | 'lg'
+    /** Variante visual del botón (primary, outline, etc.). */
     variant?: 'primary' | 'outline' | 'secondary' | 'ghost' | 'danger'
+    /** Deshabilita el botón y evita que emita el evento `click`. */
     disabled?: boolean
+    /** Clases CSS adicionales para personalizar el botón. */
     className?: string
+    /** Icono opcional mostrado antes del contenido (slot `start`). */
     startIcon?: object
+    /** Icono opcional mostrado después del contenido (slot `end`). */
     endIcon?: object
   }>(),
   {
@@ -45,7 +55,9 @@ const props = withDefaults(
   },
 )
 
+// Emite:
 const emits = defineEmits<{
+  /** Se emite al hacer clic en el botón (solo si no está deshabilitado). */
   (e: 'click', event: MouseEvent): void
 }>()
 
@@ -65,6 +77,7 @@ const variantClasses = {
   danger: 'bg-error-500 text-white hover:bg-error-600 disabled:bg-error-300',
 }
 
+/** Gestiona el clic y emite el evento `click` cuando el botón está habilitado. */
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled) emits('click', event)
 }

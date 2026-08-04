@@ -1,3 +1,5 @@
+/** * Contenedor de notificaciones (toasts). * * Configura el `Toaster` de vue-sonner en la posición
+inferior derecha con * botón de cierre, duración fija y un máximo de notificaciones visibles. */
 <template>
   <Toaster
     position="bottom-right"

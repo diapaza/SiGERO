@@ -114,6 +114,9 @@
   </div>
 </template>
 
+/** * Tabla de datos reutilizable basada en TanStack Table. * * Renderiza una tabla con ordenamiento
+por columnas, filtrado global y * paginación (con selector de tamaño de página y numeración de
+páginas), * mostrando un mensaje cuando no hay resultados. */
 <script setup lang="ts" generic="T">
 import { ref, computed } from 'vue'
 import {
@@ -129,14 +132,21 @@ import {
 } from '@tanstack/vue-table'
 
 interface Props {
+  /** Definición de columnas de la tabla. */
   columns: ColumnDef<T>[]
+  /** Datos a mostrar en las filas de la tabla. */
   data: T[]
+  /** Texto de búsqueda global aplicado a la tabla (v-model). */
   globalFilter?: string
+  /** Número de filas visibles por página. */
   pageSize?: number
+  /** Opciones disponibles para el selector de tamaño de página. */
   pageSizeOptions?: number[]
 }
 
+// Emite:
 interface Emits {
+  /** Actualiza el texto del filtro global (v-model). */
   (e: 'update:globalFilter', value: string): void
 }
 
@@ -150,11 +160,13 @@ const emit = defineEmits<Emits>()
 const sorting = ref<SortingState>([])
 const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: props.pageSize })
 
+/** Modelo enlazado para el filtro global (get/set v-model). */
 const filterModel = computed({
   get: () => props.globalFilter,
   set: (val) => emit('update:globalFilter', val),
 })
 
+/** Modelo enlazado para el tamaño de página (reinicia el índice al cambiar). */
 const pageSizeModel = computed({
   get: () => pagination.value.pageSize,
   set: (val: number) => {
@@ -200,6 +212,7 @@ const table = useVueTable({
   getPaginationRowModel: getPaginationRowModel(),
 })
 
+/** Calcula la lista de páginas visibles incluyendo elipses (...) para rangos largos. */
 const visiblePages = computed(() => {
   const pageCount = table.getPageCount()
   const currentPage = table.getState().pagination.pageIndex

@@ -1,5 +1,18 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| Arranque de la aplicación Laravel
+|--------------------------------------------------------------------------
+|
+| Configura el contenedor de la aplicación: rutas web/consola, el middleware
+| global de Inertia (`HandleInertiaRequests`), los alias de middleware de
+| Spatie (role/permission) y los manejadores de excepciones para respuestas
+| Inertia (403/404) y redirecciones por sesión expirada (419) o exceso de
+| intentos de login (429).
+|
+*/
+
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

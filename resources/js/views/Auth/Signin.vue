@@ -60,6 +60,9 @@
   </AuthLayout>
 </template>
 
+/** * Página de inicio de sesión. * * Vista renderizada por `AuthController@create`. Valida
+`username` y * `password` en el frontend y envía la petición a `AuthController@login`. * Muestra un
+aviso de credenciales incorrectas cuando el servidor rechaza el * intento. */
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'

@@ -94,6 +94,9 @@
   </AdminLayout>
 </template>
 
+/** * Página de gestión de Marcas. * * Vista renderizada por `MarcaController@index`. Lista, crea,
+edita y elimina * marcas usando el composable `useCrudIndex`. Solo se muestran los botones * con el
+permiso `gestionar marcas`. * * Props Inertia: `marcas`, `trashedCount`, `flash`. */
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'

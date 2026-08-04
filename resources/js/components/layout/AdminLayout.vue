@@ -14,10 +14,15 @@
   </div>
 </template>
 
+/** * Layout principal de las páginas autenticadas de la aplicación. * * Estructura el esqueleto del
+panel: la barra lateral (AppSidebar), el fondo * translúcido en móvil (Backdrop) y la cabecera
+(AppHeader). Desplaza el área de * contenido según el estado de la barra lateral (expandida,
+contraída o en hover). * Expone un slot para el contenido de cada página. */
 <script setup>
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
 import { useSidebar } from '@/composables/useSidebar'
 import Backdrop from './Backdrop.vue'
+// Estado compartido de la barra lateral: expandida o contraída en escritorio y en hover.
 const { isExpanded, isHovered } = useSidebar()
 </script>

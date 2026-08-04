@@ -4,8 +4,19 @@ namespace App\Http\Requests\User;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * Valida la edición de un usuario.
+ *
+ * `username` y `dni` son únicos ignorando al propio usuario; la contraseña es
+ * opcional (si llega, debe tener mínimo 8 caracteres y confirmarse).
+ */
 class UpdateUserRequest extends BaseFormRequest
 {
+    /**
+     * Reglas de validación.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         $user = $this->route('user');

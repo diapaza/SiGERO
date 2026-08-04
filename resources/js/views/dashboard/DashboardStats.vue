@@ -27,6 +27,9 @@
   </div>
 </template>
 
+/** * Tarjetas de estadísticas del dashboard. * * Subcomponente de `Dashboard.vue`. Muestra total de
+objetos, disponibles, * prestados y usuarios. * * Props Inertia: `stats` (Estadisticas),
+`usuariosTotal`. */
 <script setup lang="ts">
 import StatCard from '@/components/shared/StatCard.vue'
 import BoxCubeIcon from '@/icons/BoxCubeIcon.vue'

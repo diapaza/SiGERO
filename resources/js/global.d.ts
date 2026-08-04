@@ -1,13 +1,18 @@
 import { route as ziggyRoute } from 'ziggy-js'
 
 declare global {
-  // Esto le dice a VS Code que "route" existe globalmente en archivos .ts y .vue
+  /**
+   * Helper global de Ziggy.
+   *
+   * Expone `route()` en archivos `.ts` y `.vue` (el JSON de rutas se inyecta
+   * con la directiva `@routes` en `resources/views/app.blade.php`).
+   */
   const route: typeof ziggyRoute
 }
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    // Esto le dice a VS Code que "route" existe dentro de los <template> de Vue
+    /** Helper global `route()` disponible dentro de los templates de Vue. */
     route: typeof ziggyRoute
   }
 }

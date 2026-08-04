@@ -55,17 +55,26 @@
   </Teleport>
 </template>
 
+/** * Modal reutilizable. * * Se transporta al final del `body` y ofrece tamaños configurables,
+cierre * por teclado (Esc) o por clic en el fondo, bloqueo de scroll y gestión del * foco (trampa de
+foco y restauración al elemento anterior). */
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 import BaseCloseButton from '@/components/base/BaseCloseButton.vue'
 
 const props = withDefaults(
   defineProps<{
+    /** Controla la visibilidad del modal (v-model). */
     isOpen: boolean
+    /** Título mostrado en la cabecera del modal. */
     title?: string
+    /** Tamaño del modal (sm, md, lg, xl o fullscreen). */
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen'
+    /** Etiqueta ARIA descriptiva para accesibilidad. */
     ariaLabel?: string
+    /** Permite cerrar el modal al hacer clic en el fondo. */
     closeOnBackdrop?: boolean
+    /** Clases CSS adicionales aplicadas al contenido del modal. */
     contentClass?: string
   }>(),
   {
@@ -76,14 +85,18 @@ const props = withDefaults(
   },
 )
 
+// Emite:
 const emits = defineEmits<{
+  /** Actualiza el estado de visibilidad del modal (v-model). */
   (e: 'update:isOpen', val: boolean): void
+  /** Se emite al solicitar el cierre del modal. */
   (e: 'close'): void
 }>()
 
 const panel = ref<HTMLElement | null>(null)
 let lastFocused: Element | null = null
 
+/** Clase de ancho máximo según el tamaño configurado del modal. */
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'sm':
@@ -101,15 +114,19 @@ const sizeClass = computed(() => {
   }
 })
 
+/** Bloquea el scroll de la página mientras el modal está abierto. */
 const lockScroll = () => document.documentElement.classList.add('overflow-hidden')
+/** Restaura el scroll de la página al cerrar el modal. */
 const unlockScroll = () => document.documentElement.classList.remove('overflow-hidden')
 
+/** Guarda el elemento con foco previo y enfoca el panel del modal. */
 const focusPanel = async () => {
   await nextTick()
   lastFocused = document.activeElement
   panel.value?.focus()
 }
 
+/** Restaura el foco al elemento que lo tenía antes de abrir el modal. */
 const restoreFocus = () => {
   try {
     if (lastFocused && (lastFocused as HTMLElement).focus) {
@@ -120,17 +137,21 @@ const restoreFocus = () => {
   }
 }
 
+/** Cierra el modal al hacer clic en el fondo si `closeOnBackdrop` lo permite. */
 const onBackdropClick = () => {
   if (props.closeOnBackdrop) close()
 }
 
+/** Cierra el modal al presionar la tecla Esc. */
 const onEsc = () => close()
 
+/** Emite los eventos de cierre y actualiza el v-model. */
 const close = () => {
   emits('update:isOpen', false)
   emits('close')
 }
 
+/** Mantiene el foco dentro del panel del modal (trampa de foco). */
 const trapFocus = (event: FocusEvent) => {
   const el = panel.value
   if (!el) return

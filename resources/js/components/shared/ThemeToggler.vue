@@ -8,6 +8,8 @@
   </button>
 </template>
 
+/** * Botón de alternar el tema claro/oscuro. * * Usa el contexto `useTheme` provisto por
+ThemeProvider para conmutar el tema y * muestra el icono de sol o luna según el tema activo. */
 <script setup lang="ts">
 import { useTheme } from '@/composables/useTheme'
 import SunIcon from '@/icons/SunIcon.vue'

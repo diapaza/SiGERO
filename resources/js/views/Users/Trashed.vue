@@ -39,6 +39,9 @@
   </AdminLayout>
 </template>
 
+/** * Página de papelera de Usuarios. * * Vista renderizada por `UserController@trashed`. Muestra
+los usuarios * eliminados y permite restaurarlos (`users.restore`). * * Props Inertia: `users`,
+`flash`. */
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
 import { router } from '@inertiajs/vue3'

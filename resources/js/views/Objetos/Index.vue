@@ -404,6 +404,10 @@
   </AdminLayout>
 </template>
 
+/** * Página de gestión de Objetos. * * Vista renderizada por `ObjetoController@index`. Lista, crea,
+edita y elimina * objetos. El formulario permite subir una foto (dropzone), crear marcas y *
+categorías sobre la marcha, y muestra el estado derivado `disponible` como * badge informativo. * *
+Props Inertia: `objetos`, `marcas`, `categorias`, `trashedCount`, `flash`. */
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
 import { router } from '@inertiajs/vue3'

@@ -34,12 +34,19 @@
   </div>
 </template>
 
+/** * Tarjeta contenedora reutilizable. * * Proporciona una estructura con cabecera opcional (título
+y descripción), * cuerpo principal y pie, permitiendo personalizar las clases CSS de cada * sección
+mediante props y slots. */
 <script setup lang="ts">
 withDefaults(
   defineProps<{
+    /** Título mostrado en la cabecera de la tarjeta. */
     title?: string
+    /** Descripción mostrada bajo el título de la cabecera. */
     description?: string
+    /** Clases CSS adicionales aplicadas al contenedor de la tarjeta. */
     cardClass?: string
+    /** Clases CSS adicionales aplicadas al cuerpo (contenido). */
     contentClass?: string
   }>(),
   {

@@ -4,6 +4,12 @@ namespace App\Notifications;
 
 use App\Models\User;
 
+/**
+ * Notificación de cuenta creada.
+ *
+ * Se envía al usuario recién creado. `data` contiene: `title`, `message`,
+ * `type` (`cuenta`) y `username`.
+ */
 class CuentaCreadaNotification extends BaseNotification
 {
     public function __construct(
@@ -11,6 +17,8 @@ class CuentaCreadaNotification extends BaseNotification
     ) {}
 
     /**
+     * Estructura almacenada en la tabla `notifications`.
+     *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array

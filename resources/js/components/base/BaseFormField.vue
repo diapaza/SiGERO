@@ -26,16 +26,27 @@
   </div>
 </template>
 
+/** * Envoltorio de campos de formulario reutilizable. * * Renderiza la etiqueta (con indicador de
+obligatoriedad), el campo a través * de un slot y un mensaje de error o ayuda, agrupando los
+elementos con un * espaciado uniforme. */
 <script setup lang="ts">
 withDefaults(
   defineProps<{
+    /** Texto de la etiqueta mostrada sobre el campo. */
     label?: string
+    /** Atributo `for` de la etiqueta, que apunta al id del campo. */
     labelFor?: string
+    /** Marca el campo como obligatorio (muestra un asterisco). */
     required?: boolean
+    /** Mensaje de error mostrado bajo el campo. */
     error?: string
+    /** Mensaje de ayuda mostrado bajo el campo cuando no hay error. */
     hint?: string
+    /** Deshabilita el campo (atenúa la etiqueta). */
     disabled?: boolean
+    /** Clases CSS adicionales aplicadas a la etiqueta. */
     labelClass?: string
+    /** Clases CSS adicionales aplicadas al contenedor del campo. */
     wrapperClass?: string
   }>(),
   {

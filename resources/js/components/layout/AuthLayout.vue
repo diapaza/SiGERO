@@ -53,6 +53,9 @@
   </FullScreenLayout>
 </template>
 
+/** * Layout para las páginas de autenticación. * * Muestra en un panel a la izquierda el título, la
+descripción y el contenido * (slot), y a la derecha una zona decorativa con el logo y el nombre del
+sistema. * Incluye un enlace de retorno cuando existe una sesión iniciada. */
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3'
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
@@ -61,9 +64,13 @@ import ChevronLeftIcon from '@/icons/ChevronLeftIcon.vue'
 
 withDefaults(
   defineProps<{
+    /** Título principal de la página de autenticación. */
     title?: string
+    /** Descripción secundaria que acompaña al título. */
     description?: string
+    /** Ruta de destino del enlace "volver" que se muestra cuando hay sesión. */
     backTo?: string
+    /** Texto del enlace "volver". */
     backLabel?: string
   }>(),
   {

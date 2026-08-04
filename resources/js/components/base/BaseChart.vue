@@ -6,11 +6,14 @@
   </div>
 </template>
 
+/** * Envoltorio reutilizable para gráficos ApexCharts. * * Renderiza un gráfico con scroll
+horizontal en pantallas pequeñas y recibe * las opciones y series directamente del consumidor. */
 <script setup lang="ts">
 import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
 
 interface Props {
+  /** Tipo de gráfico a renderizar (bar, area, line, pie, etc.). */
   type:
     | 'bar'
     | 'area'
@@ -22,10 +25,15 @@ interface Props {
     | 'bubble'
     | 'heatmap'
     | 'candlestick'
+  /** Altura del gráfico en píxeles o porcentaje. */
   height?: number | string
+  /** Opciones de configuración del gráfico de ApexCharts. */
   options: ApexOptions
+  /** Series de datos a representar en el gráfico. */
   series: ApexOptions['series']
+  /** Identificador único del contenedor del gráfico. */
   chartId?: string
+  /** Clases CSS adicionales aplicadas al contenedor del gráfico. */
   containerClass?: string
 }
 

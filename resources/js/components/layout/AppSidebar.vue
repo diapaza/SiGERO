@@ -82,6 +82,10 @@
   </aside>
 </template>
 
+/** * Barra lateral de navegación del panel de administración. * * Muestra los grupos de menú
+definidos en `@/constants/menu`, filtrando los * elementos según los permisos del usuario
+autenticado. Se adapta entre el modo * contraído (solo iconos), expandido y móvil usando el estado
+compartido de * `useSidebar`. */
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
@@ -93,8 +97,10 @@ const page = usePage()
 
 const { isExpanded, isMobileOpen, isHovered } = useSidebar()
 
+// Permisos del usuario autenticado expuestos por Inertia en las props compartidas.
 const userPermissions = computed(() => (page.props.auth as any)?.user?.permissions ?? [])
 
+/** Grupos de menú filtrados según los permisos del usuario autenticado. */
 const filteredMenuGroups = computed(() => {
   return menuGroups
     .map((group) => ({
@@ -107,5 +113,6 @@ const filteredMenuGroups = computed(() => {
     .filter((group) => group.items.length > 0)
 })
 
+/** Indica si la ruta dada corresponde a la página actual. */
 const isActive = (path: string) => page.url === path
 </script>

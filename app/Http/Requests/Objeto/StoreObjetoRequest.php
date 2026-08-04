@@ -5,8 +5,19 @@ namespace App\Http\Requests\Objeto;
 use App\Http\Requests\BaseFormRequest;
 use App\Rules\UniqueIgnoringSoftDeletes;
 
+/**
+ * Valida la creación de un objeto.
+ *
+ * El `codigo` es opcional (se auto-genera si está vacío), debe ser de 4 o 12
+ * dígitos y único ignorando los objetos eliminados (soft-deletes).
+ */
 class StoreObjetoRequest extends BaseFormRequest
 {
+    /**
+     * Reglas de validación.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [

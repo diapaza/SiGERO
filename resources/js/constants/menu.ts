@@ -9,6 +9,13 @@ import {
 } from '@/icons'
 import ToolsIcon from '@/icons/ToolsIcon.vue'
 
+/**
+ * Grupos de ítems del menú lateral (`AppSidebar`).
+ *
+ * Cada ítem declara su `permission`; `AppSidebar` filtra el menú según los
+ * permisos del usuario autenticado. Las rutas deben coincidir con las
+ * definidas en `routes/web.php`.
+ */
 export const menuGroups: MenuGroup[] = [
   {
     title: 'Menu',

@@ -1,3 +1,4 @@
+/** Degradados disponibles para los avatares de usuario. */
 const gradients = [
   { from: '#FF6B6B', to: '#EE5A24' },
   { from: '#48DBFB', to: '#0ABDE3' },
@@ -17,6 +18,12 @@ const gradients = [
   { from: '#63CDDA', to: '#3DC1D3' },
 ]
 
+/**
+ * Calcula las iniciales de un nombre (hasta 2 letras, sin tildes).
+ *
+ * @param name Nombre completo (p. ej. "Juan Pérez Roca" → "JR").
+ * @returns Iniciales en mayúsculas; `?` si el nombre está vacío.
+ */
 export function getInitials(name: string): string {
   if (!name || name.trim() === '') return '?'
   const normalized = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -25,6 +32,12 @@ export function getInitials(name: string): string {
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase()
 }
 
+/**
+ * Devuelve un par de colores de degradado determinista según el nombre.
+ *
+ * @param name Nombre usado para calcular el degradado.
+ * @returns Colores `from` y `to` del degradado.
+ */
 export function getGradientColors(name: string): { from: string; to: string } {
   if (!name || name.trim() === '') return gradients[0]
   const initials = getInitials(name)

@@ -57,6 +57,9 @@
   </div>
 </template>
 
+/** * Menú de usuario de la cabecera. * * Muestra el avatar y el nombre del usuario autenticado a
+partir de las props * compartidas de Inertia. Despliega las opciones del perfil y el botón de cerrar
+* sesión, y se cierra al hacer clic fuera del contenedor. */
 <script setup lang="ts">
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon } from '@/icons'
 import UserAvatar from '@/components/shared/UserAvatar.vue'
@@ -74,14 +77,17 @@ const dropdownRef = ref<HTMLElement | null>(null)
 
 const menuItems = [{ href: '/profile', icon: UserCircleIcon, text: 'Mi perfil' }]
 
+/** Abre o cierra el menú desplegable de usuario. */
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
 }
 
+/** Cierra el menú desplegable de usuario. */
 const closeDropdown = () => {
   dropdownOpen.value = false
 }
 
+/** Cierra el menú y cierra la sesión del usuario mediante el router de Inertia. */
 const handleLogout = () => {
   closeDropdown()
   router.post(route('logout'))

@@ -57,6 +57,10 @@
   </BaseModal>
 </template>
 
+/** * Modal para gestionar los permisos directos de un usuario. * * Muestra todos los permisos del
+sistema con casillas de verificación; los * permisos heredados de los roles del usuario aparecen
+bloqueados ("vía rol"). * Al guardar, sincroniza únicamente los permisos directos mediante Inertia.
+*/
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { router } from '@inertiajs/vue3'
@@ -65,25 +69,35 @@ import BaseButton from '@/components/base/BaseButton.vue'
 import type { User, Permission } from '@/types/models'
 
 const props = defineProps<{
+  /** Controla la visibilidad del modal. */
   isOpen: boolean
+  /** Usuario cuyos permisos se gestionan. */
   user: User | null
+  /** Catálogo completo de permisos disponibles. */
   allPermissions: Permission[]
+  /** Permisos directos actualmente asignados al usuario. */
   userPermissions: string[]
+  /** Permisos heredados de los roles del usuario (bloqueados). */
   rolePermissions?: string[]
 }>()
 
+// Emite:
+/** Se emite al cerrar el modal (cancelación o tras guardar). */
 const emit = defineEmits<{
   close: []
 }>()
 
+// Permisos seleccionados en el modal, estado de guardado y de carga.
 const selectedPermissions = ref<string[]>([])
 const saving = ref(false)
 const loading = ref(false)
 
+/** Indica si un permiso proviene de un rol asignado al usuario. */
 const isRolePermission = (name: string): boolean => {
   return (props.rolePermissions ?? []).includes(name)
 }
 
+/** Al cambiar el usuario, carga sus permisos directos actuales. */
 watch(
   () => props.user,
   (newUser) => {
@@ -93,6 +107,7 @@ watch(
   },
 )
 
+/** Al abrir el modal, precarga los permisos directos del usuario. */
 watch(
   () => props.isOpen,
   (isOpen) => {
@@ -104,6 +119,10 @@ watch(
   },
 )
 
+/**
+ * Guarda los permisos directos seleccionados (excluyendo los de rol) sincronizando
+ * el usuario mediante el router de Inertia.
+ */
 const savePermissions = () => {
   if (!props.user) return
 

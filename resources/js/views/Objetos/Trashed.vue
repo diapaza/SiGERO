@@ -14,6 +14,9 @@
   />
 </template>
 
+/** * Página de papelera de Objetos. * * Vista renderizada por `ObjetoController@trashed`. Muestra
+los objetos * eliminados y permite restaurarlos (`objetos.restore`). * * Props Inertia: `objetos`,
+`flash`. */
 <script setup lang="ts">
 import { computed, h } from 'vue'
 import { router } from '@inertiajs/vue3'

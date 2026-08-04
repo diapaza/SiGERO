@@ -5,8 +5,19 @@ namespace App\Http\Requests\Profile;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Valida el cambio de contraseña del usuario autenticado.
+ *
+ * Exige la contraseña actual (verificada contra el hash del usuario), la
+ * nueva contraseña (mínimo 8 caracteres) y su confirmación.
+ */
 class UpdatePasswordRequest extends BaseFormRequest
 {
+    /**
+     * Reglas de validación.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [
@@ -19,6 +30,11 @@ class UpdatePasswordRequest extends BaseFormRequest
         ];
     }
 
+    /**
+     * Mensajes de error en español.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [

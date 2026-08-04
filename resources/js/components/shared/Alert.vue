@@ -26,16 +26,24 @@
   </div>
 </template>
 
+/** * Alerta informativa con variantes visuales (éxito, error, advertencia o * información). Muestra
+un icono, un título, un mensaje y un enlace opcional. */
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
 import { SuccessIcon, ErrorIcon, WarningIcon, InfoCircleIcon } from '@/icons'
 
 interface AlertProps {
+  /** Variante visual de la alerta: 'success' | 'error' | 'warning' | 'info'. */
   variant: 'success' | 'error' | 'warning' | 'info'
+  /** Título de la alerta. */
   title: string
+  /** Mensaje descriptivo de la alerta. */
   message: string
+  /** Indica si se muestra el enlace adicional. */
   showLink?: boolean
+  /** Ruta de destino del enlace adicional. */
   linkHref?: string
+  /** Texto del enlace adicional. */
   linkText?: string
 }
 

@@ -96,6 +96,9 @@
   </div>
 </template>
 
+/** * Selector desplegable con búsqueda reutilizable. * * Ofrece búsqueda, navegación por teclado,
+creación de opciones, carga * asíncrona y limpieza. Expone el valor seleccionado mediante `v-model`
+y * varios eventos para abrir/cerrar, buscar, crear y cambios de selección. */
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from 'vue'
 import ChevronDownIcon from '@/icons/ChevronDownIcon.vue'
@@ -107,20 +110,35 @@ import type { SelectOption } from '@/composables/useSelect'
 
 const props = withDefaults(
   defineProps<{
+    /** Valor seleccionado (v-model). */
     modelValue?: string | number | null
+    /** Lista de opciones disponibles para seleccionar. */
     options?: SelectOption[]
+    /** Permite crear nuevas opciones a partir del texto buscado. */
     creatable?: boolean
+    /** Habilita la búsqueda dentro de las opciones. */
     searchable?: boolean
+    /** Texto de marcador de posición del input. */
     placeholder?: string
+    /** Deshabilita el selector e impide su interacción. */
     disabled?: boolean
+    /** Muestra un estado de carga en la lista de opciones. */
     loading?: boolean
+    /** Muestra un botón para limpiar el valor seleccionado. */
     clearable?: boolean
+    /** Estado visual del campo (default, error o success). */
     state?: 'default' | 'error' | 'success'
+    /** Identificador HTML del input. */
     id?: string
+    /** Atributo `name` del input. */
     name?: string
+    /** Clases CSS adicionales aplicadas al input. */
     className?: string
+    /** Clases CSS adicionales aplicadas al contenedor. */
     wrapperClass?: string
+    /** Etiqueta mostrada en la opción de crear, con `{text}` como marcador. */
     createLabel?: string
+    /** Función personalizada para filtrar las opciones por el término buscado. */
     filterBy?: (option: SelectOption, search: string) => boolean
   }>(),
   {
@@ -139,15 +157,25 @@ const props = withDefaults(
   },
 )
 
+// Emite:
 const emits = defineEmits<{
+  /** Actualiza el valor seleccionado (v-model). */
   (e: 'update:modelValue', value: string | number | null): void
+  /** Se emite cuando cambia la selección. */
   (e: 'change', value: string | number | null): void
+  /** Se emite al enfocar el input. */
   (e: 'focus', event: FocusEvent): void
+  /** Se emite al perder el foco del input. */
   (e: 'blur', event: FocusEvent): void
+  /** Se emite al presionar Enter sobre el input. */
   (e: 'enter', event: KeyboardEvent): void
+  /** Se emite con el término de búsqueda al escribir. */
   (e: 'search', term: string): void
+  /** Se emite al abrir el desplegable. */
   (e: 'open'): void
+  /** Se emite al cerrar el desplegable. */
   (e: 'close'): void
+  /** Se emite al crear una nueva opción con el texto ingresado. */
   (e: 'create', value: string): void
 }>()
 
@@ -167,6 +195,7 @@ const inputClasses = computed(() => [
   props.className,
 ])
 
+/** Devuelve las clases CSS de una opción según su índice y estado de selección. */
 const getOptionClasses = (option: SelectOption, index: number) => [
   'relative flex items-center w-full px-3 py-2.5 text-sm cursor-pointer transition-colors',
   highlightedIndex.value === index
@@ -175,6 +204,7 @@ const getOptionClasses = (option: SelectOption, index: number) => [
   isSelected(option.value) ? 'font-medium' : '',
 ]
 
+/** Clases CSS de la opción para crear un nuevo valor. */
 const getCreateOptionClasses = computed(() => [
   'relative flex items-center w-full px-3 py-2.5 text-sm cursor-pointer transition-colors border-t border-gray-200 dark:border-gray-700',
   highlightedIndex.value === filteredOptions.value.length
@@ -182,14 +212,20 @@ const getCreateOptionClasses = computed(() => [
     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/[0.03]',
 ])
 
+/** Estado interno del desplegable (abierto/cerrado). */
 const isOpen = ref(false)
+/** Indica si el usuario está editando el término de búsqueda. */
 const isEditing = ref(false)
+/** Término de búsqueda actual. */
 const searchTerm = ref('')
+/** Referencia al contenedor raíz del componente. */
 const selectRef = ref<HTMLElement | null>(null)
+/** Referencia al input del selector. */
 const inputRef = ref<HTMLInputElement | null>(null)
-
+/** Lista de opciones proveniente de la prop `options`. */
 const optionsRef = computed(() => props.options)
 
+/** Indica si un valor dado es el actualmente seleccionado. */
 const isSelected = (value: string | number): boolean => {
   if (props.modelValue === null || props.modelValue === undefined || props.modelValue === '') {
     return false
@@ -197,26 +233,31 @@ const isSelected = (value: string | number): boolean => {
   return String(value) === String(props.modelValue)
 }
 
+/** Opciones filtradas según el término de búsqueda (o el `filterBy` dado). */
 const filteredOptions = useFilteredOptions(optionsRef, searchTerm, props.filterBy)
 
+/** Opción seleccionada en la lista de opciones, o null si no hay coincidencia. */
 const selectedOption = computed(() => {
   const val = props.modelValue
   if (val === null || val === undefined || val === '') return null
   return props.options.find((opt) => isSelected(opt.value)) || null
 })
 
+/** Valor mostrado en el input (etiqueta seleccionada o término en edición). */
 const displayValue = computed(() => {
   if (isEditing.value) return searchTerm.value
   if (selectedOption.value) return selectedOption.value.label
   return ''
 })
 
+/** Indica si el término buscado coincide exactamente con alguna etiqueta. */
 const hasExactMatch = computed(() => {
   if (!searchTerm.value) return true
   const term = searchTerm.value.toLowerCase()
   return props.options.some((opt) => opt.label.toLowerCase() === term)
 })
 
+/** Total de elementos del desplegable (incluye la opción de crear si aplica). */
 const itemCount = computed(() => {
   let count = filteredOptions.value.length
   if (props.creatable && searchTerm.value && !hasExactMatch.value) {
@@ -225,6 +266,7 @@ const itemCount = computed(() => {
   return count
 })
 
+/** Gestiona la navegación por teclado y el índice de opción resaltada. */
 const { highlightedIndex, resetHighlight, handleKeyDown } = useSelectKeyboard(
   itemCount,
   isOpen,
@@ -237,10 +279,12 @@ const { highlightedIndex, resetHighlight, handleKeyDown } = useSelectKeyboard(
   },
 )
 
+/** Cierra el desplegable al hacer clic fuera del componente. */
 useClickOutside(selectRef, () => {
   closeDropdown()
 })
 
+/** Emite el término de búsqueda y abre el desplegable si hay texto. */
 watch(searchTerm, (val) => {
   emits('search', val)
   if (!isOpen.value && val) {
@@ -249,6 +293,7 @@ watch(searchTerm, (val) => {
   resetHighlight()
 })
 
+/** Actualiza el término de búsqueda desde la escritura en el input. */
 function onInput(e: Event) {
   const target = e.target as HTMLInputElement
   searchTerm.value = target.value
@@ -257,6 +302,7 @@ function onInput(e: Event) {
   }
 }
 
+/** Abre el desplegable en modo edición al hacer clic en el input. */
 function onTriggerClick() {
   if (props.disabled) return
   if (!isOpen.value) {
@@ -266,6 +312,7 @@ function onTriggerClick() {
   }
 }
 
+/** Emite `focus` y abre el desplegable al enfocar el input. */
 function onFocus(e: FocusEvent) {
   emits('focus', e)
   isEditing.value = true
@@ -275,10 +322,12 @@ function onFocus(e: FocusEvent) {
   }
 }
 
+/** Emite el evento `blur` al perder el foco del input. */
 function onBlur(e: FocusEvent) {
   emits('blur', e)
 }
 
+/** Cierra el desplegable y restablece el estado de edición y búsqueda. */
 function closeDropdown() {
   if (!isOpen.value) return
   isOpen.value = false
@@ -288,6 +337,7 @@ function closeDropdown() {
   emits('close')
 }
 
+/** Selecciona una opción, actualiza el v-model y cierra el desplegable. */
 function selectOption(option: SelectOption) {
   emits('update:modelValue', option.value)
   emits('change', option.value)
@@ -301,6 +351,7 @@ function selectOption(option: SelectOption) {
   })
 }
 
+/** Crea una nueva opción con el término buscado y cierra el desplegable. */
 function createOption() {
   if (!searchTerm.value) return
   emits('create', searchTerm.value)
@@ -311,6 +362,7 @@ function createOption() {
   emits('close')
 }
 
+/** Limpia el valor seleccionado y devuelve el foco al input. */
 function clear() {
   emits('update:modelValue', null)
   emits('change', null)

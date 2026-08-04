@@ -13,10 +13,24 @@ use App\Notifications\SalidaRegistradaNotification;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\DatabaseNotification;
 
+/**
+ * Servicio de notificaciones.
+ *
+ * Centraliza el envío de las 5 notificaciones del sistema (salida, retorno,
+ * devolución vencida, permisos actualizados y cuenta creada) y la generación
+ * de las notificaciones de vencimiento (sin duplicados). Las notificaciones
+ * usan el canal `database` y se envían en línea (no en cola).
+ */
 readonly class NotificationService
 {
+    /**
+     * Días sin retorno a partir de los cuales una salida se considera vencida.
+     */
     public const DIAS_VENCIMIENTO = 3;
 
+    /**
+     * Notifica a los operadores cuando se registra una salida.
+     */
     public function salidaRegistrada(Movimiento $movimiento, User $registradoPor): void
     {
         $notification = new SalidaRegistradaNotification($movimiento, $registradoPor);
@@ -24,6 +38,9 @@ readonly class NotificationService
         $this->notifyOperadores($notification);
     }
 
+    /**
+     * Notifica a los operadores cuando se registra un retorno.
+     */
     public function retornoRegistrado(Movimiento $movimiento, User $registradoPor): void
     {
         $notification = new RetornoRegistradoNotification($movimiento, $registradoPor);
@@ -31,11 +48,17 @@ readonly class NotificationService
         $this->notifyOperadores($notification);
     }
 
+    /**
+     * Notifica al usuario cuando cambian sus roles o permisos.
+     */
     public function permisosActualizados(User $usuario, User $actualizadoPor): void
     {
         $usuario->notify(new PermisosActualizadosNotification($actualizadoPor));
     }
 
+    /**
+     * Notifica a un usuario recién creado con los datos de su cuenta.
+     */
     public function cuentaCreada(User $usuario): void
     {
         $usuario->notify(new CuentaCreadaNotification($usuario));
@@ -43,6 +66,11 @@ readonly class NotificationService
 
     /**
      * Genera notificaciones de devoluciones vencidas (evita duplicados).
+     *
+     * Revisa los objetos prestados cuya salida superó `DIAS_VENCIMIENTO` y, si
+     * aún no se notificó ese movimiento, avisa al responsable y a los
+     * operadores. Se ejecuta desde el comando `app:notificar-vencidas`
+     * (programado cada 6 horas).
      */
     public function generarVencidas(): void
     {
@@ -83,6 +111,9 @@ readonly class NotificationService
             ->exists();
     }
 
+    /**
+     * Notifica al responsable del objeto (si existe).
+     */
     private function notifyResponsable(Movimiento $movimiento, object $notification): void
     {
         if ($movimiento->user) {
@@ -90,6 +121,9 @@ readonly class NotificationService
         }
     }
 
+    /**
+     * Notifica a todos los operadores.
+     */
     private function notifyOperadores(object $notification): void
     {
         $this->operadores()->each->notify($notification);

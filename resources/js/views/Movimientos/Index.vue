@@ -260,6 +260,12 @@
   </AdminLayout>
 </template>
 
+/** * Página de Movimientos (salidas y retornos). * * Vista renderizada por
+`MovimientoController@index`. Permite registrar un * movimiento buscando el objeto por código (4/12
+dígitos) y al responsable * por DNI, con el tipo auto-determinado según la disponibilidad del
+objeto. * También lista el historial y permite editar un movimiento (tipo, * responsable o fecha). *
+* Props Inertia: `movimientos` (historial con objeto/user/registrado_por), * `users` (para el modal
+de edición), `flash`. */
 <script setup lang="ts">
 import { ref, computed, h, watch } from 'vue'
 import { usePage, useForm } from '@inertiajs/vue3'

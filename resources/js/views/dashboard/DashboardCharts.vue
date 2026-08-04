@@ -19,6 +19,9 @@
   </div>
 </template>
 
+/** * Gráficos del dashboard (movimientos por mes y objetos por categoría). * * Subcomponente de
+`Dashboard.vue`. Se muestra solo con permiso `ver reportes`. * * Props Inertia: `movimientosPorMes`
+(agrupado por año/mes/tipo), * `objetosPorCategoria`. */
 <script setup lang="ts">
 import { computed } from 'vue'
 import BaseChart from '@/components/base/BaseChart.vue'

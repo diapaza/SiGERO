@@ -1,5 +1,19 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| Rutas web (Inertia)
+|--------------------------------------------------------------------------
+|
+| Todas las rutas de la aplicación renderizan páginas Inertia (SPA), salvo los
+| endpoints JSON internos del bloque "API - Búsquedas" y las de subida/borrado
+| de imágenes. Cada grupo exige autenticación (`auth`) y, en su mayoría, un
+| permiso Spatie (`permission:...`).
+|
+| El detalle ruta → controlador → vista → props está en `docs/rutas-inertia.md`.
+|
+*/
+
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;

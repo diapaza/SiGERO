@@ -4,8 +4,19 @@ namespace App\Http\Requests\Objeto;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * Valida la edición de un objeto.
+ *
+ * El `codigo` es opcional en la petición, pero el controlador lo descarta
+ * (`unset`): el código de un objeto es inmutable al editar.
+ */
 class UpdateObjetoRequest extends BaseFormRequest
 {
+    /**
+     * Reglas de validación.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         $objeto = $this->route('objeto');

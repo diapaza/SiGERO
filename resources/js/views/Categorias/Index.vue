@@ -94,6 +94,10 @@
   </AdminLayout>
 </template>
 
+/** * Página de gestión de Categorías. * * Vista renderizada por `CategoriaController@index`. Lista,
+crea, edita y * elimina categorías usando el composable `useCrudIndex`. Solo se muestran * los
+botones con el permiso `gestionar categorias`. * * Props Inertia: `categorias`, `trashedCount`,
+`flash`. */
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'

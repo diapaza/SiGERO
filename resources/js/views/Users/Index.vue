@@ -218,6 +218,10 @@
   </AdminLayout>
 </template>
 
+/** * Página de gestión de Usuarios. * * Vista renderizada por `UserController@index`. Lista, crea,
+edita y elimina * usuarios, asigna roles y gestiona permisos directos mediante * `PermissionsModal`
+(los permisos derivados de rol se muestran bloqueados). * * Props Inertia: `users` (con
+`all_permissions` y `role_permissions`), * `roles`, `trashedCount`, `allPermissions`, `flash`. */
 <script setup lang="ts">
 import { ref, computed, h, watch } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'

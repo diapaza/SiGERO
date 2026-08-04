@@ -41,6 +41,9 @@
   </header>
 </template>
 
+/** * Cabecera superior del panel de administración. * * Contiene el botón que alterna la barra
+lateral (según el tamaño de pantalla), * el logo, el selector de tema, el menú de notificaciones y
+el menú de usuario. */
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useSidebar } from '@/composables/useSidebar'
@@ -54,6 +57,10 @@ import UserMenu from './header/UserMenu.vue'
 
 const { toggleSidebar, toggleMobileSidebar, isMobileOpen } = useSidebar()
 
+/**
+ * Alterna la barra lateral según el tamaño de pantalla: en escritorio
+ * (>= 1024 px) conmuta el estado expandido y en móvil el menú lateral móvil.
+ */
 const handleToggle = () => {
   if (window.innerWidth >= 1024) {
     toggleSidebar()
@@ -62,8 +69,10 @@ const handleToggle = () => {
   }
 }
 
+// Controla la apertura del menú de aplicación (opciones de usuario) en móvil.
 const isApplicationMenuOpen = ref(false)
 
+/** Alterna la visibilidad del menú de aplicación en pantallas pequeñas. */
 const toggleApplicationMenu = () => {
   isApplicationMenuOpen.value = !isApplicationMenuOpen.value
 }

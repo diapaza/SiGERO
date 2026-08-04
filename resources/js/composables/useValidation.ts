@@ -1,5 +1,6 @@
 import type { useForm } from '@inertiajs/vue3'
 
+/** Definición de una regla de validación de un campo. */
 interface ValidationRule {
   required?: boolean
   maxLength?: number
@@ -9,10 +10,18 @@ interface ValidationRule {
   custom?: (value: unknown) => string | null
 }
 
+/** Mapa de reglas por entidad: `{ campo: regla }`. */
 interface EntityRules {
   [field: string]: ValidationRule
 }
 
+/**
+ * Reglas de validación en el frontend, agrupadas por entidad.
+ *
+ * Espejan (aproximadamente) las reglas de los FormRequests del backend. Se
+ * usan para dar feedback inmediato antes de enviar el formulario; el backend
+ * sigue siendo la autoridad final.
+ */
 const rules: Record<string, EntityRules> = {
   login: {
     username: { required: true },
@@ -69,6 +78,14 @@ const rules: Record<string, EntityRules> = {
   },
 }
 
+/**
+ * Valida un campo contra una regla y devuelve el mensaje de error o `null`.
+ *
+ * @param field Nombre del campo.
+ * @param value Valor a validar.
+ * @param rule Regla a aplicar.
+ * @param labels Mapa de etiquetas legibles por campo.
+ */
 function validateField(
   field: string,
   value: unknown,
@@ -116,8 +133,10 @@ function validateField(
   return null
 }
 
+/** Tipo del formulario devuelto por `useForm` de Inertia. */
 type InertiaForm = ReturnType<typeof useForm>
 
+/** Etiquetas por defecto de los campos (para mensajes en español). */
 const defaultLabels: Record<string, string> = {
   nombre: 'nombre',
   username: 'usuario',
@@ -141,6 +160,17 @@ const defaultLabels: Record<string, string> = {
   serie: 'serie',
 }
 
+/**
+ * Composable de validación de formularios en el frontend.
+ *
+ * Aplica las reglas definidas por entidad sobre un formulario de Inertia y
+ * registra los errores con `form.setError`. `validate()` valida todos los
+ * campos y `validateSingleField()` solo uno (para validar al hacer blur).
+ *
+ * @param form Formulario de Inertia a validar.
+ * @param entity Clave de las reglas en el mapa (`rules`).
+ * @param customLabels Etiquetas personalizadas que sobrescriben las por defecto.
+ */
 export function useValidation(
   form: InertiaForm,
   entity: string,
@@ -149,6 +179,11 @@ export function useValidation(
   const entityRules = rules[entity] ?? {}
   const labels = { ...defaultLabels, ...customLabels }
 
+  /**
+   * Valida todos los campos del formulario.
+   *
+   * @returns `true` si todo es válido.
+   */
   function validate(): boolean {
     form.clearErrors()
     let valid = true
@@ -166,6 +201,12 @@ export function useValidation(
     return valid
   }
 
+  /**
+   * Valida un solo campo.
+   *
+   * @param field Campo a validar.
+   * @returns `true` si es válido.
+   */
   function validateSingleField(field: string): boolean {
     const rule = entityRules[field]
     if (!rule) return true

@@ -52,6 +52,10 @@
   </BaseModal>
 </template>
 
+/** * Modal global de diálogo manejado por el composable `useDialog`. * * Renderiza un único diálogo
+a nivel de aplicación con los modos 'confirm', * 'alert' y 'prompt'. Se abre mediante
+confirm()/alert()/prompt() y resuelve la * promesa según la acción del usuario (confirmar, cancelar
+o cerrar). */
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import BaseModal from '@/components/base/BaseModal.vue'
@@ -59,11 +63,13 @@ import { useDialog } from '@/composables/useDialog'
 import { WarningIcon, SuccessIcon, ErrorIcon, InfoCircleIcon, QuestionIcon } from '@/icons'
 import type { Component } from 'vue'
 
+// Estado global del diálogo y función para cerrarlo y resolver la promesa.
 const { state, close } = useDialog()
 
 const inputValue = ref('')
 const inputRef = ref<HTMLInputElement | null>(null)
 
+/** Mapa de tipos de icono a sus componentes. */
 const iconMap: Record<string, Component> = {
   warning: WarningIcon,
   success: SuccessIcon,
@@ -72,6 +78,7 @@ const iconMap: Record<string, Component> = {
   question: QuestionIcon,
 }
 
+/** Clases de fondo del contenedor del icono para cada tipo. */
 const iconBgMap: Record<string, string> = {
   warning: 'bg-warning-50 dark:bg-warning-500/15',
   error: 'bg-error-50 dark:bg-error-500/15',
@@ -80,6 +87,7 @@ const iconBgMap: Record<string, string> = {
   question: 'bg-brand-50 dark:bg-brand-500/15',
 }
 
+/** Clases de color del icono para cada tipo. */
 const iconColorMap: Record<string, string> = {
   warning: 'text-warning-500',
   error: 'text-error-500',
@@ -88,16 +96,21 @@ const iconColorMap: Record<string, string> = {
   question: 'text-brand-500',
 }
 
+/** Icono a mostrar según el tipo configurado en el estado. */
 const iconComponent = computed(() => (state.icon ? iconMap[state.icon] : null))
+/** Clases de fondo del contenedor del icono. */
 const iconBgClass = computed(() => (state.icon ? iconBgMap[state.icon] : ''))
+/** Clases de color del icono. */
 const iconColorClass = computed(() => (state.icon ? iconColorMap[state.icon] : ''))
 
+/** Clases del botón de confirmar según si la acción es destructiva o no. */
 const confirmBtnClass = computed(() =>
   state.destructive
     ? 'bg-error-500 hover:bg-error-600 disabled:bg-error-300'
     : 'bg-brand-500 hover:bg-brand-600 disabled:bg-brand-300',
 )
 
+/** Al abrir el diálogo, precarga el valor inicial y enfoca el campo de prompt. */
 watch(
   () => state.isOpen,
   (open) => {
@@ -108,6 +121,7 @@ watch(
   },
 )
 
+/** Resuelve la promesa del diálogo con el valor confirmado (o el texto del prompt). */
 function handleConfirm() {
   if (state.type === 'prompt') {
     close(inputValue.value)
@@ -116,6 +130,7 @@ function handleConfirm() {
   }
 }
 
+/** Resuelve la promesa del diálogo como cancelación (null/false). */
 function handleCancel() {
   if (state.type === 'prompt') {
     close(null)
@@ -124,6 +139,7 @@ function handleCancel() {
   }
 }
 
+/** Resuelve la promesa como cancelación al cerrar el modal sin confirmar. */
 function handleClose() {
   const value = state.type === 'prompt' ? null : false
   close(value)

@@ -79,6 +79,10 @@
   </div>
 </template>
 
+/** * Menú desplegable de notificaciones de la cabecera. * * Consume las props compartidas de
+Inertia `notifications` y `unreadNotifications` * (definidas en HandleInertiaRequests) para listar
+las notificaciones del usuario * y marcar las no leídas como leídas al abrir el menú. Actualiza los
+datos cada 30 * segundos mediante usePoll y se cierra al hacer clic fuera del contenedor. */
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
@@ -94,15 +98,22 @@ const dropdownRef = ref<HTMLElement | null>(null)
 
 const page = usePage()
 
+// Props compartidas por Inertia: lista de notificaciones y total de no leídas.
 const notifications = computed<Notification[]>(() => (page.props as any).notifications ?? [])
 const unreadCount = computed<number>(() => (page.props as any).unreadNotifications ?? 0)
 
+/** Indica si existen notificaciones sin leer (muestra el indicador pulsante). */
 const notifying = computed(() => unreadCount.value > 0)
 
+// Consulta periódica (cada 30 s) de las notificaciones y su contador de no leídas.
 usePoll(30000, {
   only: ['notifications', 'unreadNotifications'],
 })
 
+/**
+ * Abre o cierra el desplegable y, al abrirlo, marca como leídas todas las
+ * notificaciones pendientes a través del router de Inertia.
+ */
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
 
@@ -119,14 +130,17 @@ const toggleDropdown = () => {
   }
 }
 
+/** Cierra el desplegable de notificaciones. */
 const closeDropdown = () => {
   dropdownOpen.value = false
 }
 
+/** Cierra el desplegable al seleccionar una notificación. */
 const handleItemClick = () => {
   closeDropdown()
 }
 
+/** Devuelve la etiqueta legible en español para el tipo de notificación. */
 const typeLabel = (type: string): string => {
   const labels: Record<string, string> = {
     vencida: 'Vencida',
@@ -138,6 +152,7 @@ const typeLabel = (type: string): string => {
   return labels[type] ?? 'Sistema'
 }
 
+/** Formatea la fecha de la notificación como tiempo relativo en español. */
 const relativeTime = (dateString: string): string => {
   const date = new Date(dateString)
   const diffMs = Date.now() - date.getTime()

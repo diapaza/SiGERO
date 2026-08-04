@@ -13,6 +13,15 @@ import pinia from './stores'
 import VueApexCharts from 'vue3-apexcharts'
 import AppLayout from './App.vue'
 
+/**
+ * Punto de entrada de la SPA Inertia.
+ *
+ * - Resuelve cada vista con `import.meta.glob` sobre la carpeta `views`
+ *   (el nombre de vista que envía el servidor se mapea al archivo .vue).
+ * - Monta la app envolviendo la página con `App.vue` (providers + toasts).
+ * - Registra Pinia, VueApexCharts, el plugin de Inertia y ZiggyVue (helper
+ *   global `route()`).
+ */
 createInertiaApp({
   resolve: (name) => {
     const pages = import.meta.glob<{ default: DefineComponent }>('./views/**/*.vue', {

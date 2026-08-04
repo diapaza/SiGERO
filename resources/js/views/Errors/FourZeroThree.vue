@@ -44,6 +44,8 @@
   </div>
 </template>
 
+/** * Página de error 403 (acceso denegado). * * Renderizada por el manejador de excepciones de
+`bootstrap/app.php` cuando * el middleware de permisos rechaza una petición Inertia. */
 <script setup>
 import { ref } from 'vue'
 import { Link } from '@inertiajs/vue3'

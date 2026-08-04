@@ -1,3 +1,5 @@
+/** * Decoración de fondo con una cuadrícula (grid) en las esquinas superior derecha e * inferior
+izquierda. Utilizada en el layout de autenticación. */
 <template>
   <div>
     <div class="absolute right-0 top-0 -z-1 w-full max-w-[250px] xl:max-w-[450px]">

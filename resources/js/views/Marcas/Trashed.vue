@@ -39,6 +39,9 @@
   </AdminLayout>
 </template>
 
+/** * Página de papelera de Marcas. * * Vista renderizada por `MarcaController@trashed`. Muestra las
+marcas * eliminadas y permite restaurarlas (`marcas.restore`). * * Props Inertia: `marcas`, `flash`.
+*/
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
 import { router } from '@inertiajs/vue3'

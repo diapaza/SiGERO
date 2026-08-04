@@ -26,19 +26,30 @@
   </div>
 </template>
 
+/** * Campo de texto reutilizable. * * Soporta estado visual (default/error/success), iconos
+`prepend`/`append` * mediante slots y enlace bidireccional con `v-model`. */
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
 
 const props = withDefaults(
   defineProps<{
+    /** Valor del input (v-model). */
     modelValue?: string | number
+    /** Tipo HTML del input (text, number, email, etc.). */
     type?: string
+    /** Texto de marcador de posición mostrado cuando el campo está vacío. */
     placeholder?: string
+    /** Deshabilita el input e impide su edición. */
     disabled?: boolean
+    /** Identificador HTML del input. */
     id?: string
+    /** Atributo `name` del input. */
     name?: string
+    /** Estado visual del campo (default, error o success). */
     state?: 'default' | 'error' | 'success'
+    /** Clases CSS adicionales aplicadas al input. */
     className?: string
+    /** Clases CSS adicionales aplicadas al contenedor. */
     wrapperClass?: string
   }>(),
   {
@@ -52,15 +63,21 @@ const props = withDefaults(
   },
 )
 
+// Emite:
 const emits = defineEmits<{
+  /** Actualiza el valor del input (v-model). */
   (e: 'update:modelValue', value: string | number): void
+  /** Se emite al dispararse el evento `change` del input. */
   (e: 'change', event: Event): void
+  /** Se emite al dispararse el evento `blur` del input. */
   (e: 'blur', event: FocusEvent): void
 }>()
 
 const slots = useSlots()
 
+/** Indica si el slot `prepend` está definido. */
 const hasPrepend = computed(() => !!slots.prepend)
+/** Indica si el slot `append` está definido. */
 const hasAppend = computed(() => !!slots.append)
 
 const stateClasses = {
@@ -81,15 +98,18 @@ const inputClasses = computed(() => [
   props.className,
 ])
 
+/** Emite el nuevo valor del input (v-model) al escribir. */
 const onInput = (event: Event) => {
   const value = (event.target as HTMLInputElement).value
   emits('update:modelValue', value)
 }
 
+/** Reenvía el evento `change` del input. */
 const onChange = (event: Event) => {
   emits('change', event)
 }
 
+/** Reenvía el evento `blur` del input. */
 const onBlur = (event: FocusEvent) => {
   emits('blur', event)
 }

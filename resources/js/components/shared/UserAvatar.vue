@@ -28,13 +28,18 @@
   </svg>
 </template>
 
+/** * Avatar de usuario generado de forma determinista. * * Renderiza un círculo SVG con un
+degradado y las iniciales del nombre. El color * del degradado se deriva del nombre, de modo que
+cada usuario tiene un avatar * consistente. */
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getInitials, getGradientColors } from '@/composables/useUserAvatar'
 
 const props = withDefaults(
   defineProps<{
+    /** Nombre completo del usuario para calcular iniciales y color. */
     name: string
+    /** Tamaño del avatar en píxeles. */
     size?: number
   }>(),
   {
@@ -42,8 +47,11 @@ const props = withDefaults(
   },
 )
 
+/** Iniciales del usuario mostradas en el centro del avatar. */
 const initials = computed(() => getInitials(props.name))
+/** Colores del degradado derivados del nombre. */
 const gradient = computed(() => getGradientColors(props.name))
 
+/** Identificador único del degradado SVG. */
 const gradientId = `ag-${Math.random().toString(36).substring(2, 10)}`
 </script>

@@ -12,18 +12,28 @@
   />
 </template>
 
+/** * Área de texto reutilizable. * * Soporta estado visual (default/error/success), número de filas
+* configurable y enlace bidireccional con `v-model`. */
 <script setup lang="ts">
 import { computed } from 'vue'
 
 const props = withDefaults(
   defineProps<{
+    /** Valor del textarea (v-model). */
     modelValue?: string
+    /** Número de filas visibles del textarea. */
     rows?: number
+    /** Texto de marcador de posición mostrado cuando está vacío. */
     placeholder?: string
+    /** Deshabilita el textarea e impide su edición. */
     disabled?: boolean
+    /** Identificador HTML del textarea. */
     id?: string
+    /** Atributo `name` del textarea. */
     name?: string
+    /** Estado visual del campo (default, error o success). */
     state?: 'default' | 'error' | 'success'
+    /** Clases CSS adicionales aplicadas al textarea. */
     className?: string
   }>(),
   {
@@ -36,8 +46,11 @@ const props = withDefaults(
   },
 )
 
+// Emite:
 const emits = defineEmits<{
+  /** Actualiza el valor del textarea (v-model). */
   (e: 'update:modelValue', value: string): void
+  /** Se emite al dispararse el evento `change` del textarea. */
   (e: 'change', event: Event): void
 }>()
 
@@ -56,11 +69,13 @@ const textareaClasses = computed(() => [
   props.className,
 ])
 
+/** Emite el nuevo valor del textarea (v-model) al escribir. */
 const onInput = (event: Event) => {
   const value = (event.target as HTMLTextAreaElement).value
   emits('update:modelValue', value)
 }
 
+/** Reenvía el evento `change` del textarea. */
 const onChange = (event: Event) => {
   emits('change', event)
 }

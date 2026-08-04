@@ -22,7 +22,20 @@
   </button>
 </template>
 
+/** * Botón circular de cierre (X). * * Diseñado para encabezados de modales y paneles; emite el
+evento `click` * al ser presionado y admite clases adicionales para su personalización. */
 <script setup lang="ts">
-withDefaults(defineProps<{ className?: string }>(), { className: '' })
-const emit = defineEmits<{ (e: 'click'): void }>()
+withDefaults(
+  defineProps<{
+    /** Clases CSS adicionales para personalizar el botón. */
+    className?: string
+  }>(),
+  { className: '' },
+)
+
+// Emite:
+const emit = defineEmits<{
+  /** Se emite al hacer clic en el botón de cierre. */
+  (e: 'click'): void
+}>()
 </script>

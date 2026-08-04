@@ -6,6 +6,13 @@ use App\Models\Movimiento;
 use App\Models\Objeto;
 use App\Models\User;
 
+/**
+ * Notificación de salida registrada.
+ *
+ * Se envía a los operadores cuando se registra una salida. `data` contiene:
+ * `title`, `message`, `type` (`salida`), `movimiento_id`, `objeto_id`,
+ * `responsable_id`.
+ */
 class SalidaRegistradaNotification extends BaseNotification
 {
     public function __construct(
@@ -14,6 +21,8 @@ class SalidaRegistradaNotification extends BaseNotification
     ) {}
 
     /**
+     * Estructura almacenada en la tabla `notifications`.
+     *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array

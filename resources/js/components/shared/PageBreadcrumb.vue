@@ -22,11 +22,14 @@
   </div>
 </template>
 
+/** * Migas de pan (breadcrumb) de encabezado de página. * * Muestra el título de la página y la
+ruta de navegación desde la página de * inicio hasta la página actual. */
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
 import ChevronRightIcon from '@/icons/ChevronRightIcon.vue'
 
 interface BreadcrumbProps {
+  /** Título de la página actual mostrado en el breadcrumb. */
   pageTitle: string
 }
 

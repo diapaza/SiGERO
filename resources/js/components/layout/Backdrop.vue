@@ -6,6 +6,8 @@
   />
 </template>
 
+/** * Fondo translúcido que se superpone a la pantalla cuando el menú lateral móvil * está abierto.
+Al hacer clic sobre él cierra el menú lateral móvil. */
 <script setup lang="ts">
 import { useSidebar } from '@/composables/useSidebar'
 const { toggleMobileSidebar, isMobileOpen } = useSidebar()

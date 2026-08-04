@@ -17,18 +17,28 @@
   </div>
 </template>
 
+/** * Tarjeta de estadística para el panel principal. * * Muestra un icono, una etiqueta, un valor y
+un indicador de tendencia opcional. */
 <script setup lang="ts">
 import TrendIndicator from '@/components/shared/TrendIndicator.vue'
 
 withDefaults(
   defineProps<{
+    /** Componente de icono a mostrar en la tarjeta. */
     icon: object
+    /** Clases de color del icono. */
     iconColor?: string
+    /** Etiqueta descriptiva de la estadística. */
     label: string
+    /** Valor numérico o textual de la estadística. */
     value: string | number
+    /** Configuración opcional del indicador de tendencia. */
     trend?: {
+      /** Dirección de la tendencia: 'up' | 'down'. */
       direction?: 'up' | 'down'
+      /** Porcentaje de variación a mostrar. */
       percentage?: string | number
+      /** Color explícito del indicador: 'red' | 'green'. */
       color?: 'red' | 'green'
     }
   }>(),

@@ -1,7 +1,9 @@
 import { reactive } from 'vue'
 
+/** Tipo de diálogo soportado por el composable. */
 type DialogType = 'alert' | 'confirm' | 'prompt'
 
+/** Estado global compartido del diálogo. */
 interface State {
   isOpen: boolean
   type: DialogType | null
@@ -30,6 +32,13 @@ const state = reactive<State>({
   resolve: null,
 })
 
+/**
+ * Abre un diálogo y devuelve una promesa resuelta al cerrar.
+ *
+ * @template T Tipo del valor con el que se resuelve la promesa.
+ * @param type Tipo de diálogo (`confirm`, `alert`, `prompt`).
+ * @param options Opciones de presentación del diálogo.
+ */
 function open<T>(type: DialogType, options: Record<string, any>): Promise<T> {
   return new Promise((resolve) => {
     state.type = type
@@ -46,6 +55,11 @@ function open<T>(type: DialogType, options: Record<string, any>): Promise<T> {
   })
 }
 
+/**
+ * Cierra el diálogo resolviendo la promesa pendiente con `value`.
+ *
+ * @param value Valor con el que se resuelve la promesa.
+ */
 function close(value?: any) {
   state.resolve?.(value)
   state.resolve = null
@@ -55,7 +69,19 @@ function close(value?: any) {
   }, 300)
 }
 
+/**
+ * Composable de diálogos de confirmación/alert/prompt.
+ *
+ * Gestiona un estado global compartido (`state`) que consume el componente
+ * `GlobalDialog`. Las vistas usan `confirm()` para pedir confirmación antes
+ * de acciones destructivas.
+ */
 export function useDialog() {
+  /**
+   * Pide confirmación (Sí/No).
+   *
+   * @returns Promesa que resuelve a `true` si se confirma.
+   */
   function confirm(
     options: {
       title?: string
@@ -69,6 +95,11 @@ export function useDialog() {
     return open<boolean>('confirm', options)
   }
 
+  /**
+   * Muestra una alerta informativa.
+   *
+   * @returns Promesa que resuelve al cerrar.
+   */
   function alert(
     options: {
       title?: string
@@ -80,6 +111,11 @@ export function useDialog() {
     return open<void>('alert', options)
   }
 
+  /**
+   * Pide un valor de texto.
+   *
+   * @returns Promesa que resuelve al texto ingresado o `null` si se cancela.
+   */
   function prompt(
     options: {
       title?: string

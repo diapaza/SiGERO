@@ -291,6 +291,10 @@
   </AdminLayout>
 </template>
 
+/** * Página de perfil del usuario autenticado. * * Vista renderizada por `ProfileController@show`.
+Tres pestañas: información * personal (el username solo lo editan administradores), cambio de *
+contraseña (validando la actual) y objetos pendientes de devolución. * * Props Inertia: `user` (con
+roles), `pendingReturns`. */
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useForm } from '@inertiajs/vue3'

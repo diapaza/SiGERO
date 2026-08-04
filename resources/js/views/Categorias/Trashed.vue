@@ -14,6 +14,9 @@
   />
 </template>
 
+/** * Página de papelera de Categorías. * * Vista renderizada por `CategoriaController@trashed`.
+Muestra las categorías * eliminadas y permite restaurarlas (`categorias.restore`). * * Props
+Inertia: `categorias`, `flash`. */
 <script setup lang="ts">
 import { computed, h } from 'vue'
 import { router } from '@inertiajs/vue3'

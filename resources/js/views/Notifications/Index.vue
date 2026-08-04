@@ -90,6 +90,10 @@
   </AdminLayout>
 </template>
 
+/** * Página de todas las notificaciones del usuario. * * Vista renderizada por
+`NotificationController@index`. Lista las * notificaciones paginadas (10 por página) con indicador
+de leída/no leída y * tiempo relativo. * * Props Inertia: `notifications` (paginated con `data`,
+`current_page`, * `last_page`, `links`, `prev_page_url`, `next_page_url`). */
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'

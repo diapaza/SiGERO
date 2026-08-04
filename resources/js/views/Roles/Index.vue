@@ -85,6 +85,9 @@
   </AdminLayout>
 </template>
 
+/** * Página de gestión de Roles. * * Vista renderizada por `RoleController@index`. Lista, crea,
+edita y elimina * roles. Muestra el conteo de usuarios por rol (`users_count`). Los roles no * se
+eliminan de forma suave. * * Props Inertia: `roles`, `trashedCount`, `flash`. */
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'

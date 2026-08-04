@@ -16,6 +16,11 @@
   </AdminLayout>
 </template>
 
+/** * Página principal (Dashboard). * * Vista renderizada por `DashboardController@index`. Muestra
+las tarjetas de * estadísticas, los gráficos (solo con permiso `ver reportes`) y la tabla de *
+objetos en préstamo. Se refresca por polling cada 30 segundos con `usePoll`, * actualizando
+únicamente sus props. * * Props Inertia: `estadisticas`, `usuariosTotal`, `movimientosPorMes`, *
+`objetosPorCategoria`, `objetosPrestados`. */
 <script setup lang="ts">
 import { computed } from 'vue'
 import { usePage, usePoll } from '@inertiajs/vue3'

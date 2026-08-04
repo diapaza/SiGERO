@@ -4,8 +4,20 @@ namespace App\Http\Requests\User;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * Valida la creación de un usuario.
+ *
+ * `username` y `dni` son únicos; `roles` es una lista de nombres de rol
+ * existentes; la contraseña es obligatoria, de mínimo 8 caracteres y debe
+ * confirmarse.
+ */
 class StoreUserRequest extends BaseFormRequest
 {
+    /**
+     * Reglas de validación.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [

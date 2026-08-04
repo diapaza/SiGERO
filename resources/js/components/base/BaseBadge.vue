@@ -14,14 +14,23 @@
   </span>
 </template>
 
+/** * Insignia o etiqueta de estado reutilizable. * * Permite mostrar contenido con variantes
+visuales (light/solid), distintos * tamaños y colores semánticos, además de iconos opcionales al
+inicio y al * final mediante slots. */
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
+    /** Variante de estilo del badge (relleno suave o sólido). */
     variant?: 'light' | 'solid'
+    /** Tamaño del badge (pequeño o mediano). */
     size?: 'sm' | 'md'
+    /** Color semántico del badge (primary, success, error, etc.). */
     color?: 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light' | 'dark'
+    /** Clases CSS adicionales para personalizar el badge. */
     className?: string
+    /** Icono opcional mostrado antes del contenido (slot `start`). */
     startIcon?: object
+    /** Icono opcional mostrado después del contenido (slot `end`). */
     endIcon?: object
   }>(),
   {

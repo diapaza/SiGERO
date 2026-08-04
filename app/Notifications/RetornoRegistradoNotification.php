@@ -6,6 +6,13 @@ use App\Models\Movimiento;
 use App\Models\Objeto;
 use App\Models\User;
 
+/**
+ * Notificación de retorno registrado.
+ *
+ * Se envía a los operadores cuando se registra un retorno. `data` contiene:
+ * `title`, `message`, `type` (`retorno`), `movimiento_id`, `objeto_id`,
+ * `responsable_id`.
+ */
 class RetornoRegistradoNotification extends BaseNotification
 {
     public function __construct(
@@ -14,6 +21,8 @@ class RetornoRegistradoNotification extends BaseNotification
     ) {}
 
     /**
+     * Estructura almacenada en la tabla `notifications`.
+     *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array

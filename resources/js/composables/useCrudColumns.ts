@@ -7,13 +7,16 @@ import { formatDate } from '@/utils/date'
 import { usePermissions } from './usePermissions'
 import { useDialog } from './useDialog'
 
+/** Configuración de una columna personalizada. */
 interface ColumnConfig<T> {
   accessorKey: string
   header: string
   cell?: (info: { row: { original: T }; getValue: () => any }) => any
 }
 
+/** Configuración de la columna de acciones (ver/editar/eliminar). */
 interface ActionsConfig<T> {
+  /** Permiso requerido por defecto para las acciones. */
   permission: string
   edit?: { onClick: (entity: T) => void; permission?: string }
   delete?: {
@@ -26,10 +29,20 @@ interface ActionsConfig<T> {
   view?: { onClick: (entity: T) => void; permission?: string }
 }
 
+/**
+ * Composable de columnas para `BaseDataTable` (TanStack Vue Table).
+ *
+ * Provee fábricas de columnas reutilizables: ID, campo simple, fecha,
+ * columna personalizada, columna con badge y la columna de acciones
+ * (ver/editar/eliminar) que respeta permisos y muestra confirmación.
+ *
+ * @template T Tipo de la entidad de la tabla.
+ */
 export function useCrudColumns<T = any>() {
   const { hasPermission } = usePermissions()
   const { confirm } = useDialog()
 
+  /** Columna de ID. */
   function idColumn(): ColumnDef<T> {
     return {
       accessorKey: 'id',
@@ -38,6 +51,13 @@ export function useCrudColumns<T = any>() {
     }
   }
 
+  /**
+   * Columna de un campo simple.
+   *
+   * @param key Clave del campo en la entidad.
+   * @param label Encabezado de la columna.
+   * @param fallback Texto cuando el valor es nulo/vacío.
+   */
   function fieldColumn(key: string, label: string, fallback = '-'): ColumnDef<T> {
     return {
       accessorKey: key,
@@ -46,6 +66,12 @@ export function useCrudColumns<T = any>() {
     }
   }
 
+  /**
+   * Columna de fecha formateada (usa `formatDate`).
+   *
+   * @param key Clave del campo fecha.
+   * @param label Encabezado de la columna.
+   */
   function dateColumn(key: string, label: string): ColumnDef<T> {
     return {
       accessorKey: key,
@@ -54,6 +80,7 @@ export function useCrudColumns<T = any>() {
     }
   }
 
+  /** Columna con celda renderizada a medida. */
   function customColumn(config: ColumnConfig<T>): ColumnDef<T> {
     return {
       accessorKey: config.accessorKey,
@@ -62,6 +89,14 @@ export function useCrudColumns<T = any>() {
     }
   }
 
+  /**
+   * Columna que muestra un `BaseBadge` según el valor del campo.
+   *
+   * @param key Clave del campo.
+   * @param label Encabezado.
+   * @param colorMap Mapa `{ valor: color }` de colores del badge.
+   * @param labelMap Mapa opcional `{ valor: etiqueta }`.
+   */
   function badgeColumn(
     key: string,
     label: string,
@@ -94,6 +129,12 @@ export function useCrudColumns<T = any>() {
     }
   }
 
+  /**
+   * Columna de acciones (ver/editar/eliminar).
+   *
+   * Cada botón se muestra solo si el usuario tiene el permiso indicado; el
+   * botón de eliminar pide confirmación antes de ejecutar.
+   */
   function actionsColumn(config: ActionsConfig<T>): ColumnDef<T> {
     const editPerm = config.edit?.permission ?? config.permission
     const deletePerm = config.delete?.permission ?? config.permission
@@ -168,6 +209,10 @@ export function useCrudColumns<T = any>() {
     }
   }
 
+  /**
+   * Agrega la columna de acciones al final del arreglo de columnas si el
+   * usuario tiene al menos un permiso de acción.
+   */
   function addActionsColumn(columns: ColumnDef<T>[], config: ActionsConfig<T>): ColumnDef<T>[] {
     const editPerm = config.edit?.permission ?? config.permission
     const deletePerm = config.delete?.permission ?? config.permission

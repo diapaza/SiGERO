@@ -10,8 +10,28 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controlador del Dashboard (`/`).
+ *
+ * Compone las estadísticas generales del sistema, los datos de los gráficos
+ * (solo para usuarios con permiso `ver reportes`) y la lista de los 10
+ * objetos actualmente prestados. La vista `Dashboard` se refresca por polling
+ * cada 30 segundos desde el frontend.
+ */
 class DashboardController extends Controller
 {
+    /**
+     * Renderiza la página principal del dashboard.
+     *
+     * Props que recibe la vista `Dashboard`:
+     * - `estadisticas`: totales (total, disponibles, prestados, eliminados).
+     * - `usuariosTotal`: cantidad de usuarios activos.
+     * - `movimientosPorMes`: movimientos agrupados por año/mes y tipo (solo `ver reportes`).
+     * - `objetosPorCategoria`: conteo de objetos por categoría (solo `ver reportes`).
+     * - `objetosPrestados`: hasta 10 objetos con `disponible = false` y su movimiento activo.
+     *
+     * @return Response Vista Inertia `Dashboard`.
+     */
     public function index(Request $request): Response
     {
         $estadisticas = Objeto::estadisticas();

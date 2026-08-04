@@ -5,6 +5,13 @@ namespace App\Console\Commands;
 use App\Services\NotificationService;
 use Illuminate\Console\Command;
 
+/**
+ * Comando Artisan para generar notificaciones de devoluciones vencidas.
+ *
+ * Se ejecuta manualmente con `php artisan app:notificar-vencidas` y está
+ * programado en `routes/console.php` cada 6 horas. Delega en
+ * `NotificationService::generarVencidas()`.
+ */
 class NotificarVencidas extends Command
 {
     /**

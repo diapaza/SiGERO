@@ -1,0 +1,162 @@
+openapi: 3.0.3
+info:
+  title: SiGERO — API interna
+  version: 1.0.0
+  description: |
+    Endpoints JSON internos de SiGERO. La aplicación es una SPA Inertia sin
+    API pública; estos dos endpoints de búsqueda se usan desde el módulo de
+    Movimientos para localizar objetos por código y personas por DNI en tiempo
+    real. Autenticación por sesión (cookie) con permisos de Spatie.
+servers:
+  - url: /
+security:
+  - cookieAuth: []
+paths:
+  /api/objetos/search/{codigo}:
+    get:
+      summary: Buscar objeto por código
+      description: |
+        Devuelve un objeto activo con su marca y categoría. El código debe ser
+        de 4 o 12 dígitos numéricos.
+      parameters:
+        - name: codigo
+          in: path
+          required: true
+          description: Código exacto del objeto (4 o 12 dígitos).
+          schema:
+            type: string
+            pattern: '^(\d{4}|\d{12})$'
+            example: '0001'
+      responses:
+        '200':
+          description: Objeto encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjetoSearch'
+        '401':
+          description: No autenticado.
+        '403':
+          description: Sin permiso (requiere `gestionar objetos` o `registrar movimientos`).
+        '404':
+          description: Objeto no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Objeto no encontrado.
+  /api/users/search/{dni}:
+    get:
+      summary: Buscar usuario por DNI
+      description: Devuelve un usuario activo por su DNI de 8 dígitos.
+      parameters:
+        - name: dni
+          in: path
+          required: true
+          description: DNI exacto del usuario (8 dígitos).
+          schema:
+            type: string
+            pattern: '^\d{8}$'
+            example: '12345678'
+      responses:
+        '200':
+          description: Usuario encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSearch'
+        '401':
+          description: No autenticado.
+        '403':
+          description: Sin permiso (requiere `ver usuarios`).
+        '404':
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Persona no encontrada.
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: laravel_session
+      description: Cookie de sesión de Laravel (incluye el token CSRF vía XSRF-TOKEN).
+  schemas:
+    ObjetoSearch:
+      type: object
+      properties:
+        id:
+          type: integer
+        codigo:
+          type: string
+          description: Código del objeto (4 o 12 dígitos).
+        nombre:
+          type: string
+        modelo:
+          type: string
+          nullable: true
+        serie:
+          type: string
+          nullable: true
+        descripcion:
+          type: string
+          nullable: true
+        foto:
+          type: string
+          nullable: true
+          description: Ruta relativa de la foto (`objetos/{codigo}.jpg`).
+        disponible:
+          type: boolean
+          description: Estado derivado de los movimientos.
+        marca:
+          type: string
+          nullable: true
+          description: Nombre de la marca.
+        categoria:
+          type: string
+          nullable: true
+          description: Nombre de la categoría.
+      example:
+        id: 1
+        codigo: '0001'
+        nombre: Laptop HP
+        modelo: ProBook 450
+        serie: SN-001
+        descripcion: null
+        foto: objetos/0001.jpg
+        disponible: true
+        marca: HP
+        categoria: Equipos
+    UserSearch:
+      type: object
+      properties:
+        id:
+          type: integer
+        dni:
+          type: string
+          description: DNI de 8 dígitos.
+        nombres:
+          type: string
+        apellidos:
+          type: string
+        name:
+          type: string
+          description: Nombre completo (nombres + apellidos).
+        whatsapp_number:
+          type: string
+          nullable: true
+      example:
+        id: 1
+        dni: '12345678'
+        nombres: Juan
+        apellidos: Perez
+        name: Juan Perez
+        whatsapp_number: '987654321'

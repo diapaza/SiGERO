@@ -4,8 +4,19 @@ namespace App\Http\Requests\Profile;
 
 use App\Http\Requests\BaseFormRequest;
 
+/**
+ * Valida la actualización del perfil del usuario autenticado.
+ *
+ * Solo los administradores pueden modificar el `username`. El DNI es único
+ * ignorando el propio usuario.
+ */
 class UpdateProfileRequest extends BaseFormRequest
 {
+    /**
+     * Reglas de validación.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         $user = $this->user();

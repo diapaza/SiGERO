@@ -6,6 +6,14 @@ use App\Models\Movimiento;
 use App\Models\Objeto;
 use App\Models\User;
 
+/**
+ * Notificación de devolución vencida.
+ *
+ * Se envía al responsable del objeto y a los operadores cuando una salida
+ * supera `NotificationService::DIAS_VENCIMIENTO` días sin retorno. `data`
+ * contiene: `title`, `message`, `type` (`vencida`), `movimiento_id`,
+ * `objeto_id`, `responsable_id` y `responsable`.
+ */
 class DevolucionVencidaNotification extends BaseNotification
 {
     public function __construct(
@@ -14,6 +22,8 @@ class DevolucionVencidaNotification extends BaseNotification
     ) {}
 
     /**
+     * Estructura almacenada en la tabla `notifications`.
+     *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array

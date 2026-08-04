@@ -30,6 +30,9 @@
   </BaseInput>
 </template>
 
+/** * Campo de contraseña reutilizable. * * Extiende `BaseInput` añadiendo un botón para alternar la
+visibilidad de la * contraseña entre `password` y `text`, manteniendo el enlace bidireccional * con
+`v-model` y los estados visuales del campo base. */
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
@@ -38,13 +41,21 @@ import EyeOffIcon from '@/icons/EyeOffIcon.vue'
 
 withDefaults(
   defineProps<{
+    /** Valor de la contraseña (v-model). */
     modelValue?: string | number
+    /** Texto de marcador de posición mostrado cuando el campo está vacío. */
     placeholder?: string
+    /** Deshabilita el campo e impide su edición. */
     disabled?: boolean
+    /** Identificador HTML del campo. */
     id?: string
+    /** Atributo `name` del campo. */
     name?: string
+    /** Estado visual del campo (default, error o success). */
     state?: 'default' | 'error' | 'success'
+    /** Clases CSS adicionales aplicadas al input. */
     className?: string
+    /** Clases CSS adicionales aplicadas al contenedor. */
     wrapperClass?: string
   }>(),
   {
@@ -57,14 +68,19 @@ withDefaults(
   },
 )
 
+// Emite:
 const emit = defineEmits<{
+  /** Actualiza el valor de la contraseña (v-model). */
   (e: 'update:modelValue', value: string | number): void
+  /** Se emite al dispararse el evento `change` del input. */
   (e: 'change', event: Event): void
+  /** Se emite al dispararse el evento `blur` del input. */
   (e: 'blur', event: FocusEvent): void
 }>()
 
 const showPassword = ref(false)
 
+/** Alterna la visibilidad de la contraseña. */
 const toggleVisibility = () => {
   showPassword.value = !showPassword.value
 }

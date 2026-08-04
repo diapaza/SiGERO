@@ -66,6 +66,9 @@
   </div>
 </template>
 
+/** * Zona de arrastre y subida de imágenes reutilizable. * * Permite seleccionar o arrastrar una
+imagen, la sube al servidor mediante * `uploadUrl` y expone la ruta almacenada a través de
+`v-model`. Incluye * vista previa con opción de eliminar y validación de tamaño y tipo. */
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
@@ -75,9 +78,13 @@ import TrashIcon from '@/icons/TrashIcon.vue'
 
 const props = withDefaults(
   defineProps<{
+    /** Ruta de la imagen subida, relativa a storage (v-model). */
     modelValue?: string | null
+    /** Endpoint al que se envía la imagen (multipart/form-data, campo `foto`). */
     uploadUrl: string
+    /** Tamaño máximo permitido del archivo en megabytes. */
     maxFileSize?: number
+    /** Tipos MIME aceptados por el input de archivo. */
     acceptedFiles?: string
   }>(),
   {
@@ -87,9 +94,13 @@ const props = withDefaults(
   },
 )
 
+// Emite:
 const emits = defineEmits<{
+  /** Actualiza la ruta de la imagen subida (v-model). */
   (e: 'update:modelValue', value: string | null): void
+  /** Se emite tras una subida exitosa con la ruta de la imagen. */
   (e: 'uploaded', path: string): void
+  /** Se emite cuando se elimina la imagen. */
   (e: 'removed'): void
 }>()
 
@@ -97,19 +108,23 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 const isDragOver = ref(false)
 let dragCounter = 0
 
+/** Abre el selector de archivos nativo del navegador. */
 function openFilePicker() {
   fileInputRef.value?.click()
 }
 
+/** Marca la zona como activa al entrar el archivo arrastrado. */
 function onDragEnter() {
   dragCounter++
   isDragOver.value = true
 }
 
+/** Mantiene activa la zona mientras el archivo pasa sobre ella. */
 function onDragOver() {
   isDragOver.value = true
 }
 
+/** Desactiva la zona cuando el archivo sale de ella (con contador). */
 function onDragLeave() {
   dragCounter--
   if (dragCounter <= 0) {
@@ -118,6 +133,7 @@ function onDragLeave() {
   }
 }
 
+/** Maneja el soltar del archivo arrastrado y delega en `handleFile`. */
 function onDrop(event: DragEvent) {
   dragCounter = 0
   isDragOver.value = false
@@ -128,6 +144,7 @@ function onDrop(event: DragEvent) {
   }
 }
 
+/** Maneja la selección de archivo desde el input nativo. */
 function onFileInputChange(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
@@ -137,6 +154,7 @@ function onFileInputChange(event: Event) {
   input.value = ''
 }
 
+/** Valida el archivo y lo sube al servidor, emitiendo la ruta resultante. */
 async function handleFile(file: File) {
   const maxSizeBytes = props.maxFileSize * 1024 * 1024
   if (file.size > maxSizeBytes) {
@@ -163,6 +181,7 @@ async function handleFile(file: File) {
   }
 }
 
+/** Elimina la imagen actual y emite los eventos `removed` y `update:modelValue`. */
 function removeImage() {
   emits('update:modelValue', null)
   emits('removed')
