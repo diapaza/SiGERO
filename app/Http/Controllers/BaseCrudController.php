@@ -45,7 +45,7 @@ abstract class BaseCrudController extends Controller
         $entities = (clone $query)->with($this->relations())->latest()->get();
         $trashedCount = $this->usesSoftDeletes() ? $modelClass::onlyTrashed()->count() : 0;
 
-        return Inertia::render($this->viewPath() . '/Index', array_merge([
+        return Inertia::render($this->viewPath().'/Index', array_merge([
             $this->routePrefix() => $entities,
             'trashedCount' => $trashedCount,
             'flash' => [
@@ -64,7 +64,7 @@ abstract class BaseCrudController extends Controller
                 ->get()
             : collect();
 
-        return Inertia::render($this->viewPath() . '/Trashed', [
+        return Inertia::render($this->viewPath().'/Trashed', [
             $this->routePrefix() => $entities,
             'flash' => [
                 'success' => session('success'),

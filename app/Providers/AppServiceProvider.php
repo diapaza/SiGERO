@@ -6,7 +6,6 @@ use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Movimiento;
 use App\Models\Objeto;
-use App\Models\Role;
 use App\Models\User;
 use App\Services\CategoriaService;
 use App\Services\MarcaService;
@@ -15,6 +14,9 @@ use App\Services\NotificationService;
 use App\Services\ObjetoService;
 use App\Services\RoleService;
 use App\Services\UserService;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +39,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        // Limita los intentos de inicio de sesión para mitigar fuerza bruta.
+        RateLimiter::for('login', function (Request $request) {
+            return Limit::perMinute(5)->by(
+                $request->input('username').'|'.$request->ip(),
+            );
+        });
     }
 }

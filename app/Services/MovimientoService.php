@@ -6,6 +6,7 @@ use App\Models\Movimiento;
 use App\Models\Objeto;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 readonly class MovimientoService extends BaseCrudService
 {
@@ -18,14 +19,21 @@ readonly class MovimientoService extends BaseCrudService
 
     public function create(array $data): Movimiento
     {
-        $this->assertTipoValido(
-            $data['objeto_id'],
-            $data['tipo_movimiento'],
-        );
+        $movimiento = DB::transaction(function () use ($data) {
+            // Serializa el acceso al objeto para evitar salidas simultáneas.
+            Objeto::whereKey($data['objeto_id'])->lockForUpdate()->first();
 
-        $movimiento = parent::create($data);
+            $this->assertTipoValido(
+                $data['objeto_id'],
+                $data['tipo_movimiento'],
+            );
 
-        $this->recalcularDisponibilidad($movimiento->objeto_id);
+            $movimiento = parent::create($data);
+
+            $this->recalcularDisponibilidad($movimiento->objeto_id);
+
+            return $movimiento;
+        });
 
         $this->notifyMovimiento($movimiento);
 
@@ -36,6 +44,10 @@ readonly class MovimientoService extends BaseCrudService
     {
         /** @var Movimiento $movimiento */
         $movimiento = $entity;
+
+        // El objeto de un movimiento no puede cambiarse: la disponibilidad
+        // de ambos objetos quedaría inconsistente.
+        unset($data['objeto_id']);
 
         $tipoAnterior = $movimiento->tipo_movimiento?->value;
         $tipoNuevo = $data['tipo_movimiento'] ?? $tipoAnterior;

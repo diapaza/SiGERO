@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Objeto;
 
 use App\Http\Requests\BaseFormRequest;
-use App\Rules\UniqueIgnoringSoftDeletes;
 
 class UpdateObjetoRequest extends BaseFormRequest
 {

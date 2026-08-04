@@ -3,9 +3,10 @@
 namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 readonly class ImageService
 {
@@ -15,17 +16,19 @@ readonly class ImageService
 
     public function __construct()
     {
-        $this->manager = new ImageManager(new Driver());
+        $this->manager = new ImageManager(new Driver);
     }
 
     public function process(UploadedFile $file, string $directory = 'objetos', ?string $filename = null, int $maxSize = 800, int $quality = 80): string
     {
+        $this->ensureDirectory($directory);
+
         $image = $this->manager->read($file);
 
         $image->scaleDown(width: $maxSize, height: $maxSize);
 
         if (! $filename) {
-            $filename = time() . '_' . uniqid();
+            $filename = time().'_'.uniqid();
         }
 
         $path = storage_path("app/public/{$directory}/{$filename}.jpg");
@@ -43,11 +46,24 @@ readonly class ImageService
             return $oldPath;
         }
 
+        $this->ensureDirectory($directory);
+
         $newPath = storage_path("app/public/{$directory}/{$newCode}.jpg");
 
         rename($fullOldPath, $newPath);
 
         return "{$directory}/{$newCode}.jpg";
+    }
+
+    /**
+     * Crea el directorio de destino si no existe (p. ej. tras un despliegue
+     * limpio, donde la carpeta puede no estar en el repositorio).
+     */
+    private function ensureDirectory(string $directory): void
+    {
+        $path = storage_path("app/public/{$directory}");
+
+        File::ensureDirectoryExists($path);
     }
 
     public function delete(string $path): bool
@@ -89,7 +105,7 @@ readonly class ImageService
             return null;
         }
 
-        if (! Str::startsWith($fullPath, $base . DIRECTORY_SEPARATOR)) {
+        if (! Str::startsWith($fullPath, $base.DIRECTORY_SEPARATOR)) {
             return null;
         }
 

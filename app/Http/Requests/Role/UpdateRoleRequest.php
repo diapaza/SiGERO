@@ -15,7 +15,7 @@ class UpdateRoleRequest extends BaseFormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:roles,name,' . $role?->id,
+                'unique:roles,name,'.$role?->id,
             ],
             'guard_name' => ['nullable', 'string', 'max:255'],
         ];

@@ -16,7 +16,7 @@ class UpdateProfileRequest extends BaseFormRequest
                 'required',
                 'string',
                 'size:8',
-                'unique:users,dni,' . $user->id,
+                'unique:users,dni,'.$user->id,
             ],
             'nombres' => ['required', 'string', 'max:120'],
             'apellidos' => ['required', 'string', 'max:120'],
@@ -28,7 +28,7 @@ class UpdateProfileRequest extends BaseFormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:users,username,' . $user->id,
+                'unique:users,username,'.$user->id,
             ];
         }
 

@@ -12,7 +12,6 @@ class UpdateMovimientoRequest extends BaseFormRequest
     {
         return [
             'user_id' => ['required', 'exists:users,id'],
-            'objeto_id' => ['sometimes', 'exists:objetos,id'],
             'tipo_movimiento' => ['required', new Enum(TipoMovimientoEnum::class)],
             'fecha_hora' => ['required', 'date'],
         ];

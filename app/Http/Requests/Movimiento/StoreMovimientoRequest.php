@@ -13,7 +13,6 @@ class StoreMovimientoRequest extends BaseFormRequest
         return [
             'user_id' => ['required', 'exists:users,id'],
             'objeto_id' => ['required', 'exists:objetos,id'],
-            'registrado_por' => ['required', 'exists:users,id'],
             'tipo_movimiento' => ['required', new Enum(TipoMovimientoEnum::class)],
             'fecha_hora' => ['required', 'date'],
         ];

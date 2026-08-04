@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Objeto extends Model
 {
@@ -64,20 +65,20 @@ class Objeto extends Model
 
     public static function generarSiguienteCodigo(): string
     {
-        $ultimoCodigo = self::withTrashed()
-            ->whereRaw('LENGTH(codigo) = 4')
-            ->where('codigo', 'REGEXP', '^[0-9]{4}$')
-            ->orderByRaw('CAST(codigo AS UNSIGNED) DESC')
-            ->value('codigo');
+        // Bloquea la fila del código máximo dentro de una transacción para
+        // que dos creaciones simultáneas no generen el mismo código.
+        return DB::transaction(function () {
+            $ultimoCodigo = self::withTrashed()
+                ->whereRaw('LENGTH(codigo) = 4')
+                ->where('codigo', 'REGEXP', '^[0-9]{4}$')
+                ->orderByRaw('CAST(codigo AS UNSIGNED) DESC')
+                ->lockForUpdate()
+                ->value('codigo');
 
-        if (! $ultimoCodigo) {
-            return '0001';
-        }
+            $numero = $ultimoCodigo ? (int) $ultimoCodigo : 0;
 
-        $numero = (int) $ultimoCodigo;
-        $siguiente = $numero + 1;
-
-        return str_pad($siguiente, 4, '0', STR_PAD_LEFT);
+            return str_pad($numero + 1, 4, '0', STR_PAD_LEFT);
+        });
     }
 
     public function ultimoMovimiento(): HasOne

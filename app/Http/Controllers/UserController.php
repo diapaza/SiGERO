@@ -42,13 +42,14 @@ class UserController extends BaseCrudController
 
     public function index(Request $request): Response
     {
-        $users = User::with('roles')->latest()->get();
+        $users = User::with('roles.permissions')->latest()->get();
         $roles = Role::latest()->get();
         $trashedCount = User::onlyTrashed()->count();
         $allPermissions = Permission::orderBy('name')->get();
 
         $users->each(function ($user) {
             $user->setRelation('all_permissions', $user->getAllPermissions());
+            $user->setRelation('role_permissions', $user->roles->flatMap->permissions->pluck('name')->unique()->values());
         });
 
         return Inertia::render('Users/Index', [

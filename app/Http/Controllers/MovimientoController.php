@@ -56,7 +56,10 @@ class MovimientoController extends BaseCrudController
 
     public function store(StoreMovimientoRequest $request, MovimientoService $service): RedirectResponse
     {
-        $service->create($request->validated());
+        $data = $request->validated();
+        $data['registrado_por'] = $request->user()->id;
+
+        $service->create($data);
 
         return redirect()->route('movimientos.index')->with('success', 'Movimiento registrado correctamente.');
     }

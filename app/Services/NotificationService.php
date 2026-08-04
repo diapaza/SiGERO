@@ -10,7 +10,6 @@ use App\Notifications\DevolucionVencidaNotification;
 use App\Notifications\PermisosActualizadosNotification;
 use App\Notifications\RetornoRegistradoNotification;
 use App\Notifications\SalidaRegistradaNotification;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\DatabaseNotification;
 

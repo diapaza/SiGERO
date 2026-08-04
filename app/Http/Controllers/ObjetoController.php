@@ -50,13 +50,7 @@ class ObjetoController extends BaseCrudController
 
     public function store(StoreObjetoRequest $request, ObjetoService $service): RedirectResponse
     {
-        $data = $request->validated();
-
-        if (empty($data['codigo'])) {
-            $data['codigo'] = Objeto::generarSiguienteCodigo();
-        }
-
-        $service->create($data);
+        $service->create($request->validated());
 
         return redirect()->route('objetos.index')->with('success', 'Objeto creado correctamente.');
     }
@@ -98,7 +92,7 @@ class ObjetoController extends BaseCrudController
         $path = $imageService->process($request->file('foto'), 'objetos');
 
         return response()->json([
-            'url' => asset('storage/' . $path),
+            'url' => asset('storage/'.$path),
             'path' => $path,
         ]);
     }

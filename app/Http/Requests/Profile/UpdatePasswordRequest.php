@@ -4,7 +4,6 @@ namespace App\Http\Requests\Profile;
 
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
 class UpdatePasswordRequest extends BaseFormRequest
 {
@@ -12,7 +11,7 @@ class UpdatePasswordRequest extends BaseFormRequest
     {
         return [
             'current_password' => ['required', 'string', function ($attribute, $value, $fail) {
-                if (!Hash::check($value, $this->user()->password)) {
+                if (! Hash::check($value, $this->user()->password)) {
                     $fail('La contraseña actual es incorrecta.');
                 }
             }],

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Objeto;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 readonly class ObjetoService extends BaseCrudService
 {
@@ -18,14 +19,20 @@ readonly class ObjetoService extends BaseCrudService
         unset($data['disponible']);
         $data['disponible'] = true;
 
-        $objeto = parent::create($data);
+        return DB::transaction(function () use ($data) {
+            if (empty($data['codigo'])) {
+                $data['codigo'] = Objeto::generarSiguienteCodigo();
+            }
 
-        if ($objeto->foto) {
-            $newPath = app(ImageService::class)->renameImage($objeto->foto, $objeto->codigo);
-            $objeto->update(['foto' => $newPath]);
-        }
+            $objeto = parent::create($data);
 
-        return $objeto;
+            if ($objeto->foto) {
+                $newPath = app(ImageService::class)->renameImage($objeto->foto, $objeto->codigo);
+                $objeto->update(['foto' => $newPath]);
+            }
+
+            return $objeto;
+        });
     }
 
     public function update(Model $entity, array $data): Model
@@ -33,12 +40,22 @@ readonly class ObjetoService extends BaseCrudService
         /** @var Objeto $objeto */
         $objeto = $entity;
         unset($data['disponible']);
+
+        $fotoAnterior = $objeto->foto;
+        $fotoNueva = $data['foto'] ?? $fotoAnterior;
+
         parent::update($objeto, $data);
         $objeto = $objeto->fresh();
 
+        // Si la foto cambió (o se eliminó), borra el archivo anterior para
+        // no dejar archivos huérfanos en disco.
+        if ($fotoNueva !== $fotoAnterior && $fotoAnterior) {
+            app(ImageService::class)->delete($fotoAnterior);
+        }
+
         if ($objeto->foto) {
             $currentFilename = basename($objeto->foto);
-            $expectedFilename = $objeto->codigo . '.jpg';
+            $expectedFilename = $objeto->codigo.'.jpg';
 
             if ($currentFilename !== $expectedFilename) {
                 $newPath = app(ImageService::class)->renameImage($objeto->foto, $objeto->codigo);

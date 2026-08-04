@@ -30,6 +30,7 @@ class HandleInertiaRequests
             'notifications' => fn () => $request->user()
                 ? $request->user()
                     ->notifications()
+                    ->latest()
                     ->take(10)
                     ->get()
                     ->map(fn ($notification) => [
