@@ -64,6 +64,7 @@
               id="name"
               v-model="form.name"
               type="text"
+              :maxlength="255"
               placeholder="Ingrese el nombre del rol"
               :state="form.errors.name ? 'error' : 'default'"
               class-name="w-full"

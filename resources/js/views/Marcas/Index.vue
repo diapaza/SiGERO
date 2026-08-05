@@ -73,6 +73,7 @@
               id="nombre"
               v-model="form.nombre"
               type="text"
+              :maxlength="255"
               placeholder="Ingrese el nombre de la marca"
               :state="form.errors.nombre ? 'error' : 'default'"
               class-name="w-full"

@@ -13,6 +13,7 @@
       :type="type"
       :placeholder="placeholder"
       :disabled="disabled"
+      :maxlength="maxlength"
       :value="modelValue"
       :class="inputClasses"
       @input="onInput"
@@ -51,6 +52,8 @@ const props = withDefaults(
     className?: string
     /** Clases CSS adicionales aplicadas al contenedor. */
     wrapperClass?: string
+    /** Longitud máxima de caracteres permitida en el input. */
+    maxlength?: number
   }>(),
   {
     modelValue: '',
@@ -60,6 +63,7 @@ const props = withDefaults(
     state: 'default',
     className: '',
     wrapperClass: '',
+    maxlength: undefined,
   },
 )
 

@@ -55,6 +55,7 @@
                     id="username"
                     v-model="profileForm.username"
                     type="text"
+                    :maxlength="255"
                     :placeholder="
                       isAdmin
                         ? 'Ingrese el nombre de usuario'
@@ -77,6 +78,7 @@
                     id="dni"
                     v-model="profileForm.dni"
                     type="text"
+                    :maxlength="8"
                     placeholder="Ingrese el DNI"
                     :state="profileForm.errors.dni ? 'error' : 'default'"
                     class-name="w-full"
@@ -96,6 +98,7 @@
                     id="nombres"
                     v-model="profileForm.nombres"
                     type="text"
+                    :maxlength="120"
                     placeholder="Ingrese los nombres"
                     :state="profileForm.errors.nombres ? 'error' : 'default'"
                     class-name="w-full"
@@ -113,6 +116,7 @@
                     id="apellidos"
                     v-model="profileForm.apellidos"
                     type="text"
+                    :maxlength="120"
                     placeholder="Ingrese los apellidos"
                     :state="profileForm.errors.apellidos ? 'error' : 'default'"
                     class-name="w-full"
@@ -125,12 +129,14 @@
                 <BaseFormField
                   label="Número de WhatsApp"
                   label-for="whatsapp_number"
+                  :required="true"
                   :error="profileForm.errors.whatsapp_number"
                 >
                   <BaseInput
                     id="whatsapp_number"
                     v-model="profileForm.whatsapp_number"
                     type="text"
+                    :maxlength="9"
                     placeholder="Ingrese el número de WhatsApp"
                     :state="profileForm.errors.whatsapp_number ? 'error' : 'default'"
                     class-name="w-full sm:w-1/2"

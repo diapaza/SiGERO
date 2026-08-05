@@ -54,7 +54,7 @@ const rules: Record<string, EntityRules> = {
     dni: { required: true, size: 8 },
     nombres: { required: true, maxLength: 120 },
     apellidos: { required: true, maxLength: 120 },
-    whatsapp_number: { maxLength: 15 },
+    whatsapp_number: { required: true, size: 9, pattern: /^\d{9}$/ },
     password: { required: true, minLength: 8 },
   },
   userUpdate: {
@@ -62,7 +62,7 @@ const rules: Record<string, EntityRules> = {
     dni: { required: true, size: 8 },
     nombres: { required: true, maxLength: 120 },
     apellidos: { required: true, maxLength: 120 },
-    whatsapp_number: { maxLength: 15 },
+    whatsapp_number: { required: true, size: 9, pattern: /^\d{9}$/ },
     password: { minLength: 8 },
   },
   profile: {
@@ -70,7 +70,7 @@ const rules: Record<string, EntityRules> = {
     dni: { required: true, size: 8 },
     nombres: { required: true, maxLength: 120 },
     apellidos: { required: true, maxLength: 120 },
-    whatsapp_number: { maxLength: 15 },
+    whatsapp_number: { required: true, size: 9, pattern: /^\d{9}$/ },
   },
   profilePassword: {
     current_password: { required: true },

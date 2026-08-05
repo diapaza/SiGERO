@@ -25,7 +25,7 @@ class StoreUserRequest extends BaseFormRequest
             'dni' => ['required', 'string', 'size:8', 'unique:users,dni'],
             'nombres' => ['required', 'string', 'max:120'],
             'apellidos' => ['required', 'string', 'max:120'],
-            'whatsapp_number' => ['nullable', 'string', 'max:15'],
+            'whatsapp_number' => ['required', 'string', 'size:9', 'regex:/^\d{9}$/'],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['string', 'exists:roles,name'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],

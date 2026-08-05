@@ -7,6 +7,7 @@
     :disabled="disabled"
     :name="name"
     :state="state"
+    :maxlength="maxlength"
     :class-name="className"
     :wrapper-class="wrapperClass"
     @update:model-value="emit('update:modelValue', $event)"
@@ -57,6 +58,8 @@ withDefaults(
     className?: string
     /** Clases CSS adicionales aplicadas al contenedor. */
     wrapperClass?: string
+    /** Longitud máxima de caracteres permitida en el campo. */
+    maxlength?: number
   }>(),
   {
     modelValue: '',
@@ -65,6 +68,7 @@ withDefaults(
     state: 'default',
     className: '',
     wrapperClass: '',
+    maxlength: undefined,
   },
 )
 

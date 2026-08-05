@@ -36,7 +36,7 @@ class UpdateUserRequest extends BaseFormRequest
             ],
             'nombres' => ['required', 'string', 'max:120'],
             'apellidos' => ['required', 'string', 'max:120'],
-            'whatsapp_number' => ['nullable', 'string', 'max:15'],
+            'whatsapp_number' => ['required', 'string', 'size:9', 'regex:/^\d{9}$/'],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['string', 'exists:roles,name'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],

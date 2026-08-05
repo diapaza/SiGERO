@@ -5,6 +5,7 @@
     :rows="rows"
     :placeholder="placeholder"
     :disabled="disabled"
+    :maxlength="maxlength"
     :class="textareaClasses"
     :value="modelValue"
     @input="onInput"
@@ -35,6 +36,8 @@ const props = withDefaults(
     state?: 'default' | 'error' | 'success'
     /** Clases CSS adicionales aplicadas al textarea. */
     className?: string
+    /** Longitud máxima de caracteres permitida en el textarea. */
+    maxlength?: number
   }>(),
   {
     modelValue: '',
@@ -43,6 +46,7 @@ const props = withDefaults(
     disabled: false,
     state: 'default',
     className: '',
+    maxlength: undefined,
   },
 )
 
