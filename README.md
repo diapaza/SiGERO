@@ -1,6 +1,6 @@
 # SiGERO
 
-Sistema de Gestión de Objetos y Equipos con control de préstamos (salidas y retornos) para instituciones. Permite administrar inventario, registrar movimientos de préstamo, gestionar usuarios con roles y permisos, y mantener notificaciones automáticas de devoluciones vencidas.
+Sistema de Gestión de Equipos y Recursos Operativos con control de préstamos (salidas y retornos) para instituciones. Permite administrar inventario, registrar movimientos de préstamo, gestionar usuarios con roles y permisos, y mantener notificaciones automáticas de devoluciones vencidas.
 
 ## Stack
 
@@ -227,4 +227,3 @@ Consulta `docs/rutas-inertia.md` para el detalle ruta → controlador → vista 
 
 - `docs/rutas-inertia.md` — mapa completo de rutas Inertia (controlador → vista → props).
 - `docs/openapi.yaml` — especificación OpenAPI de los endpoints JSON internos.
-- `PROYECTO.md` — documentación técnica ampliada (solo local, no versionada).

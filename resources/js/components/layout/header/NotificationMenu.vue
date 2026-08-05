@@ -108,6 +108,7 @@ const notifying = computed(() => unreadCount.value > 0)
 // Consulta periódica (cada 30 s) de las notificaciones y su contador de no leídas.
 usePoll(30000, {
   only: ['notifications', 'unreadNotifications'],
+  showProgress: false,
 })
 
 /**
@@ -125,6 +126,7 @@ const toggleDropdown = () => {
         preserveState: true,
         preserveScroll: true,
         only: ['notifications', 'unreadNotifications'],
+        showProgress: false,
       },
     )
   }

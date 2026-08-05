@@ -49,6 +49,16 @@ const monthNames = [
   'Dic',
 ]
 
+const barChartCategories = computed<string[]>(() => {
+  const now = new Date()
+  const categories: string[] = []
+  for (let i = 11; i >= 0; i--) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    categories.push(monthNames[date.getMonth()])
+  }
+  return categories
+})
+
 const barChartSeries = computed<Array<{ name: string; data: number[] }>>(() => {
   const salidas: number[] = Array<number>(12).fill(0)
   const retornos: number[] = Array<number>(12).fill(0)
@@ -93,7 +103,7 @@ const barChartOptions = computed<ApexOptions>(() => ({
     colors: ['transparent'],
   },
   xaxis: {
-    categories: monthNames,
+    categories: barChartCategories.value,
     axisBorder: { show: false },
     axisTicks: { show: false },
   },
